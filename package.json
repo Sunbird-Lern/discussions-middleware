@@ -1,0 +1,21 @@
+{
+  "name": "nodebb-middleware",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "@project-sunbird/logger": "^0.0.9",
+    "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "dateformat": "2.0.0",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "express-http-proxy": "1.0.6",
+    "http-errors": "~1.6.3",
+    "jade": "~1.11.0",
+    "mocha": "^8.2.1",
+    "morgan": "~1.9.1"
+  }
+}
