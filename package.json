@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "backend-test": "mocha 'tests/**/*.spec.js'"
   },
   "dependencies": {
     "@project-sunbird/logger": "^0.0.9",
@@ -15,7 +16,10 @@
     "express-http-proxy": "1.0.6",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
+    "mock-require": "3.0.3",
+    "node-mocks-http": "1.8.1",
     "mocha": "^8.2.1",
+    "chai": "4.2.0",
     "morgan": "~1.9.1"
   }
 }

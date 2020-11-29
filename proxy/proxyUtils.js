@@ -14,7 +14,7 @@ const decorateRequestHeaders = function () {
 }
 
 const handleSessionExpiry = (proxyRes, proxyResData, req, res, data) => {
-  if ((proxyRes.statusCode === 401) && !req.session.userId) {
+  if ((proxyRes.statusCode === 401)) {
     return {
       id: 'app.error',
       ver: '1.0',
