@@ -11,6 +11,11 @@ app.get(`${BASE_REPORT_URL}/tags`, proxyObject());
 app.get(`${BASE_REPORT_URL}/categories`, proxyObject());
 app.get(`${BASE_REPORT_URL}/notifications`, proxyObject());
 
+app.get(`${BASE_REPORT_URL}/user/:userslug`, proxyObject())
+app.get(`${BASE_REPORT_URL}/user/:userslug/upvoted`, proxyObject())
+app.get(`${BASE_REPORT_URL}/user/:userslug/downvoted`, proxyObject())
+app.get(`${BASE_REPORT_URL}/user/:userslug/bookmarks`, proxyObject())
+
 // categories apis
 app.get(`${BASE_REPORT_URL}/category/:category_id/:slug/:topic_index`, proxyObject());
 app.get(`${BASE_REPORT_URL}/categories`, proxyObject());
@@ -109,6 +114,7 @@ function proxyObject() {
   return proxy(DISCUSSION_FORUM, {
     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
     proxyReqPathResolver: function (req) {
+      console.log(req.body)
       let urlParam = req.originalUrl.replace('/discussionHub', '');
       let query = require('url').parse(req.url).query;
       if (query) {

@@ -6,7 +6,7 @@ const __envIn = 'dev';
 
 let devEnvVariables = {
     DISCUSSION_FORUM: env.sunbird_discussion_forum || 'http://localhost:4567/api',
-    Authorization: env.authorization_token || 'a4838b88-6a04-4293-a504-245862cad404',
+    Authorization: 'a4838b88-6a04-4293-a504-245862cad404',
 }
 
 let stagingEnvVariables = {
