@@ -19,6 +19,7 @@ app.get(`${BASE_REPORT_URL}/user/:userslug/bookmarks`, proxyObject())
 // categories apis
 app.get(`${BASE_REPORT_URL}/category/:category_id/:slug/:topic_index`, proxyObject());
 app.get(`${BASE_REPORT_URL}/categories`, proxyObject());
+app.get(`${BASE_REPORT_URL}/category/:cid`, proxyObject());
 app.get(`${BASE_REPORT_URL}/categories/:cid/moderators`, proxyObject());
 
 // topic apis
@@ -26,7 +27,7 @@ app.get(`${BASE_REPORT_URL}/unread`, proxyObject());
 app.get(`${BASE_REPORT_URL}/recent`, proxyObject());
 app.get(`${BASE_REPORT_URL}/popular`, proxyObject());
 app.get(`${BASE_REPORT_URL}/top`, proxyObject());
-app.get(`${BASE_REPORT_URL}/topic/:topic_id/:slug/:post_index`, proxyObject());
+app.get(`${BASE_REPORT_URL}/topic/:topic_id/:slug`, proxyObject());
 app.get(`${BASE_REPORT_URL}/unread/total`, proxyObject());
 app.get(`${BASE_REPORT_URL}/topic/teaser/:topic_id`, proxyObject());
 app.get(`${BASE_REPORT_URL}/topic/pagination/:topic_id`, proxyObject());
@@ -48,7 +49,7 @@ app.get(`${BASE_REPORT_URL}/user/admin/groups`, proxyObject());
 app.get(`${BASE_REPORT_URL}/user/admin/upvoted`, proxyObject());
 app.get(`${BASE_REPORT_URL}/user/admin/downvoted`, proxyObject());
 
-// topics apis 
+// topics apis
 app.post(`${BASE_REPORT_URL}/v2/topics`, proxyObject());
 app.post(`${BASE_REPORT_URL}/v2/topics/:tid`, proxyObject());
 app.put(`${BASE_REPORT_URL}/v2/topics/:tid`, proxyObject());
