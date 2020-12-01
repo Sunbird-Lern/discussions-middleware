@@ -17,6 +17,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use(cors());
+app.all('/health', (req,res,next) => {
+  res.send({statusCode: 200, message: "health api"})
+})
 app.use('/', nodebb);
 
 // catch 404 and forward to error handler
