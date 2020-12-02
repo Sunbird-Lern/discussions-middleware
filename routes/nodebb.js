@@ -2,7 +2,7 @@ const proxyUtils = require('../proxy/proxyUtils.js')
 const proxy = require('express-http-proxy');
 const { DISCUSSION_FORUM } = require('../helpers/environmentVariablesHelper.js');
 const { logger } = require('@project-sunbird/logger');
-const BASE_REPORT_URL = "/discussionHub";
+const BASE_REPORT_URL = "/discussion";
 const express = require('express');
 const app = express();
 
@@ -116,7 +116,7 @@ function proxyObject() {
     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
     proxyReqPathResolver: function (req) {
       console.log(req.body)
-      let urlParam = req.originalUrl.replace('/discussionHub', '');
+      let urlParam = req.originalUrl.replace('/discussion', '');
       let query = require('url').parse(req.url).query;
       if (query) {
         return require('url').parse(DISCUSSION_FORUM + urlParam + '?' + query).path
