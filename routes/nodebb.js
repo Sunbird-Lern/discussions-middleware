@@ -34,7 +34,7 @@ app.get(`${BASE_REPORT_URL}/user/:userslug/downvoted`, proxyObject())
 app.get(`${BASE_REPORT_URL}/user/:userslug/bookmarks`, proxyObject())
 
 // categories apis
-app.get(`${BASE_REPORT_URL}/category/:category_id/:slug/:topic_index`, proxyObject());
+app.get(`${BASE_REPORT_URL}/category/:category_id/:slug`, proxyObject());
 app.get(`${BASE_REPORT_URL}/categories`, proxyObject());
 app.get(`${BASE_REPORT_URL}/category/:cid`, proxyObject());
 app.get(`${BASE_REPORT_URL}/categories/:cid/moderators`, proxyObject());
@@ -138,7 +138,7 @@ function getForumId(id) {
         resolve(data);
       });
     }
-    catch(error) {
+    catch(error) {  
       resolve(error);
     }
   })
