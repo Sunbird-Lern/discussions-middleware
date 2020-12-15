@@ -7,7 +7,7 @@ const { logger } = require('@project-sunbird/logger');
 */
 const decorateRequestHeaders = function () {
   return function (proxyReqOpts) {
-    logger.info({message: 'adding headers in the request'});
+    logger.info({message: `adding headers in the request ${proxyReqOpts.path}`});
     proxyReqOpts.headers.Authorization = 'Bearer ' + Authorization;
     return proxyReqOpts;
   }
