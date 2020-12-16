@@ -13,7 +13,7 @@ const mockEnv = {
     Authorization: 'token'
 };
 const { expect } = require('chai');
-const proxyUtils = require('../../../proxy/proxyUtils');
+const proxyUtils = require('../../proxy/proxyUtils');
 
 describe('ProxyUtils add the headers', function () {
 
@@ -23,7 +23,6 @@ describe('ProxyUtils add the headers', function () {
 
     it('should add the authorization token in the request headers', function (done) {
         const req = proxyUtils.decorateRequestHeaders()(request);
-        console.log(req)
         const isContainsAuth = req.headers.hasOwnProperty('Authorization')
         expect(isContainsAuth).to.eql(true);
         done();

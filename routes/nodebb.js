@@ -164,7 +164,6 @@ function proxyObject() {
   return proxy(DISCUSSION_FORUM, {
     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
     proxyReqPathResolver: function (req) {
-      console.log(req.body)
       let urlParam = req.originalUrl.replace('/discussion', '');
       let query = require('url').parse(req.url).query;
       if (query) {
