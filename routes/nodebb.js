@@ -1,6 +1,6 @@
 const proxyUtils = require('../proxy/proxyUtils.js')
 const proxy = require('express-http-proxy');
-const { DISCUSSION_FORUM } = require('../helpers/environmentVariablesHelper.js');
+const { NODEBB_SERVICE_URL } = require('../helpers/environmentVariablesHelper.js');
 const { logger } = require('@project-sunbird/logger');
 const BASE_REPORT_URL = "/discussion";
 const express = require('express');
@@ -161,15 +161,15 @@ function addDetails(object) {
 
 
 function proxyObject() {
-  return proxy(DISCUSSION_FORUM, {
+  return proxy(NODEBB_SERVICE_URL, {
     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
     proxyReqPathResolver: function (req) {
       let urlParam = req.originalUrl.replace('/discussion', '');
       let query = require('url').parse(req.url).query;
       if (query) {
-        return require('url').parse(DISCUSSION_FORUM + urlParam + '?' + query).path
+        return require('url').parse(NODEBB_SERVICE_URL + urlParam + '?' + query).path
       } else {
-        return require('url').parse(DISCUSSION_FORUM + urlParam).path
+        return require('url').parse(NODEBB_SERVICE_URL + urlParam).path
       }
     },
     userResDecorator: (proxyRes, proxyResData, req, res) => {
