@@ -9,7 +9,7 @@ const request = httpMocks.createRequest({
     }
 });
 const mockEnv = {
-    DISCUSSION_FORUM: 'mock-url',
+    NODEBB_SERVICE_URL: 'mock-url',
     Authorization: 'token'
 };
 const { expect } = require('chai');
