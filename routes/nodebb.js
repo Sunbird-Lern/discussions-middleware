@@ -182,13 +182,12 @@ function proxyObject() {
          console.log('data--', data);
          console.log('proxyRes--', proxyRes.statusCode);
         if (proxyRes.statusCode === 404 ) {
-          logger.info({message: `Not found ${req}`})
+          logger.info({message: `Not found ${data}`})
           res.send(data)
         } else {
           return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
         }
       } catch (err) {
-        logger.info({message: `${req}`});
         logger.info({ message: `Error while htting the ${req.url}  ${err.message}` });
         return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res);
       }
