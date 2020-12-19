@@ -174,7 +174,13 @@ function proxyObject() {
     },
     userResDecorator: (proxyRes, proxyResData, req, res) => {
       try {
+        // 
         const data = (proxyResData.toString('utf8'));
+        console.log(req.headers);
+        // console.log('Prams--',  req.params)
+        //  console.log('query--',req.query);
+         console.log('data--', data);
+         console.log('proxyRes--', proxyRes.statusCode);
         if (proxyRes.statusCode === 404 ) {
           logger.info({message: `Not found ${req}`})
           res.send(data)
