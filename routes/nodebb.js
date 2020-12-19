@@ -176,12 +176,13 @@ function proxyObject() {
       try {
         const data = (proxyResData.toString('utf8'));
         if (proxyRes.statusCode === 404 ) {
-          logger.info({message: `Not found ${data}`})
+          logger.info({message: `Not found ${req}`})
           res.send(data)
         } else {
           return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
         }
       } catch (err) {
+        logger.info({message: `${req}`});
         logger.info({ message: `Error while htting the ${req.url}  ${err.message}` });
         return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res);
       }
