@@ -174,15 +174,15 @@ function proxyObject() {
     },
     userResDecorator: (proxyRes, proxyResData, req, res) => {
       try {
-        const data = JSON.parse(proxyResData.toString('utf8'));
-        logger.info({ message: `${req.url} called ${JSON.stringify(data)}` });
-        if (proxyRes.statusCode === 404 && (typeof data.message === 'string')) {
+        const data = (proxyResData.toString('utf8'));
+        if (proxyRes.statusCode === 404 ) {
+          logger.info({message: `Not found ${data}`})
           res.send(data)
         } else {
           return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
         }
       } catch (err) {
-        logger.info({ message: `Error while htting the ${req.url} ${err.message}` });
+        logger.info({ message: `Error while htting the ${req.url}  ${err.message}` });
         return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res);
       }
     }
