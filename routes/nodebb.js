@@ -5,24 +5,9 @@ const { logger } = require('@project-sunbird/logger');
 const BASE_REPORT_URL = "/discussion";
 const express = require('express');
 const app = express();
-const mongo = require('../helpers/dbConnection');
 
-// TODO: need to remove the static forum id and add the actual ID getting from DB
-app.get(`${BASE_REPORT_URL}/forumId/:id`, async (req, res) => {
-  const id = req.params.id;
-  if(id) {
-    const response = await getForumId(id);
-    res.send(response);
-   }
-});
-
-app.post(`${BASE_REPORT_URL}/forum`, async (req, res, next) => {
-  const object = req.body;
-  if(object) {
-   const response = await addDetails(object);
-   res.send(response);
-  }
-});
+app.post(`${BASE_REPORT_URL}/forumId`, proxyObject());
+app.post(`${BASE_REPORT_URL}/forum`, proxyObject());
 
 app.get(`${BASE_REPORT_URL}/tags`, proxyObject());
 app.get(`${BASE_REPORT_URL}/categories`, proxyObject());
@@ -129,41 +114,11 @@ app.get(`${BASE_REPORT_URL}/user/username/:username`, proxyObject());
 
 
 
-function getForumId(id) {
-  return new Promise((resolve) => {
-    try {
-      mongo.then(async (db) => {
-        const dbo = db.db('nodebb');
-        const data = await dbo.collection('sbcategory_category').findOne({id: id});
-        resolve(data);
-      });
-    }
-    catch(error) {  
-      resolve(error);
-    }
-  })
-}
-
-function addDetails(object) {
-  return new Promise((resolve) => {
-    try {
-      mongo.then(async (db) => {
-        const dbo = db.db('nodebb');
-        const data = await dbo.collection('sbcategory_category').insertOne(object);
-        resolve(data);
-      });
-    }
-    catch(error) {
-      resolve(error);
-    }
-  });
-}
-
-
 function proxyObject() {
   return proxy(NODEBB_SERVICE_URL, {
     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
     proxyReqPathResolver: function (req) {
+      console.log('session===========', req.session);
       let urlParam = req.originalUrl.replace('/discussion', '');
       let query = require('url').parse(req.url).query;
       if (query) {
@@ -174,16 +129,9 @@ function proxyObject() {
     },
     userResDecorator: (proxyRes, proxyResData, req, res) => {
       try {
-        // 
         const data = (proxyResData.toString('utf8'));
-        console.log(req.headers);
-        // console.log('Prams--',  req.params)
-        //  console.log('query--',req.query);
-         console.log('data--', data);
-         console.log('proxyRes--', proxyRes.statusCode);
         if (proxyRes.statusCode === 404 ) {
           logger.info({message: `Not found ${data}`})
-          res.send(data)
         } else {
           return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
         }
