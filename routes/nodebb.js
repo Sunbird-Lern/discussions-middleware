@@ -112,13 +112,14 @@ app.post(`${BASE_REPORT_URL}/v2/users/:uid/tokens`, proxyObject());
 app.delete(`${BASE_REPORT_URL}/v2/users/:uid/tokens/:token`, proxyObject());
 app.get(`${BASE_REPORT_URL}/user/username/:username`, proxyObject());
 
+app.post(`${BASE_REPORT_URL}/user/v1/create`, proxyObject());
+app.get(`${BASE_REPORT_URL}/user/uid/:uid`, proxyObject());
 
 
 function proxyObject() {
   return proxy(NODEBB_SERVICE_URL, {
     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
     proxyReqPathResolver: function (req) {
-      console.log('session===========', req.session);
       let urlParam = req.originalUrl.replace('/discussion', '');
       let query = require('url').parse(req.url).query;
       if (query) {
