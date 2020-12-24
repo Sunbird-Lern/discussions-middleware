@@ -5,24 +5,9 @@ const { logger } = require('@project-sunbird/logger');
 const BASE_REPORT_URL = "/discussion";
 const express = require('express');
 const app = express();
-const mongo = require('../helpers/dbConnection');
 
-// TODO: need to remove the static forum id and add the actual ID getting from DB
-app.get(`${BASE_REPORT_URL}/forumId/:id`, async (req, res) => {
-  const id = req.params.id;
-  if(id) {
-    const response = await getForumId(id);
-    res.send(response);
-   }
-});
-
-app.post(`${BASE_REPORT_URL}/forum`, async (req, res, next) => {
-  const object = req.body;
-  if(object) {
-   const response = await addDetails(object);
-   res.send(response);
-  }
-});
+app.post(`${BASE_REPORT_URL}/forumId`, proxyObject());
+app.post(`${BASE_REPORT_URL}/forum`, proxyObject());
 
 app.get(`${BASE_REPORT_URL}/tags`, proxyObject());
 app.get(`${BASE_REPORT_URL}/categories`, proxyObject());
@@ -127,37 +112,8 @@ app.post(`${BASE_REPORT_URL}/v2/users/:uid/tokens`, proxyObject());
 app.delete(`${BASE_REPORT_URL}/v2/users/:uid/tokens/:token`, proxyObject());
 app.get(`${BASE_REPORT_URL}/user/username/:username`, proxyObject());
 
-
-
-function getForumId(id) {
-  return new Promise((resolve) => {
-    try {
-      mongo.then(async (db) => {
-        const dbo = db.db('nodebb');
-        const data = await dbo.collection('sbcategory_category').findOne({id: id});
-        resolve(data);
-      });
-    }
-    catch(error) {  
-      resolve(error);
-    }
-  })
-}
-
-function addDetails(object) {
-  return new Promise((resolve) => {
-    try {
-      mongo.then(async (db) => {
-        const dbo = db.db('nodebb');
-        const data = await dbo.collection('sbcategory_category').insertOne(object);
-        resolve(data);
-      });
-    }
-    catch(error) {
-      resolve(error);
-    }
-  });
-}
+app.post(`${BASE_REPORT_URL}/user/v1/create`, proxyObject());
+app.get(`${BASE_REPORT_URL}/user/uid/:uid`, proxyObject());
 
 
 function proxyObject() {
@@ -177,7 +133,6 @@ function proxyObject() {
         const data = (proxyResData.toString('utf8'));
         if (proxyRes.statusCode === 404 ) {
           logger.info({message: `Not found ${data}`})
-          res.send(data)
         } else {
           return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
         }
