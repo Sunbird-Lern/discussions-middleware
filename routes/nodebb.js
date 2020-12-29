@@ -5,6 +5,10 @@ const { logger } = require('@project-sunbird/logger');
 const BASE_REPORT_URL = "/discussion";
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
+const badResCode = '400';
+const createUserUrl = '/discussion/user/v1/create';
+const badResMsg = 'User already Exists';
 
 app.post(`${BASE_REPORT_URL}/forumId`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum`, proxyObject());
@@ -112,7 +116,7 @@ app.post(`${BASE_REPORT_URL}/v2/users/:uid/tokens`, proxyObject());
 app.delete(`${BASE_REPORT_URL}/v2/users/:uid/tokens/:token`, proxyObject());
 app.get(`${BASE_REPORT_URL}/user/username/:username`, proxyObject());
 
-app.post(`${BASE_REPORT_URL}/user/v1/create`, proxyObject());
+app.post(`${BASE_REPORT_URL}/user/v1/create`, bodyParser.json({ limit: '10mb' }), proxyObject());
 app.get(`${BASE_REPORT_URL}/user/uid/:uid`, proxyObject());
 
 
@@ -130,7 +134,10 @@ function proxyObject() {
     },
     userResDecorator: (proxyRes, proxyResData, req, res) => {
       try {
-        const data = (proxyResData.toString('utf8'));
+        const data = JSON.parse(proxyResData.toString('utf8'));
+        if(req.originalUrl === createUserUrl && data.responseCode === badResCode && data.params.msg === badResMsg) {
+            res.redirect(`/discussion/user/username/${req.body.request.username}`)
+         }
         if (proxyRes.statusCode === 404 ) {
           logger.info({message: `Not found ${data}`})
         } else {
