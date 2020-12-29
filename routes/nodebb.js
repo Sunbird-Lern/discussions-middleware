@@ -5,6 +5,10 @@ const { logger } = require('@project-sunbird/logger');
 const BASE_REPORT_URL = "/discussion";
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
+const badResCode = '400';
+const createUserUrl = '/discussion/user/v1/create';
+const badResMsg = 'User already Exists';
 
 app.post(`${BASE_REPORT_URL}/forumId`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum`, proxyObject());
@@ -112,7 +116,7 @@ app.post(`${BASE_REPORT_URL}/v2/users/:uid/tokens`, proxyObject());
 app.delete(`${BASE_REPORT_URL}/v2/users/:uid/tokens/:token`, proxyObject());
 app.get(`${BASE_REPORT_URL}/user/username/:username`, proxyObject());
 
-app.post(`${BASE_REPORT_URL}/user/v1/create`, proxyObject());
+app.post(`${BASE_REPORT_URL}/user/v1/create`, bodyParser.json({ limit: '10mb' }), proxyObjectForCreate());
 app.get(`${BASE_REPORT_URL}/user/uid/:uid`, proxyObject());
 
 
@@ -131,6 +135,38 @@ function proxyObject() {
     userResDecorator: (proxyRes, proxyResData, req, res) => {
       try {
         const data = (proxyResData.toString('utf8'));
+        if (proxyRes.statusCode === 404 ) {
+          logger.info({message: `Not found ${data}`})
+        } else {
+          return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
+        }
+      } catch (err) {
+        logger.info({ message: `Error while htting the ${req.url}  ${err.message}` });
+        return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res);
+      }
+    }
+  })
+}
+
+function proxyObjectForCreate() {
+  return proxy(NODEBB_SERVICE_URL, {
+    proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+    proxyReqPathResolver: function (req) {
+      let urlParam = req.originalUrl.replace('/discussion', '');
+      let query = require('url').parse(req.url).query;
+      if (query) {
+        return require('url').parse(NODEBB_SERVICE_URL + urlParam + '?' + query).path
+      } else {
+        return require('url').parse(NODEBB_SERVICE_URL + urlParam).path
+      }
+    },
+    userResDecorator: (proxyRes, proxyResData, req, res) => {
+      try {
+        const data = JSON.parse(proxyResData.toString('utf8'));
+        if(data && data.responseCode === badResCode && data.params.msg === badResMsg) {
+          logger.info({message: `User already Exists ${data}`})
+          res.redirect(`/discussion/user/username/${req.body.request.username}`)
+         }
         if (proxyRes.statusCode === 404 ) {
           logger.info({message: `Not found ${data}`})
         } else {
