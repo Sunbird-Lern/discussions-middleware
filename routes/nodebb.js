@@ -5,10 +5,6 @@ const { logger } = require('@project-sunbird/logger');
 const BASE_REPORT_URL = "/discussion";
 const express = require('express');
 const app = express();
-const bodyParser = require('body-parser');
-const badResCode = '400';
-const createUserUrl = '/discussion/user/v1/create';
-const badResMsg = 'User already Exists';
 
 app.post(`${BASE_REPORT_URL}/forum/v2/read`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v2/create`, proxyObject());
@@ -138,6 +134,7 @@ function proxyObject() {
         const data = (proxyResData.toString('utf8'));
         if (proxyRes.statusCode === 404 ) {
           logger.info({message: `Not found ${data}`})
+          return data;
         } else {
           return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
         }
