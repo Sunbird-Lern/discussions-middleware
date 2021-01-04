@@ -120,7 +120,7 @@ function proxyObject() {
   return proxy(NODEBB_SERVICE_URL, {
     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
     proxyReqPathResolver: function (req) {
-      let urlParam = req.originalUrl.replace('/discussion', '/api');
+      let urlParam = req.originalUrl.replace('/discussion', '');
       logger.info({"message": `request comming from ${req.originalUrl}`})
       let query = require('url').parse(req.url).query;
       if (query) {
