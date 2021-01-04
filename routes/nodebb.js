@@ -126,14 +126,15 @@ function proxyObject() {
       if (query) {
         return require('url').parse(NODEBB_SERVICE_URL + urlParam + '?' + query).path
       } else {
-        const proxyUrl = require('url').parse(NODEBB_SERVICE_URL + urlParam).path;
-        console.log("Proxy url=", proxyUrl);
-        return proxyUrl;
+        var incoming = req.protocol + '://' + req.get('host') + req.originalUrl;
+        const proxyUrl = require('url').parse(NODEBB_SERVICE_URL + urlParam);
+        console.log("Proxy req url : ", incoming)
+        console.log("Upstream req url : " , proxyUrl.href);
+        return proxyUrl.path;
       }
     },
     userResDecorator: (proxyRes, proxyResData, req, res) => {
       try {
-        console.log(req.url)
         const data = (proxyResData.toString('utf8'));
         if (proxyRes.statusCode === 404 ) {
           logger.info({message: `Not found ${data}`})
