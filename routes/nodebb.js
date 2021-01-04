@@ -126,7 +126,11 @@ function proxyObject() {
       if (query) {
         return require('url').parse(NODEBB_SERVICE_URL + urlParam + '?' + query).path
       } else {
-        return require('url').parse(NODEBB_SERVICE_URL + urlParam).path
+        var incoming = req.protocol + '://' + req.get('host') + req.originalUrl;
+        const proxyUrl = require('url').parse(NODEBB_SERVICE_URL + urlParam);
+        console.log("Proxy req url : ", incoming)
+        console.log("Upstream req url : " , proxyUrl.href);
+        return proxyUrl.path;
       }
     },
     userResDecorator: (proxyRes, proxyResData, req, res) => {
