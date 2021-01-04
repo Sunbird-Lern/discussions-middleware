@@ -126,11 +126,14 @@ function proxyObject() {
       if (query) {
         return require('url').parse(NODEBB_SERVICE_URL + urlParam + '?' + query).path
       } else {
-        return require('url').parse(NODEBB_SERVICE_URL + urlParam).path
+        const proxyUrl = require('url').parse(NODEBB_SERVICE_URL + urlParam).path;
+        console.log("Proxy url=", proxyUrl);
+        return proxyUrl;
       }
     },
     userResDecorator: (proxyRes, proxyResData, req, res) => {
       try {
+        console.log(req.url)
         const data = (proxyResData.toString('utf8'));
         if (proxyRes.statusCode === 404 ) {
           logger.info({message: `Not found ${data}`})
