@@ -27,6 +27,8 @@
     "nock": "^13.0.5",
     "node-mocks-http": "1.8.1",
     "nyc": "^15.1.0",
-    "sinon": "^9.2.2"
+    "sinon": "^9.2.2",
+    "sb_logger_util": "file:libs/sb_logger_util",
+    "sb-config-util": "file:libs/sb-config-util"
   }
 }

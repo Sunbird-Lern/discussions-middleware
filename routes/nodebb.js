@@ -5,6 +5,19 @@ const { logger } = require('@project-sunbird/logger');
 const BASE_REPORT_URL = "/discussion";
 const express = require('express');
 const app = express();
+const sbLogger = require('sb_logger_util');
+let logObj = {
+  "eid": "LOG",
+  "ets": 1518460198146,
+  "ver": "3.0",
+  "mid": "LOG:69e9ca45-c7e2-4a94-af50-50a4ff854cc9",
+  "actor": {
+    "id": "discussion-forum-middleware",
+    "type": "API"
+  },
+  "context": {},
+  "edata": {}
+};
 
 app.post(`${BASE_REPORT_URL}/forum/v2/read`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v2/create`, proxyObject());
@@ -120,29 +133,43 @@ function proxyObject() {
   return proxy(NODEBB_SERVICE_URL, {
     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
     proxyReqPathResolver: function (req) {
-      let urlParam = req.originalUrl.replace('/discussion', '/api');
+      let urlParam = req.originalUrl.replace('/discussion', '/discussions/api');
       logger.info({"message": `request comming from ${req.originalUrl}`})
       let query = require('url').parse(req.url).query;
       if (query) {
         return require('url').parse(NODEBB_SERVICE_URL + urlParam + '?' + query).path
       } else {
-        var incoming = req.protocol + '://' + req.get('host') + req.originalUrl;
+		    const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
         const proxyUrl = require('url').parse(NODEBB_SERVICE_URL + urlParam);
-        console.log("Proxy req url : ", incoming)
-        console.log("Upstream req url : " , proxyUrl.href);
+        logger.info({message: `Proxy req url :  ${incomingUrl}`});
+        logger.info({message: `Upstream req url :  ${proxyUrl.href}`});
         return proxyUrl.path;
       }
     },
     userResDecorator: (proxyRes, proxyResData, req, res) => {
+      let edata = {
+        "type": "log",
+        "level": "INFO",
+        "requestid": "",
+        "message": ''
+      };
       try {
+        logger.info({message: `request came from ${req.originalUrl}`})
         const data = (proxyResData.toString('utf8'));
         if (proxyRes.statusCode === 404 ) {
-          logger.info({message: `Not found ${data}`})
+          edata['message'] = `Request url ${req.originalUrl} not found`;
+          logMessage(edata, req);
+          logger.info({message: `${req.originalUrl} Not found ${data}`})
           return data;
         } else {
+          edata['message'] = `${req.originalUrl} successfull`;
+          logMessage(edata, req);
           return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
         }
       } catch (err) {
+        edata['level'] = "Error";
+        edata['message'] = `Error: ${err.message}, Url:  ${req.originalUrl}`;
+        logMessage(edata, req);
         logger.info({ message: `Error while htting the ${req.url}  ${err.message}` });
         return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res);
       }
@@ -150,5 +177,19 @@ function proxyObject() {
   })
 }
 
+function logMessage(data, req) {
+  logObj.context.env = req.originalUrl;
+  console.log(req.headers)
+  logObj.context.did = req.headers['x-device-id'];
+  logObj.context.sid = req.headers['x-session-id'];
+  logObj.context.pdata = {
+    "id": "org.sunbird.discussion-forum-middleware",
+    "pid": "",
+    "ver": ""
+  };
+  logObj.context.cdata = [];
+  logObj.edata = data;
+  sbLogger.info(logObj);
+}
 
 module.exports = app;
