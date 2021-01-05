@@ -133,7 +133,7 @@ function proxyObject() {
   return proxy(NODEBB_SERVICE_URL, {
     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
     proxyReqPathResolver: function (req) {
-      let urlParam = req.originalUrl.replace('/discussion', '');
+      let urlParam = req.originalUrl.replace('/discussion', '/discussions/api');
       logger.info({"message": `request comming from ${req.originalUrl}`})
       let query = require('url').parse(req.url).query;
       if (query) {
@@ -162,7 +162,7 @@ function proxyObject() {
           logger.info({message: `${req.originalUrl} Not found ${data}`})
           return data;
         } else {
-          edata['message'] = `${req.originalUrl} Successfull`;
+          edata['message'] = `${req.originalUrl} successfull`;
           logMessage(edata, req);
           return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
         }
@@ -179,8 +179,9 @@ function proxyObject() {
 
 function logMessage(data, req) {
   logObj.context.env = req.originalUrl;
-  logObj.context.did = req.headers['X-Device-ID'];
-  logObj.context.sid = req.headers['X-Session-ID'];
+  console.log(req.headers)
+  logObj.context.did = req.headers['x-device-id'];
+  logObj.context.sid = req.headers['x-session-id'];
   logObj.context.pdata = {
     "id": "org.sunbird.discussion-forum-middleware",
     "pid": "",
