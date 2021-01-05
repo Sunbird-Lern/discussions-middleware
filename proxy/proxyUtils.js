@@ -22,7 +22,7 @@ let logObj = {
 const decorateRequestHeaders = function () {
   return function (proxyReqOpts) {
     logger.info({message: `adding headers in the request ${proxyReqOpts.path}`});
-    proxyReqOpts.headers.Authorization = 'Bearer ' + Authorization;
+    // proxyReqOpts.headers.Authorization = 'Bearer ' + Authorization;
     return proxyReqOpts;
   }
 }
