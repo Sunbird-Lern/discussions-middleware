@@ -1,6 +1,6 @@
 const proxyUtils = require('../proxy/proxyUtils.js')
 const proxy = require('express-http-proxy');
-const { NODEBB_SERVICE_URL } = require('../helpers/environmentVariablesHelper.js');
+const { NODEBB_SERVICE_URL, Nodebb_Slug } = require('../helpers/environmentVariablesHelper.js');
 const { logger } = require('@project-sunbird/logger');
 const BASE_REPORT_URL = "/discussion";
 const express = require('express');
@@ -133,14 +133,14 @@ function proxyObject() {
   return proxy(NODEBB_SERVICE_URL, {
     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
     proxyReqPathResolver: function (req) {
-      let urlParam = req.originalUrl.replace('/discussion', '/discussions/api');
+      let urlParam = req.originalUrl.replace('/discussion', '');
       logger.info({"message": `request comming from ${req.originalUrl}`})
       let query = require('url').parse(req.url).query;
       if (query) {
-        return require('url').parse(NODEBB_SERVICE_URL + urlParam + '?' + query).path
+        return require('url').parse(NODEBB_SERVICE_URL + Nodebb_Slug + urlParam + '?' + query).path
       } else {
 		    const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-        const proxyUrl = require('url').parse(NODEBB_SERVICE_URL + urlParam);
+        const proxyUrl = require('url').parse(NODEBB_SERVICE_URL+ Nodebb_Slug + urlParam);
         logger.info({message: `Proxy req url :  ${incomingUrl}`});
         logger.info({message: `Upstream req url :  ${proxyUrl.href}`});
         return proxyUrl.path;
