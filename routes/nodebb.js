@@ -1,12 +1,12 @@
 const proxyUtils = require('../proxy/proxyUtils.js')
 const proxy = require('express-http-proxy');
-const { NODEBB_SERVICE_URL, Nodebb_Api_Slug } = require('../helpers/environmentVariablesHelper.js');
+const { NODEBB_SERVICE_URL, nodebb_api_slug } = require('../helpers/environmentVariablesHelper.js');
 const { logger } = require('@project-sunbird/logger');
 const BASE_REPORT_URL = "/discussion";
 const express = require('express');
 const app = express();
 const sbLogger = require('sb_logger_util');
-const nodebbServiceUrl = NODEBB_SERVICE_URL+ Nodebb_Api_Slug;
+const nodebbServiceUrl = NODEBB_SERVICE_URL+ nodebb_api_slug;
 let logObj = {
   "eid": "LOG",
   "ets": 1518460198146,
