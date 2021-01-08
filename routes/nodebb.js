@@ -31,6 +31,7 @@ app.get(`${BASE_REPORT_URL}/user/:userslug`, proxyObject())
 app.get(`${BASE_REPORT_URL}/user/:userslug/upvoted`, proxyObject())
 app.get(`${BASE_REPORT_URL}/user/:userslug/downvoted`, proxyObject())
 app.get(`${BASE_REPORT_URL}/user/:userslug/bookmarks`, proxyObject())
+app.get(`${BASE_REPORT_URL}/user/:userslug/best`, proxyObject())
 
 // categories apis
 app.get(`${BASE_REPORT_URL}/category/:category_id/:slug`, proxyObject());
