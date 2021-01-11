@@ -2,7 +2,7 @@ const dateFormat = require('dateformat')
 const { Authorization } = require('../helpers/environmentVariablesHelper');
 const { logger } = require('@project-sunbird/logger');
 const sbLogger = require('sb_logger_util');
-
+const userCreate = '/discussion/user/v1/create';
 let logObj = {
   "eid": "LOG",
   "ets": 1518460198146,
@@ -22,7 +22,9 @@ let logObj = {
 const decorateRequestHeaders = function () {
   return function (proxyReqOpts) {
     logger.info({message: `adding headers in the request ${proxyReqOpts.path}`});
-    proxyReqOpts.headers.Authorization = 'Bearer ' + Authorization;
+    if (userCreate === proxyReqOpts.path) {
+      proxyReqOpts.headers.Authorization = 'Bearer ' + Authorization;
+    }
     return proxyReqOpts;
   }
 }
