@@ -140,8 +140,8 @@ function isEditablePost() {
   logger.info({message: "isEditablePost method called"});
   return function(req, res, next) {
     logger.info(req.body);
-    const uid = req.body.uid;
-    const pid = req.body.pid;
+    const uid = parseInt(req.body.uid || req.query.uid, 10);
+    const pid = parseInt(req.params.pid, 10);
     const url = `${req.protocol}://${req.get('host')}${BASE_REPORT_URL}/post/pid/${pid}`
     const options = {
       url: url,
