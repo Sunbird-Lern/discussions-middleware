@@ -6,6 +6,7 @@ const BASE_REPORT_URL = "/discussion";
 const express = require('express');
 const app = express();
 const sbLogger = require('sb_logger_util');
+const request = require('request');
 const nodebbServiceUrl = NODEBB_SERVICE_URL+ nodebb_api_slug;
 let logObj = {
   "eid": "LOG",
@@ -18,6 +19,10 @@ let logObj = {
   },
   "context": {},
   "edata": {}
+};
+const responseObj = {
+  errorCode: 400,
+  message: 'You are not authorized to perform this action.'
 };
 
 app.post(`${BASE_REPORT_URL}/forum/v2/read`, proxyObject());
@@ -98,8 +103,9 @@ app.delete(`${BASE_REPORT_URL}/v2/groups/:slug/membership/:uid`, proxyObject());
 
 
 // post apis 
-app.put(`${BASE_REPORT_URL}/v2/posts/:pid`, proxyObject());
-app.delete(`${BASE_REPORT_URL}/v2/posts/:pid`, proxyObject());
+app.get(`${BASE_REPORT_URL}/post/pid/:pid`, proxyObject());
+app.put(`${BASE_REPORT_URL}/v2/posts/:pid`, isEditablePost(), proxyObject());
+app.delete(`${BASE_REPORT_URL}/v2/posts/:pid`,isEditablePost() , proxyObject());
 app.put(`${BASE_REPORT_URL}/v2/posts/:pid/state`, proxyObject());
 app.delete(`${BASE_REPORT_URL}/v2/posts/:pid/state`, proxyObject());
 app.post(`${BASE_REPORT_URL}/v2/posts/:pid/vote`, proxyObject());
@@ -129,6 +135,39 @@ app.get(`${BASE_REPORT_URL}/user/username/:username`, proxyObject());
 
 app.post(`${BASE_REPORT_URL}/user/v1/create`, proxyObject());
 app.get(`${BASE_REPORT_URL}/user/uid/:uid`, proxyObject());
+
+function isEditablePost() {
+  logger.info({message: "isEditablePost method called"});
+  return function(req, res, next) {
+    logger.info(req.body);
+    const uid = req.body.uid;
+    const pid = req.body.pid;
+    const url = `${req.protocol}://${req.get('host')}${BASE_REPORT_URL}/post/pid/${pid}`
+    const options = {
+      url: url,
+      method: 'GET',
+      json: true
+    };
+    logger.info(options)
+      request(options, (error, response, body) => {
+        if(error) {
+          logger.info({message: `Error while call the api ${options.url}`})
+          logger.info({message: `Error message:  ${error.message}`})
+          next(error);
+          return;
+        }
+        logger.info(body)
+        if (body.uid === uid && body.pid === pid) {
+          logger.info({message: 'Uid got matched and the post can be deleted'})
+          next();
+        } else {
+          logger.info({message: 'Uid is not matched and you can not delete the post'})
+          res.status(400)
+          res.send(responseObj)
+        }
+      });
+  }
+}
 
 
 function proxyObject() {
