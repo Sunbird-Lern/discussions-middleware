@@ -104,7 +104,7 @@ app.delete(`${BASE_REPORT_URL}/v2/groups/:slug/membership/:uid`, proxyObject());
 
 // post apis 
 app.get(`${BASE_REPORT_URL}/post/pid/:pid`, proxyObject());
-app.put(`${BASE_REPORT_URL}/v2/posts/:pid`, isEditablePost(), proxyObject());
+app.post(`${BASE_REPORT_URL}/v2/posts/:pid`, isEditablePost(), proxyObjectForPutApi());
 app.delete(`${BASE_REPORT_URL}/v2/posts/:pid`,isEditablePost() , proxyObject());
 app.put(`${BASE_REPORT_URL}/v2/posts/:pid/state`, proxyObject());
 app.delete(`${BASE_REPORT_URL}/v2/posts/:pid/state`, proxyObject());
@@ -173,6 +173,54 @@ function isEditablePost() {
 function proxyObject() {
   return proxy(nodebbServiceUrl, {
     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+    proxyReqPathResolver: function (req) {
+      let urlParam = req.originalUrl.replace('/discussion', '');
+      logger.info({"message": `request comming from ${req.originalUrl}`})
+      let query = require('url').parse(req.url).query;
+      if (query) {
+        return require('url').parse(nodebbServiceUrl+ urlParam + '?' + query).path
+      } else {
+		    const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+        const proxyUrl = require('url').parse(nodebbServiceUrl + urlParam);
+        logger.info({message: `Proxy req url :  ${incomingUrl}`});
+        logger.info({message: `Upstream req url :  ${proxyUrl.href}`});
+        return proxyUrl.path;
+      }
+    },
+    userResDecorator: (proxyRes, proxyResData, req, res) => {
+      let edata = {
+        "type": "log",
+        "level": "INFO",
+        "requestid": "",
+        "message": ''
+      };
+      try {
+        logger.info({message: `request came from ${req.originalUrl}`})
+        const data = (proxyResData.toString('utf8'));
+        if (proxyRes.statusCode === 404 ) {
+          edata['message'] = `Request url ${req.originalUrl} not found`;
+          logMessage(edata, req);
+          logger.info({message: `${req.originalUrl} Not found ${data}`})
+          return data;
+        } else {
+          edata['message'] = `${req.originalUrl} successfull`;
+          logMessage(edata, req);
+          return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
+        }
+      } catch (err) {
+        edata['level'] = "Error";
+        edata['message'] = `Error: ${err.message}, Url:  ${req.originalUrl}`;
+        logMessage(edata, req);
+        logger.info({ message: `Error while htting the ${req.url}  ${err.message}` });
+        return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res);
+      }
+    }
+  })
+}
+
+function proxyObjectForPutApi() {
+  return proxy(nodebbServiceUrl, {
+    proxyReqOptDecorator: proxyUtils.decorateRequestHeadersForPutApi(),
     proxyReqPathResolver: function (req) {
       let urlParam = req.originalUrl.replace('/discussion', '');
       logger.info({"message": `request comming from ${req.originalUrl}`})

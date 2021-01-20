@@ -29,6 +29,14 @@ const decorateRequestHeaders = function () {
   }
 }
 
+const decorateRequestHeadersForPutApi = function () {
+  return function (proxyReqOpts) {
+    logger.info({message: `Changing the method name for the request ${proxyReqOpts.path}`});
+      proxyReqOpts.method = 'PUT';
+    return proxyReqOpts;
+  }
+}
+
 const handleSessionExpiry = (proxyRes, proxyResData, req, res, data) => {
   let edata = {
     "type": "log",
@@ -79,3 +87,4 @@ function logMessage(data, req) {
 
 module.exports.decorateRequestHeaders = decorateRequestHeaders
 module.exports.handleSessionExpiry = handleSessionExpiry
+module.exports.decorateRequestHeadersForPutApi = decorateRequestHeadersForPutApi
