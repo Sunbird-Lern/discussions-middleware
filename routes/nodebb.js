@@ -50,6 +50,7 @@ app.get(`${BASE_REPORT_URL}/recent`, proxyObject());
 app.get(`${BASE_REPORT_URL}/popular`, proxyObject());
 app.get(`${BASE_REPORT_URL}/top`, proxyObject());
 app.get(`${BASE_REPORT_URL}/topic/:topic_id/:slug`, proxyObject());
+app.get(`${BASE_REPORT_URL}/topic/:topic_id`, proxyObject());
 app.get(`${BASE_REPORT_URL}/unread/total`, proxyObject());
 app.get(`${BASE_REPORT_URL}/topic/teaser/:topic_id`, proxyObject());
 app.get(`${BASE_REPORT_URL}/topic/pagination/:topic_id`, proxyObject());
