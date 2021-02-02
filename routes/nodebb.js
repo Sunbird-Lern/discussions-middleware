@@ -27,6 +27,7 @@ const responseObj = {
 
 app.post(`${BASE_REPORT_URL}/forum/v2/read`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v2/create`, proxyObject());
+app.post(`${BASE_REPORT_URL}/forum/v2/remove`, proxyObject());
 
 app.get(`${BASE_REPORT_URL}/tags`, proxyObject());
 app.get(`${BASE_REPORT_URL}/categories`, proxyObject());
