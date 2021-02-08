@@ -27,6 +27,7 @@ const responseObj = {
 
 app.post(`${BASE_REPORT_URL}/forum/v2/read`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v2/create`, proxyObject());
+app.post(`${BASE_REPORT_URL}/forum/v2/remove`, proxyObject());
 
 app.get(`${BASE_REPORT_URL}/tags`, proxyObject());
 app.get(`${BASE_REPORT_URL}/categories`, proxyObject());
@@ -50,6 +51,7 @@ app.get(`${BASE_REPORT_URL}/recent`, proxyObject());
 app.get(`${BASE_REPORT_URL}/popular`, proxyObject());
 app.get(`${BASE_REPORT_URL}/top`, proxyObject());
 app.get(`${BASE_REPORT_URL}/topic/:topic_id/:slug`, proxyObject());
+app.get(`${BASE_REPORT_URL}/topic/:topic_id`, proxyObject());
 app.get(`${BASE_REPORT_URL}/unread/total`, proxyObject());
 app.get(`${BASE_REPORT_URL}/topic/teaser/:topic_id`, proxyObject());
 app.get(`${BASE_REPORT_URL}/topic/pagination/:topic_id`, proxyObject());
@@ -191,7 +193,7 @@ function proxyObject() {
       let edata = {
         "type": "log",
         "level": "INFO",
-        "requestid": "",
+        "requestid": req.headers['x-request-id'] || '',
         "message": ''
       };
       try {
@@ -201,18 +203,18 @@ function proxyObject() {
           edata['message'] = `Request url ${req.originalUrl} not found`;
           logMessage(edata, req);
           logger.info({message: `${req.originalUrl} Not found ${data}`})
-          return data;
+          return proxyUtils.errorResponse(req, res, proxyRes, null);;
         } else {
           edata['message'] = `${req.originalUrl} successfull`;
           logMessage(edata, req);
-          return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
+          return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null);
         }
       } catch (err) {
         edata['level'] = "Error";
         edata['message'] = `Error: ${err.message}, Url:  ${req.originalUrl}`;
         logMessage(edata, req);
         logger.info({ message: `Error while htting the ${req.url}  ${err.message}` });
-        return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res);
+        return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req,res, err);
       }
     }
   })
@@ -239,7 +241,7 @@ function proxyObjectForPutApi() {
       let edata = {
         "type": "log",
         "level": "INFO",
-        "requestid": "",
+        "requestid": req.headers['x-requester-id'] || '',
         "message": ''
       };
       try {
@@ -249,18 +251,18 @@ function proxyObjectForPutApi() {
           edata['message'] = `Request url ${req.originalUrl} not found`;
           logMessage(edata, req);
           logger.info({message: `${req.originalUrl} Not found ${data}`})
-          return data;
+          return proxyUtils.errorResponse(req, res, proxyRes, null);
         } else {
           edata['message'] = `${req.originalUrl} successfull`;
           logMessage(edata, req);
-          return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
+          return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null);
         }
       } catch (err) {
         edata['level'] = "Error";
         edata['message'] = `Error: ${err.message}, Url:  ${req.originalUrl}`;
         logMessage(edata, req);
         logger.info({ message: `Error while htting the ${req.url}  ${err.message}` });
-        return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res);
+        return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, err);
       }
     }
   })
