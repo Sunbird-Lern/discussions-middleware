@@ -241,7 +241,7 @@ function proxyObjectForPutApi() {
       let edata = {
         "type": "log",
         "level": "INFO",
-        "requestid": req.headers['x-requester-id'] || '',
+        "requestid": req.headers['x-request-id'] || '',
         "message": ''
       };
       try {

@@ -15,6 +15,7 @@ let logObj = {
   "context": {},
   "edata": {}
 };
+const _ = require('lodash');
 const errorCodes = require('../helpers/errorCodes.json');
 const defaultErrorCode = 'err_500';
 const errorStatus = [400, 404, 500];
@@ -113,7 +114,8 @@ function logMessage(data, req) {
 function errorResponse(req, res, proxyRes, error) {
   const errorCode = `err_${proxyRes.statusCode}`;
   const method = req.method.toLowerCase();
-  const errorObj = errorCodes[req.route.path][method]['errorObject'][errorCode] || errorCodes[req.route.path][method]['errorObject'][defaultErrorCode];
+  const path = `${req.route.path}.${method}.errorObject`;
+  const errorObj = _.get(errorCodes, `${path}.${errorCode}`) || _.get(errorCodes, `${path}.${defaultErrorCode}`);
   const id =  req.originalUrl.split('/');
   error_obj['id'] = id.join('.');
   error_obj['ts'] = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo');
