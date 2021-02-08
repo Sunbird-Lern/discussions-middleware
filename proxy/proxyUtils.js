@@ -70,7 +70,7 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, error) => {
       ts: dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
       params:
       {
-        'msgid': req.headers['x-request-id'],
+        'msgid': req.headers['x-request-id'] || '',
         'status': 'failed',
         'err': 'SESSION_EXPIRED',
         'errmsg': 'Session Expired'
@@ -78,7 +78,7 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, error) => {
       responseCode: 'SESSION_EXPIRED',
       result: {}
     };
-  } else if(errorStatus.includes(proxyRes.statusCode)) {
+  } else if(error || errorStatus.includes(proxyRes.statusCode)) {
     edata['message'] = `${req.originalUrl} failed`;
     logger.info({message: `${req.originalUrl} failed`});
     logMessage(edata, req);
@@ -111,7 +111,7 @@ function logMessage(data, req) {
  * 
  */
 function errorResponse(req, res, proxyRes, error) {
-  const errorCode = `err_${res.statusCode}`;
+  const errorCode = `err_${proxyRes.statusCode}`;
   const method = req.method.toLowerCase();
   const errorObj = errorCodes[req.route.path][method]['errorObject'][errorCode] || errorCodes[req.route.path][method]['errorObject'][defaultErrorCode];
   const id =  req.originalUrl.split('/');

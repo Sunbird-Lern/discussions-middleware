@@ -196,7 +196,7 @@
             }
         },
         "/discussion/v2/categories": {
-            "get": {
+            "post": {
                 "endPoint": "/discussion/v2/categories",
                 "key": "DiscussionForumCreateCategory",
                 "errorObject": {
@@ -220,7 +220,7 @@
             }
         },
         "/discussion/v2/categories/:cid": {
-            "post": {
+            "put": {
                 "endPoint": "/discussion/v2/categories/:cid",
                 "key": "DiscussionForumUpdateCategory",
                 "errorObject": {
