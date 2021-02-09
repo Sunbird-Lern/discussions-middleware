@@ -30,7 +30,10 @@ app.post(`${BASE_REPORT_URL}/forum/v2/create`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v2/remove`, proxyObject());
 
 app.get(`${BASE_REPORT_URL}/tags`, proxyObject());
+app.post(`${BASE_REPORT_URL}/tags/list`, proxyObject());
+app.get(`${BASE_REPORT_URL}/tags/:tag`, proxyObject());
 app.get(`${BASE_REPORT_URL}/categories`, proxyObject());
+app.post(`${BASE_REPORT_URL}/category/list`, proxyObject());
 app.get(`${BASE_REPORT_URL}/notifications`, proxyObject());
 
 app.get(`${BASE_REPORT_URL}/user/:userslug`, proxyObject())
