@@ -7,10 +7,10 @@ const nock = require('nock');
 const envData = require('../../helpers/environmentVariablesHelper');
 const mockData = require('./mock.data.spec');
 var expect = require('chai').expect;
-
+const nodebbUrl = envData.NODEBB_SERVICE_URL+envData.nodebb_api_slug;
 describe('Nodebb Routes', () => {
     it('it should GET all the Tags', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .get('/tags')
             .reply(200, mockData.tags);
         const response = [{
@@ -32,7 +32,7 @@ describe('Nodebb Routes', () => {
     });
 
     it('it should GET all the Categories', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .get('/categories')
             .reply(200, mockData.categories);
 
@@ -47,7 +47,7 @@ describe('Nodebb Routes', () => {
     });
 
     it('it should GET all the notifications', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .get('/notifications')
             .reply(200, mockData.notifications);
 
@@ -62,7 +62,7 @@ describe('Nodebb Routes', () => {
     });
 
     it('it should GET the user details', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .get('/user/ntptest102')
             .reply(200, mockData.userDetails);
 
@@ -77,7 +77,7 @@ describe('Nodebb Routes', () => {
     });
 
     it('it should not GET the user details', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .get('/user/1234')
             .reply(404);
 
@@ -90,7 +90,7 @@ describe('Nodebb Routes', () => {
     });
 
     it('it should GET the user upvote details', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .get('/user/ntptest104/upvoted')
             .reply(200, mockData.userVoteDetails);
 
@@ -105,7 +105,7 @@ describe('Nodebb Routes', () => {
     });
 
     it('it should not GET the user upvote details', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .get('/user/1111/upvoted')
             .reply(404);
 
@@ -118,7 +118,7 @@ describe('Nodebb Routes', () => {
     });
 
     it('it should GET the user downvote details', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .get('/user/ntptest104/downvoted')
             .reply(200, mockData.userVoteDetails);
 
@@ -133,7 +133,7 @@ describe('Nodebb Routes', () => {
     });
 
     it('it should not GET the user downvote details', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .get('/user/1111/downvoted')
             .reply(200, mockData.userVoteDetails);
 
@@ -148,7 +148,7 @@ describe('Nodebb Routes', () => {
     });
 
     it('it should GET the category details by category slug', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .get('/category/1/announcements')
             .reply(200, mockData.categoryDetails);
 
@@ -163,7 +163,7 @@ describe('Nodebb Routes', () => {
     });
 
     it('it should GET the category details by category id', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .get('/category/1')
             .reply(200, mockData.categoryDetails);
 
@@ -178,7 +178,7 @@ describe('Nodebb Routes', () => {
     });
 
     it('it should not GET the category details by category id', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .get('/category/1234')
             .reply(404);
 
@@ -191,7 +191,7 @@ describe('Nodebb Routes', () => {
     });
 
     it('it should GET the unread topic details', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .get('/unread')
             .reply(200, mockData.topicDetails);
 
@@ -206,7 +206,7 @@ describe('Nodebb Routes', () => {
     });
 
     it('it should GET the recent topic details', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .get('/recent')
             .reply(200, mockData.topicDetails);
 
@@ -221,7 +221,7 @@ describe('Nodebb Routes', () => {
     });
 
     it('it should GET the popular topics details', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .get('/popular')
             .reply(200, mockData.topicDetails);
 
@@ -236,7 +236,7 @@ describe('Nodebb Routes', () => {
     });
 
     it('it should GET the group details by slug', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .get('/groups')
             .reply(200, mockData.groupData);
 
@@ -254,7 +254,7 @@ describe('Nodebb Routes', () => {
         const topic = {
             cid: 1, title:"test", content: "test content"
         }
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .post('/v2/topics', topic)
             .reply(200, mockData.topicsRes);
 
@@ -271,7 +271,7 @@ describe('Nodebb Routes', () => {
 
     it('it should not Create topic', (done) => {
         const topic = { };
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .post('/v2/topics', topic)
             .reply(400, mockData.errorResponse);
 
@@ -279,9 +279,11 @@ describe('Nodebb Routes', () => {
             .post('/discussion/v2/topics')
             .send(topic)
             .end((err, res) => {
+                console.log(res.body)
+                console.log(err)
                 expect(res.body).to.be.a('object');
                 expect(res.status).to.equal(400);
-                expect(res.body.code).to.equal('params-missing')
+                expect(res.body.params.err).to.equal('DMW_TCRT08')
                 done();
             });
     });
@@ -290,7 +292,7 @@ describe('Nodebb Routes', () => {
         const topic = {
             toPid: 1, content: "test content"
         }
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .post('/v2/topics/1', topic)
             .reply(200, mockData.topicsRes);
 
@@ -307,7 +309,7 @@ describe('Nodebb Routes', () => {
 
     it('it should not create reply to topic', (done) => {
         const topic = {};
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .post('/v2/topics/1', topic)
             .reply(400, mockData.errorResponse);
 
@@ -317,7 +319,7 @@ describe('Nodebb Routes', () => {
             .end((err, res) => {
                 expect(res.body).to.be.a('object');
                 expect(res.status).to.equal(400);
-                expect(res.body.code).to.equal('params-missing')
+                expect(res.body.params.err).to.equal('DMW_RCRT12')
                 done();
             });
     });
@@ -326,7 +328,7 @@ describe('Nodebb Routes', () => {
         const topic = {
             pid: 1, content: "test content"
         }
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .put('/v2/topics/1', topic)
             .reply(200, mockData.topicsRes);
 
@@ -345,7 +347,7 @@ describe('Nodebb Routes', () => {
         const topic = {
             pid: 1, content: "test content"
         }
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .put('/v2/topics/123', topic)
             .reply(404, mockData.errorMessage);
 
@@ -355,13 +357,13 @@ describe('Nodebb Routes', () => {
             .end((err, res) => {
                 expect(res.body).to.be.a('object');
                 expect(res.status).to.equal(404);
-                expect(res.body.code).to.equal('not-found')
+                expect(res.body.params.err).to.equal('DMW_TUDT14')
                 done();
             });
     });
 
     it('it should delete the topic', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .delete('/v2/topics/1')
             .reply(200, mockData.topicsRes);
 
@@ -376,7 +378,7 @@ describe('Nodebb Routes', () => {
     });
 
     it('it should not delete the topic', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .delete('/v2/topics/123')
             .reply(404, mockData.errorMessage);
 
@@ -385,7 +387,7 @@ describe('Nodebb Routes', () => {
             .end((err, res) => {
                 expect(res.body).to.be.a('object');
                 expect(res.status).to.equal(404);
-                expect(res.body.code).to.equal('not-found')
+                expect(res.body.params.err).to.equal('DMW_TDEL18')
                 done();
             });
     });
@@ -393,7 +395,7 @@ describe('Nodebb Routes', () => {
     it('it should create the category', (done) => {
         const payload = {name: 'Test Category'};
 
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .post('/v2/categories', payload)
             .reply(200, mockData.categoryRes);
 
@@ -411,7 +413,7 @@ describe('Nodebb Routes', () => {
     it('it should not create the category', (done) => {
         const payload = {};
 
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .post('/v2/categories', payload)
             .reply(400, mockData.errorResponse);
 
@@ -421,14 +423,14 @@ describe('Nodebb Routes', () => {
             .end((err, res) => {
                 expect(res.body).to.be.a('object');
                 expect(res.status).to.equal(400);
-                expect(res.body.code).to.equal('params-missing')
+                expect(res.body.params.err).to.equal('DMW_CCRT09')
                 done();
             });
     });
     it('it should update the category', (done) => {
         const payload = {name: 'Test Category'};
 
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .put('/v2/categories/1', payload)
             .reply(200, mockData.categoryRes);
 
@@ -446,7 +448,7 @@ describe('Nodebb Routes', () => {
     it('it should not update the category', (done) => {
         const payload = {name: 'Test Category'};
 
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .put('/v2/categories/1234', payload)
             .reply(404, mockData.errorMessage);
 
@@ -456,13 +458,13 @@ describe('Nodebb Routes', () => {
             .end((err, res) => {
                 expect(res.body).to.be.a('object');
                 expect(res.status).to.equal(404);
-                expect(res.body.code).to.equal('not-found')
+                expect(res.body.params.err).to.equal('DMW_CUDT11')
                 done();
             });
     });
 
     it('it should delete the category', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .delete('/v2/categories/1')
             .reply(200, mockData.categoryRes);
 
@@ -477,7 +479,7 @@ describe('Nodebb Routes', () => {
     });
 
     it('it should not delete the category', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .delete('/v2/categories/1234')
             .reply(404, mockData.errorMessage);
 
@@ -486,14 +488,14 @@ describe('Nodebb Routes', () => {
             .end((err, res) => {
                 expect(res.body).to.be.a('object');
                 expect(res.status).to.equal(404);
-                expect(res.body.code).to.equal('not-found')
+                expect(res.body.params.err).to.equal('DMW_CDEL15')
                 done();
             });
     });
 
     it('it should create the group', (done) => {
         const payload ={name : "test group"}
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .post('/v2/groups', payload)
             .reply(200, mockData.groupRes);
 
@@ -508,24 +510,25 @@ describe('Nodebb Routes', () => {
             });
     });
 
-    it('it should not create the group', (done) => {
-        const payload ={}
-        nock(envData.NODEBB_SERVICE_URL)
-            .post('/v2/groups', payload)
-            .reply(400, mockData.errorResponse);
+    // it('it should not create the group', (done) => {
+    //     const payload ={}
+    //     nock(nodebbUrl)
+    //         .post('/v2/groups', payload)
+    //         .reply(400, mockData.errorResponse);
 
-        chai.request(server)
-            .post('/discussion/v2/groups')
-            .send(payload)
-            .end((err, res) => {
-                expect(res.body).to.be.a('object');
-                expect(res.status).to.equal(400);
-                expect(res.body.code).to.equal('params-missing')
-                done();
-            });
-    });
+    //     chai.request(server)
+    //         .post('/discussion/v2/groups')
+    //         .send(payload)
+    //         .end((err, res) => {
+    //             expect(res.body).to.be.a('object');
+    //             expect(res.status).to.equal(400);
+    //             expect(res.body.code).to.equal('params-missing')
+    //             done();
+    //         });
+    // });
+
     it('it should delete the group', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .delete('/v2/groups/1')
             .reply(200, mockData.groupRes);
 
@@ -539,87 +542,53 @@ describe('Nodebb Routes', () => {
             });
     });
 
-    it('it should not delete the group', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
-            .delete('/v2/groups/12345')
-            .reply(404, mockData.errorMessage);
+    // it('it should not delete the group', (done) => {
+    //     nock(nodebbUrl)
+    //         .delete('/v2/groups/12345')
+    //         .reply(404, mockData.errorMessage);
 
-        chai.request(server)
-            .delete('/discussion/v2/groups/12345')
-            .end((err, res) => {
-                expect(res.body).to.be.a('object');
-                expect(res.status).to.equal(404);
-                expect(res.body.code).to.equal('not-found')
-                done();
-            });
-    });
-
-    it('it should create new post', (done) => {
-        const payload = {content: "Test post content"}
-        nock(envData.NODEBB_SERVICE_URL)
-            .put('/v2/posts/1', payload)
-            .reply(200, mockData.postRes);
-
-        chai.request(server)
-            .put('/discussion/v2/posts/1')
-            .send(payload)
-            .end((err, res) => {
-                expect(res.body).to.be.a('object');
-                expect(res.status).to.equal(200);
-                expect(res.body.code).to.equal('ok')
-                done();
-            });
-    });
+    //     chai.request(server)
+    //         .delete('/discussion/v2/groups/12345')
+    //         .end((err, res) => {
+    //             expect(res.body).to.be.a('object');
+    //             expect(res.status).to.equal(404);
+    //             expect(res.body.code).to.equal('not-found')
+    //             done();
+    //         });
+    // });
 
     it('it should not create new post', (done) => {
-        const payload = {}
-        nock(envData.NODEBB_SERVICE_URL)
-            .put('/v2/posts/1', payload)
+        const payload = {uid:1}
+        nock(nodebbUrl)
+            .post('/v2/posts/1', payload)
             .reply(400, mockData.errorResponse);
 
         chai.request(server)
-            .put('/discussion/v2/posts/1')
+            .post('/discussion/v2/posts/1')
             .send(payload)
             .end((err, res) => {
                 expect(res.body).to.be.a('object');
                 expect(res.status).to.equal(400);
-                expect(res.body.code).to.equal('params-missing')
-                done();
-            });
-    });
-
-    it('it should delete post', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
-            .delete('/v2/posts/1')
-            .reply(200, mockData.postRes);
-
-        chai.request(server)
-            .delete('/discussion/v2/posts/1')
-            .end((err, res) => {
-                expect(res.body).to.be.a('object');
-                expect(res.status).to.equal(200);
-                expect(res.body.code).to.equal('ok')
                 done();
             });
     });
 
     it('it should not delete post', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
-            .delete('/v2/posts/12345')
-            .reply(404, mockData.errorMessage);
+        nock(nodebbUrl)
+            .delete('/v2/posts/1?uid=1')
+            .reply(400, mockData.errorMessage);
 
         chai.request(server)
             .delete('/discussion/v2/posts/12345')
             .end((err, res) => {
                 expect(res.body).to.be.a('object');
-                expect(res.status).to.equal(404);
-                expect(res.body.code).to.equal('not-found')
+                expect(res.status).to.equal(400);
                 done();
             });
     });
     it('it should vote the post', (done) => {
         const payload = {delta: 1};
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .post('/v2/posts/1/vote', payload)
             .reply(200, mockData.postRes);
 
@@ -637,7 +606,7 @@ describe('Nodebb Routes', () => {
 
     it('it should not vote the post', (done) => {
         const payload = {};
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .post('/v2/posts/1/vote', payload)
             .reply(400, mockData.errorResponse);
 
@@ -647,13 +616,13 @@ describe('Nodebb Routes', () => {
             .end((err, res) => {
                 expect(res.body).to.be.a('object');
                 expect(res.status).to.equal(400);
-                expect(res.body.code).to.equal('params-missing')
+                expect(res.body.params.err).to.equal('DMW_PVOT14')
                 done();
             });
     });
 
     it('it should delete the vote to post', (done) => {
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .delete('/v2/posts/1/vote')
             .reply(200, mockData.postRes);
 
@@ -669,7 +638,7 @@ describe('Nodebb Routes', () => {
 
     it('it should create the user', (done) => {
         const payload ={username: "test user", email: 'test@gmail.com'};
-        nock(envData.NODEBB_SERVICE_URL)
+        nock(nodebbUrl)
             .post('/v2/users', payload)
             .reply(200, mockData.postRes);
 
@@ -684,22 +653,6 @@ describe('Nodebb Routes', () => {
             });
     });
 
-    it('it should create the user', (done) => {
-        const payload ={};
-        nock(envData.NODEBB_SERVICE_URL)
-            .post('/v2/users', payload)
-            .reply(400, mockData.errorResponse);
-
-        chai.request(server)
-            .post('/discussion/v2/users')
-            .send(payload)
-            .end((err, res) => {
-                expect(res.body).to.be.a('object');
-                expect(res.status).to.equal(400);
-                expect(res.body.code).to.equal('params-missing')
-                done();
-            });
-    });
 
     it('it should call helth api', (done) => {
         chai.request(server)

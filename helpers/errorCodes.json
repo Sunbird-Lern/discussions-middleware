@@ -1,0 +1,550 @@
+    {
+        "/discussion/forum/v2/read": {
+            "post": {
+                "endPoint": "/discussion/forum/v2/read",
+                "key": "DiscussionForumRead",
+                "errorObject": {
+                    "err_404": {
+                        "errMsg": "Forum read failed because of nodebb-plugin-create-forum plugin not enabled.",
+                        "err": "DMW_FRED01"
+                    },
+                    "err_400": {
+                        "errMsg": "Forum read failed because of request payload issue",
+                        "err": "DMW_FRED02"
+                    },
+                    "err_500": {
+                        "errMsg": "Forum read failed",
+                        "err": "DMW_FRED03"
+                    }
+                }
+            }
+        },
+        "/discussion/forum/v2/create": {
+            "post": {
+                "endPoint": "/discussion/forum/v2/create",
+                "key": "DiscussionForumCreate",
+                "errorObject": {
+                    "err_404": {
+                        "errMsg": "Forum create failed because nodebb-plugin-create-forum not enabled",
+                        "err": "DMW_FCRT04"
+                    },
+                    "err_400": {
+                        "errMsg": "Forum create failed because of request payload issue.",
+                        "err": "DMW_FCRT05"
+                    },
+                    "err_500": {
+                        "errMsg": "Forum create failed",
+                        "err": "DMW_FCRT06"
+                    }
+                }
+            }
+        },
+        "/discussion/forum/v2/remove": {
+            "post": {
+                "endPoint": "/discussion/forum/v2/remove",
+                "key": "DiscussionForumRemove",
+                "errorObject": {
+                    "err_404": {
+                        "errMsg": "Forum remove failed because nodebb-plugin-create-forum not enabled.",
+                        "err": "DMW_FREM07"
+                    },
+                    "err_400": {
+                        "errMsg": "Forum remove failed because of request pay is incorrect",
+                        "err": "DMW_FREM09"
+                    },
+                    "err_500": {
+                        "errMsg": "Forum remove failed",
+                        "err": "DMW_FREM08"
+                    }
+                }
+            }
+        },
+        "/discussion/tags": {
+            "get": {
+                "endPoint": "/discussion/tags",
+                "key": "DiscussionForumTagsList",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Tags read failed",
+                        "err": "DMW_TRED01"
+                    }
+                }
+            }
+        },
+        "/discussion/user/:userslug": {
+            "get": {
+                "endPoint": "/discussion/user/:userslug",
+                "key": "DiscussionForumUserDetails",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Tags read failed",
+                        "err": "DMW_URED01"
+                    },
+                    "err_404": {
+                        "errMsg": "Users details read failed because of user not exists",
+                        "err": "DMW_URED02"
+                    }
+                }
+            }
+        },
+        "/discussion/user/:userslug/upvoted": {
+            "get": {
+                "endPoint": "/discussion/user/:userslug/upvoted",
+                "key": "DiscussionForumUserUpvoteDetails",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "User up vote post details read failed ",
+                        "err": "DMW_UUVR03"
+                    },
+                    "err_404": {
+                        "errMsg": "User up vote post details read failed because of user not exists",
+                        "err": "DMW_UUVR04"
+                    }
+                }
+            }
+        },
+        "/discussion/user/:userslug/downvoted": {
+            "get": {
+                "endPoint": "/discussion/user/:userslug/downvoted",
+                "key": "DiscussionForumUserDownvoteDetails",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "User down vote post details read failed",
+                        "err": "DMW_UDVR05"
+                    },
+                    "err_404": {
+                        "errMsg": "User down vote post details read failed because of user not exists.",
+                        "err": "DMW_UDVR06"
+                    }
+                }
+            }
+        },
+        "/discussion/user/:userslug/bookmarks": {
+            "get": {
+                "endPoint": "/discussion/user/:userslug/bookmarks",
+                "key": "DiscussionForumUserBookmarksDetails",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "User saved post details read failed",
+                        "err": "DMW_UBMR07"
+                    },
+                    "err_404": {
+                        "errMsg": "User saved post details read failed because of user not exists",
+                        "err": "DMW_UBMR08"
+                    }
+                }
+            }
+        },
+        "/discussion/user/v1/create": {
+            "post": {
+                "endPoint": "/discussion/user/v1/create",
+                "key": "DiscussionForumCreate",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Create user failed",
+                        "err": "DMW_UCRT09"
+                    },
+                    "err_404": {
+                        "errMsg": "Create user failed because of nodebb-plugin-sunbird-oidc plugin not enable",
+                        "err": "DMW_UCRT10"
+                    }
+                }
+            }
+        },
+        "/discussion/category/:category_id/:slug": {
+            "get": {
+                "endPoint": "/discussion/category/:category_id/:slug",
+                "key": "DiscussionForumCategoryDetails",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Category details read failed",
+                        "err": "DMW_CDTL01"
+                    },
+                    "err_404": {
+                        "errMsg": "Category details read failed because of category id not exists.",
+                        "err": "DMW_CDTL02"
+                    }
+                }
+            }
+        },
+        "/discussion/category/:cid": {
+            "get": {
+                "endPoint": "/discussion/category/:cid",
+                "key": "DiscussionForumCategoryDetailsByCid",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Category details read by cid failed",
+                        "err": "DMW_CRED03"
+                    },
+                    "err_404": {
+                        "errMsg": "Category details read by cid failed because of cid not exists.",
+                        "err": "DMW_CRED04"
+                    }
+                }
+            }
+        },
+        "/discussion/categories": {
+            "get": {
+                "endPoint": "/discussion/categories",
+                "key": "DiscussionForumCategoryList",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Access list of categories failed.",
+                        "err": "DMW_CLST05"
+                    }
+                }
+            }
+        },
+        "/discussion/v2/categories": {
+            "post": {
+                "endPoint": "/discussion/v2/categories",
+                "key": "DiscussionForumCreateCategory",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Create category failed",
+                        "err": "DMW_CCRT06"
+                    },
+                    "err_404": {
+                        "errMsg": "Create category failed because of nodedd-plugin-write-api not enable.",
+                        "err": "DMW_CCRT07"
+                    },
+                    "err_401": {
+                        "errMsg": "Create category failed because of you are not authorized",
+                        "err": "DMW_CCRT08"
+                    },
+                    "err_400": {
+                        "errMsg": "Create category failed because of request payload is incorrect.",
+                        "err": "DMW_CCRT09"
+                    }
+                }
+            }
+        },
+        "/discussion/v2/categories/:cid": {
+            "put": {
+                "endPoint": "/discussion/v2/categories/:cid",
+                "key": "DiscussionForumUpdateCategory",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Update category failed",
+                        "err": "DMW_CUDT10"
+                    },
+                    "err_404": {
+                        "errMsg": "Update category failed because of nodedd-plugin-write-api not enable or cid not exists.",
+                        "err": "DMW_CUDT11"
+                    },
+                    "err_401": {
+                        "errMsg": "Update category failed because of you are not authorized",
+                        "err": "DMW_CUDT12"
+                    },
+                    "err_400": {
+                        "errMsg": "Update category failed because of request payload is incorrect.",
+                        "err": "DMW_CUDT13"
+                    }
+                }
+            },
+            "delete": {
+                "endPoint": "/discussion/v2/categories/:cid",
+                "key": "DiscussionForumDeleteCategory",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Delete category failed",
+                        "err": "DMW_CDEL14"
+                    },
+                    "err_404": {
+                        "errMsg": "Delete category failed because of nodedd-plugin-write-api not enable or cid not exists.",
+                        "err": "DMW_CDEL15"
+                    },
+                    "err_401": {
+                        "errMsg": "Delete category failed because of you are not authorized",
+                        "err": "DMW_CDEL16"
+                    }
+                }
+            }
+        },
+        "/discussion/unread": {
+            "get": {
+                "endPoint": "/discussion/unread",
+                "key": "DiscussionForumUnreadTopics",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Access unread topics failed",
+                        "err": "DMW_TUNR01"
+                    }
+                }
+            }
+        },
+        "/discussion/recent": {
+            "get": {
+                "endPoint": "/discussion/recent",
+                "key": "DiscussionForumRecentopics",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Access recent topics failed.",
+                        "err": "DMW_TRCT02"
+                    }
+                }
+            }
+        },
+        "/discussion/topic/:topic_id/:slug": {
+            "get": {
+                "endPoint": "/discussion/topic/:topic_id/:slug",
+                "key": "DiscussionForumTopicDetails",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Access topic details failed",
+                        "err": "DMW_TDTL03"
+                    },
+                    "err_404": {
+                        "errMsg": "Access topic details failed because of topic id is not exists",
+                        "err": "DMW_TDTL04"
+                    }
+                }
+            }
+        },
+        "/discussion/v2/topics": {
+            "post": {
+                "endPoint": "/discussion/v2/topics",
+                "key": "DiscussionForumCreateTopic",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Create topic failed",
+                        "err": "DMW_TCRT05"
+                    },
+                    "err_404": {
+                        "errMsg": "Create topic  failed because of nodebb-plugin-write-api plugin not enabled.",
+                        "err": "DMW_TCRT06"
+                    },
+                    "err_401": {
+                        "errMsg": "Create topic  failed because of you are not authorized.",
+                        "err": "DMW_TCRT07"
+                    },
+                    "err_400": {
+                        "errMsg": "Create topic failed because of request payload is incorrect.",
+                        "err": "DMW_TCRT08"
+                    }
+                }
+            }
+        },
+        "/discussion/v2/topics/:tid": {
+            "post": {
+                "endPoint": "/discussion/v2/topics/:tid",
+                "key": "DiscussionForumAddReplyToTopic",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Add reply failed",
+                        "err": "DMW_RCRT09"
+                    },
+                    "err_404": {
+                        "errMsg": "Add reply failed because f nodebb-plugin-write-api is not enabled or tid not exists",
+                        "err": "DMW_RCRT10"
+                    },
+                    "err_401": {
+                        "errMsg": "Add reply failed because you are not authorized",
+                        "err": "DMW_RCRT11"
+                    },
+                    "err_400": {
+                        "errMsg": "Add reply failed because of request payload is incorrect.",
+                        "err": "DMW_RCRT12"
+                    }
+                }
+            },
+            "put": {
+                "endPoint": "/discussion/v2/topics/:tid",
+                "key": "DiscussionForumUpdateTopic",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Update topics/reply failed",
+                        "err": "DMW_TUDT13"
+                    },
+                    "err_404": {
+                        "errMsg": "Update topics/reply failed because of nodebb-plugin-write-api is not enabled or tid not exists.",
+                        "err": "DMW_TUDT14"
+                    },
+                    "err_401": {
+                        "errMsg": "Update topics/reply failed because of you are not authorized",
+                        "err": "DMW_TUDT15"
+                    },
+                    "err_400": {
+                        "errMsg": "Update topics/reply failed because of request payload is incorrect",
+                        "err": "DMW_TUDT16"
+                    }
+                }
+            },
+            "delete": {
+                "endPoint": "/discussion/v2/topics/:tid",
+                "key": "DiscussionForumDeleteTopic",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Delete topic/reply failed",
+                        "err": "DMW_TDEL17"
+                    },
+                    "err_404": {
+                        "errMsg": "Delete topic/reply failed because of nodebb-plugin-write-api is not enabled or tid not exists",
+                        "err": "DMW_TDEL18"
+                    },
+                    "err_401": {
+                        "errMsg": "Delete topic/reply failed because of you are not authorized",
+                        "err": "DMW_TDEL19"
+                    },
+                    "err_400": {
+                        "errMsg": "Delete topic/reply failed because of tid is not exists",
+                        "err": "DMW_TDEL20"
+                    }
+                }
+            }
+        },
+        "/discussion/post/pid/:pid": {
+            "get": {
+                "endPoint": "/discussion/post/pid/:pid",
+                "key": "DiscussionForumPostDetails",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Access post details failed",
+                        "err": "DWM_PRED01"
+                    },
+                    "err_404": {
+                        "errMsg": "Access post details failed because of pid is not exists",
+                        "err": "DWM_PRED02"
+                    }
+                }
+            }
+        },
+        "/discussion/v2/posts/:pid": {
+            "post": {
+                "endPoint": "/discussion/v2/posts/:pid",
+                "key": "DiscussionForumCreatePost",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Create post failed",
+                        "err": "DMW_PCRT03"
+                    },
+                    "err_404": {
+                        "errMsg": "Create post failed because of nodebb-plugin-write-api is not enabled or pid not exists",
+                        "err": "DMW_PCRT04"
+                    },
+                    "err_401": {
+                        "errMsg": "Create post failed because of you are not authorized",
+                        "err": "DMW_PCRT05"
+                    },
+                    "err_400": {
+                        "errMsg": "Create post failed because of request payload is incorrect",
+                        "err": "DMW_PCRT06"
+                    }
+                }
+            },
+            "delete": {
+                "endPoint": "/discussion/v2/posts/:pid",
+                "key": "DiscussionForumDeletePost",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Delete post failed",
+                        "err": "DMW_PCRT07"
+                    },
+                    "err_404": {
+                        "errMsg": "Delete post failed because of nodebb-plugin-write-api is not enabled or pid not exists",
+                        "err": "DMW_PCRT08"
+                    },
+                    "err_401": {
+                        "errMsg": "Delete post failed because of you are not authorized",
+                        "err": "DMW_PCRT09"
+                    },
+                    "err_400": {
+                        "errMsg": "Delete post failed because of pid is not exists",
+                        "err": "DMW_PCRT10"
+                    }
+                }
+            }
+        },
+        "/discussion/v2/posts/:pid/vote": {
+            "post": {
+                "endPoint": "/discussion/v2/posts/:pid/vote",
+                "key": "DiscussionForumCreatePost",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Adding vote to a post failed",
+                        "err": "DMW_PVOT11"
+                    },
+                    "err_404": {
+                        "errMsg": "Adding vote to a post failed because of nodebb-plugin-write-api is not enabled or pid not exists",
+                        "err": "DMW_PVOT12"
+                    },
+                    "err_401": {
+                        "errMsg": "Adding vote to a post failed because of you are not authorized",
+                        "err": "DMW_PVOT13"
+                    },
+                    "err_400": {
+                        "errMsg": "Adding vote to a post failed because of request payload is incorrect",
+                        "err": "DMW_PVOT14"
+                    }
+                }
+            },
+            "delete": {
+                "endPoint": "/discussion/v2/posts/:pid/vote",
+                "key": "DiscussionForumDeletePost",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Deleting vote failed",
+                        "err": "DMW_PVDL15"
+                    },
+                    "err_404": {
+                        "errMsg": "Deleting vote failed because of nodebb-plugin-write-api is not enabled or pid not exists",
+                        "err": "DMW_PVDL16"
+                    },
+                    "err_401": {
+                        "errMsg": "Deleting vote failed because of you are not authorized",
+                        "err": "DMW_PVDL17"
+                    },
+                    "err_400": {
+                        "errMsg": "Deleting vote failed because of pid is incorrect",
+                        "err": "DMW_PVDL18"
+                    }
+                }
+            }
+        },
+        "/discussion/v2/posts/:pid/bookmark": {
+            "post": {
+                "endPoint": "/discussion/v2/posts/:pid/bookmark",
+                "key": "DiscussionForumSavePost",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Bookmark post failed",
+                        "err": "DMW_PSVE19"
+                    },
+                    "err_404": {
+                        "errMsg": "Bookmark post failed because of nodebb-plugin-write-api not enabled or pid not exists",
+                        "err": "DMW_PSVE20"
+                    },
+                    "err_401": {
+                        "errMsg": "Bookmark post failed because of you are not authorized",
+                        "err": "DMW_PSVE21"
+                    },
+                    "err_400": {
+                        "errMsg": "Bookmark post failed because of pid  is incorrect",
+                        "err": "DMW_PSVE22"
+                    }
+                }
+            },
+            "delete": {
+                "endPoint": "/discussion/v2/posts/:pid/bookmark",
+                "key": "DiscussionForumUnsavePost",
+                "errorObject": {
+                    "err_500": {
+                        "errMsg": "Delete bookmark failed",
+                        "err": "DMW_PUSVE23"
+                    },
+                    "err_404": {
+                        "errMsg": "Delete bookmark failed because of nodebb-plugin-write-api is not enabled or pid incorrect.",
+                        "err": "DMW_PSVE24"
+                    },
+                    "err_401": {
+                        "errMsg": "Delete bookmark failed because of you are not authorized",
+                        "err": "DMW_PSVE25"
+                    },
+                    "err_400": {
+                        "errMsg": "Delete bookmark failed because of pid not exists",
+                        "err": "DMW_PSVE26"
+                    }
+                }
+            }
+        }
+    }

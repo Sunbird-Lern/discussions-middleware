@@ -15,6 +15,22 @@ let logObj = {
   "context": {},
   "edata": {}
 };
+const _ = require('lodash');
+const errorCodes = require('../helpers/errorCodes.json');
+const defaultErrorCode = 'err_500';
+const errorStatus = [400, 404, 500];
+let error_obj = {
+  "id": "",
+  "ver": "1.0",
+  "ts": "",
+  "params": {
+      "resmsgid": "5f36c090-2eee-11eb-80ed-6bb70096c082",
+      "msgid": "",
+      "status": "failed",
+      "err": "",
+      "errmsg": ""
+  }
+}
 
 /**
  * adding athorization token in the headers 
@@ -37,7 +53,7 @@ const decorateRequestHeadersForPutApi = function () {
   }
 }
 
-const handleSessionExpiry = (proxyRes, proxyResData, req, res, data) => {
+const handleSessionExpiry = (proxyRes, proxyResData, req, res, error) => {
   let edata = {
     "type": "log",
     "level": "INFO",
@@ -55,7 +71,7 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, data) => {
       ts: dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
       params:
       {
-        'msgid': null,
+        'msgid': req.headers['x-request-id'] || '',
         'status': 'failed',
         'err': 'SESSION_EXPIRED',
         'errmsg': 'Session Expired'
@@ -63,6 +79,11 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, data) => {
       responseCode: 'SESSION_EXPIRED',
       result: {}
     };
+  } else if(error || errorStatus.includes(proxyRes.statusCode)) {
+    edata['message'] = `${req.originalUrl} failed`;
+    logger.info({message: `${req.originalUrl} failed`});
+    logMessage(edata, req);
+    return errorResponse(req, res,proxyRes, error);
   } else {
     edata['message'] = `${req.originalUrl} successfull`;
     logger.info({message: `${req.originalUrl} successfull`});
@@ -73,8 +94,8 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, data) => {
 
 function logMessage(data, req) {
   logObj.context.env = req.originalUrl;
-  logObj.context.did = req.headers['X-Device-ID'];
-  logObj.context.sid = req.headers['X-Session-ID'];
+  logObj.context.did = req.headers['x-device-id'];
+  logObj.context.sid = req.headers['x-session-id'];
   logObj.context.pdata = {
     "id": "org.sunbird.discussion-forum-middleware",
     "pid": "",
@@ -85,6 +106,27 @@ function logMessage(data, req) {
   sbLogger.info(logObj);
 }
 
+
+/***
+ * This method will construct the error response 
+ * 
+ */
+function errorResponse(req, res, proxyRes, error) {
+  const errorCode = `err_${proxyRes.statusCode}`;
+  const method = req.method.toLowerCase();
+  const path = `${req.route.path}.${method}.errorObject`;
+  const errorObj = _.get(errorCodes, `${path}.${errorCode}`) || _.get(errorCodes, `${path}.${defaultErrorCode}`);
+  const id =  req.originalUrl.split('/');
+  error_obj['id'] = id.join('.');
+  error_obj['ts'] = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo');
+  error_obj['params']['msgid'] = req.headers['x-request-id']; // TODO: replace with x-request-id;
+  error_obj['params']['errmsg'] = errorObj.errMsg
+  error_obj['params']['err'] = errorObj.err;
+  return error_obj;
+}
+
+
 module.exports.decorateRequestHeaders = decorateRequestHeaders
 module.exports.handleSessionExpiry = handleSessionExpiry
+module.exports.errorResponse= errorResponse
 module.exports.decorateRequestHeadersForPutApi = decorateRequestHeadersForPutApi
