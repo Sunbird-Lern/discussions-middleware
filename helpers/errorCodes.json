@@ -546,5 +546,45 @@
                     }
                 }
             }
+        },
+        "/discussion/category/list": {
+            "post": {
+                "endPoint": "/discussion/category/list",
+                "key": "DiscussionForumListOfCategoryDetails",
+                "errorObject": {
+                    "err_500": {
+                        "err": "DMW_CLST17",
+                        "errMsg": "Category list api failed"
+                    },
+                    "err_404": {
+                        "err": "DMW_CLST18",
+                        "errMsg": "Category id not found, Use correct cid."
+                    }
+                }
+            }
+        },
+        "/discussion/tags/list": {
+            "post": {
+                "endPoint": "/discussion/tags/list",
+                "key": "DiscussionForumListOfTagsDetails",
+                "errorObject": {
+                    "err_500": {
+                        "err": "DMW_TLST02",
+                        "errMsg": "Tags list read failed"
+                    }
+                }
+            }
+        },
+        "/discussion/tags/:tag": {
+            "post": {
+                "endPoint": "/discussion/category/list",
+                "key": "DiscussionForumBasedOnTag",
+                "errorObject": {
+                    "err_500": {
+                        "err": "DMW_TRDIS03",
+                        "errMsg": "Tag related discussion read failed"
+                    }
+                }
+            }
         }
     }
