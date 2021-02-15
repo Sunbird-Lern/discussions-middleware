@@ -586,5 +586,25 @@
                     }
                 }
             }
+        },
+        "/discussion/forum/v3/create": {
+            "post": {
+                "endPoint": "/discussion/forum/v3/create",
+                "key": "DiscussionForumForGroups",
+                "errorObject": {
+                    "err_500": {
+                        "err": "DMW_FGCRT09",
+                        "errMsg": "Generalization of api failed"
+                    },
+                    "err_404": {
+                        "err": "DMW_FGCRT10",
+                        "errMsg": "Forum create failed because of nodebb-plugin-create-forum plugin not enabled."
+                    },
+                    "err_401": {
+                        "err": "DMW_FGCRT11",
+                        "errMsg": "category creation failed and token is not valid"
+                    }
+                }
+            }
         }
     }
