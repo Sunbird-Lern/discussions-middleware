@@ -3,6 +3,7 @@ const { Authorization } = require('../helpers/environmentVariablesHelper');
 const { logger } = require('@project-sunbird/logger');
 const sbLogger = require('sb_logger_util');
 const userCreate = '/discussion/user/v1/create';
+const groupCreate = '/discussion/forum/v3/create';
 let logObj = {
   "eid": "LOG",
   "ets": 1518460198146,
@@ -38,7 +39,7 @@ let error_obj = {
 const decorateRequestHeaders = function () {
   return function (proxyReqOpts) {
     logger.info({message: `adding headers in the request ${proxyReqOpts.path}`});
-    if (userCreate === proxyReqOpts.path) {
+    if (userCreate === proxyReqOpts.path || groupCreate === proxyReqOpts.path) {
       proxyReqOpts.headers.Authorization = 'Bearer ' + Authorization;
     }
     return proxyReqOpts;
