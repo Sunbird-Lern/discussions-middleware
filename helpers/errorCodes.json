@@ -606,5 +606,29 @@
                     }
                 }
             }
+        },
+        "/discussion/privileges/v2/copy": {
+            "post": {
+                "endPoint": "/discussion/privileges/v2/copy",
+                "key": "DiscussionForumForCopyPrivileges",
+                "errorObject": {
+                    "err_500": {
+                        "err": "DMW_CPFP01",
+                        "errMsg": "copy privileges api failed"
+                    },
+                    "err_404": {
+                        "err": "DMW_CPFP02",
+                        "errMsg": "copy privileges failed because of nodebb-plugin-create-forum plugin not enabled."
+                    },
+                    "err_401": {
+                        "err": "DMW_CPFP03",
+                        "errMsg": "copy privileges failed and token or uid is not valid"
+                    },
+                    "err_403": {
+                        "err": "DMW_CPFP04",
+                        "errMsg": "copy privileges failed because off you are not authorized"
+                    }
+                }
+            }
         }
     }
