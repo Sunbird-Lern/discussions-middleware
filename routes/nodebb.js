@@ -7,6 +7,7 @@ const express = require('express');
 const app = express();
 const sbLogger = require('sb_logger_util');
 const request = require('request');
+const methodSlug = '/update';
 const nodebbServiceUrl = NODEBB_SERVICE_URL+ nodebb_api_slug;
 let logObj = {
   "eid": "LOG",
@@ -85,7 +86,7 @@ app.get(`${BASE_REPORT_URL}/user/admin/downvoted`, proxyObject());
 // topics apis
 app.post(`${BASE_REPORT_URL}/v2/topics`, proxyObject());
 app.post(`${BASE_REPORT_URL}/v2/topics/:tid`, proxyObject());
-app.post(`${BASE_REPORT_URL}/v2/topics/:tid`, proxyObjectForPutApi());
+app.post(`${BASE_REPORT_URL}/v2/topics/update/:tid`, proxyObjectForPutApi());
 app.delete(`${BASE_REPORT_URL}/v2/topics/:tid`, proxyObject());
 app.put(`${BASE_REPORT_URL}/v2/topics/:tid/state`, proxyObject());
 app.put(`${BASE_REPORT_URL}/v2/topics/:tid/follow`, proxyObject());
@@ -233,7 +234,10 @@ function proxyObjectForPutApi() {
   return proxy(nodebbServiceUrl, {
     proxyReqOptDecorator: proxyUtils.decorateRequestHeadersForPutApi(),
     proxyReqPathResolver: function (req) {
-      let urlParam = req.originalUrl.replace('/discussion', '');
+      let urlParam= req.originalUrl.replace(BASE_REPORT_URL, '')
+      if(urlParam.includes(methodSlug)) {
+        urlParam = urlParam.replace(methodSlug, '');
+      }
       logger.info({"message": `request comming from ${req.originalUrl}`})
       let query = require('url').parse(req.url).query;
       if (query) {
