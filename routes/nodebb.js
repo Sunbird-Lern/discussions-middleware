@@ -7,8 +7,12 @@ const express = require('express');
 const app = express();
 const sbLogger = require('sb_logger_util');
 const request = require('request');
+const Telemetry = require('../libs/sb_telemetry_util/telemetryService.js')
+const telemetry = new Telemetry()
 const methodSlug = '/update';
 const nodebbServiceUrl = NODEBB_SERVICE_URL+ nodebb_api_slug;
+const _ = require('lodash')
+
 let logObj = {
   "eid": "LOG",
   "ets": 1518460198146,
@@ -206,20 +210,41 @@ function proxyObject() {
         "requestid": req.headers['x-request-id'] || '',
         "message": ''
       };
+      let context = {
+        env: 'discussion-middleware'
+      }
       try {
-        logger.info({message: `request came from ${req.originalUrl}`})
-        const data = (proxyResData.toString('utf8'));
-        if (proxyRes.statusCode === 404 ) {
+        logger.info({ message: `request came from ${req.originalUrl}` })
+        let data = proxyResData.toString('utf8');
+        if (proxyRes.statusCode === 404) {
           edata['message'] = `Request url ${req.originalUrl} not found`;
           logMessage(edata, req);
-          logger.info({message: `${req.originalUrl} Not found ${data}`})
-          return proxyUtils.errorResponse(req, res, proxyRes, null);;
+          logger.info({ message: `${req.originalUrl} Not found ${data}` })
+          if (data !== 'Not Found' && (typeof data) !== 'string') {
+            data = JSON.parse(proxyResData.toString('utf8'));
+          } else {
+            data = proxyUtils.errorResponse(req, res, proxyRes, null)
+          }
+          const option = telemetry.getTelemetryAPIError(data, proxyRes, context);
+          if(option) { logApiErrorEventV2(req, data, option) }        
+          return proxyUtils.errorResponse(req, res, proxyRes, null);
         } else {
           edata['message'] = `${req.originalUrl} successfull`;
+          if (data !== 'Not Found') {
+            let resCode = proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null)
+            if (resCode.params) {
+              data = resCode
+            } else {
+              data = JSON.parse(proxyResData.toString('utf8'));
+            }
+          }
+          const option = telemetry.getTelemetryAPIError(data, proxyRes, context);
+          if(option) { logApiErrorEventV2(req, data, option) }
           logMessage(edata, req);
           return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null);
         }
       } catch (err) {
+        console.log('catch', err)
         edata['level'] = "Error";
         edata['message'] = `Error: ${err.message}, Url:  ${req.originalUrl}`;
         logMessage(edata, req);
@@ -283,7 +308,6 @@ function proxyObjectForPutApi() {
 
 function logMessage(data, req) {
   logObj.context.env = req.originalUrl;
-  console.log(req.headers)
   logObj.context.did = req.headers['x-device-id'];
   logObj.context.sid = req.headers['x-session-id'];
   logObj.context.pdata = {
@@ -296,4 +320,27 @@ function logMessage(data, req) {
   sbLogger.info(logObj);
 }
 
+function logApiErrorEventV2 (req, data, option) {
+  let object = data.obj || {}
+  let channel = req.headers['x-channel-id']
+  const context = {
+    channel: channel,
+    env: option.context.env,
+    cdata: [],
+    did:  req.headers['x-device-id'],
+    sid: req.headers['x-session-id'] 
+  }
+  const actor = {
+    id: req.userId ? req.userId.toString() : 'anonymous',
+    type: 'user'
+  }
+ telemetry.error({
+  edata: option.edata,
+  context: _.pickBy(context, value => !_.isEmpty(value)),
+  object: _.pickBy(object, value => !_.isEmpty(value)),
+  actor: _.pickBy(actor, value => !_.isEmpty(value))
+}) 
+}
+
 module.exports = app;
+// module.exports.logMessage = logMessage;
