@@ -210,38 +210,22 @@ function proxyObject() {
         "requestid": req.headers['x-request-id'] || '',
         "message": ''
       };
-      let context = {
-        env: 'discussion-middleware'
-      }
       try {
         logger.info({ message: `request came from ${req.originalUrl}` })
-        let data = proxyResData.toString('utf8');
+        const data = proxyResData.toString('utf8');
         if (proxyRes.statusCode === 404) {
           edata['message'] = `Request url ${req.originalUrl} not found`;
           logMessage(edata, req);
           logger.info({ message: `${req.originalUrl} Not found ${data}` })
-          if (data !== 'Not Found' && (typeof data) !== 'string') {
-            data = JSON.parse(proxyResData.toString('utf8'));
-          } else {
-            data = proxyUtils.errorResponse(req, res, proxyRes, null)
-          }
-          const option = telemetry.getTelemetryAPIError(data, proxyRes, context);
-          if(option) { logApiErrorEventV2(req, data, option) }        
-          return proxyUtils.errorResponse(req, res, proxyRes, null);
+          const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);
+          logTelemetryEvent(req, res, data, proxyResData, proxyRes, resCode)     
+          return resCode;
         } else {
           edata['message'] = `${req.originalUrl} successfull`;
-          if (data !== 'Not Found') {
-            let resCode = proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null)
-            if (resCode.params) {
-              data = resCode
-            } else {
-              data = JSON.parse(proxyResData.toString('utf8'));
-            }
-          }
-          const option = telemetry.getTelemetryAPIError(data, proxyRes, context);
-          if(option) { logApiErrorEventV2(req, data, option) }
+          const resCode = proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null)
+          logTelemetryEvent(req, res, data, proxyResData, proxyRes, resCode)
           logMessage(edata, req);
-          return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null);
+          return resCode;
         }
       } catch (err) {
         console.log('catch', err)
@@ -318,6 +302,28 @@ function logMessage(data, req) {
   logObj.context.cdata = [];
   logObj.edata = data;
   sbLogger.info(logObj);
+}
+
+function logTelemetryEvent (req, res, data, proxyResData, proxyRes, resCode) {
+ const context = {
+    env: 'discussion-middleware'
+  }
+  let telemetryObj = {};
+  if(proxyRes.statusCode === 404 ) {
+      if (data !== 'Not Found' && (typeof data) !== 'string') {
+        telemetryObj =   JSON.parse(proxyResData.toString('utf8'));
+      } else {
+        telemetryObj =  resCode;
+      }
+    } else {
+        if (resCode.params) {
+          telemetryObj = resCode;
+        } else {
+          telemetryObj =  JSON.parse(proxyResData.toString('utf8'));
+        }
+    }
+  const option = telemetry.getTelemetryAPIError(telemetryObj, proxyRes, context);
+   if(option) { logApiErrorEventV2(req, telemetryObj, option) }
 }
 
 function logApiErrorEventV2 (req, data, option) {
