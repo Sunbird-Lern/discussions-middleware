@@ -34,6 +34,7 @@ app.post(`${BASE_REPORT_URL}/forum/v2/read`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v2/create`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v2/remove`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v3/create`, proxyObject());
+app.post(`${BASE_REPORT_URL}/forum/tags`, proxyObject())
 app.post(`${BASE_REPORT_URL}/privileges/v2/copy`, proxyObject());
 
 app.post(`${BASE_REPORT_URL}/forum/v3/group/membership`, proxyObject());
