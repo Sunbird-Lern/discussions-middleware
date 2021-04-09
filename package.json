@@ -1,0 +1,36 @@
+{
+  "name": "nodebb-middleware",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "backend-test": "nyc mocha 'tests/**/*.spec.js'",
+    "coverage": "nyc --reporter=lcov --reporter=text-lcov npm run backend-test"
+  },
+  "dependencies": {
+    "@project-sunbird/logger": "^0.0.9",
+    "chai": "4.2.0",
+    "chai-http": "^4.3.0",
+    "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "dateformat": "2.0.0",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "express-http-proxy": "1.0.6",
+    "http-errors": "~1.6.3",
+    "istanbul": "^0.4.5",
+    "jade": "~1.11.0",
+    "lodash": "^4.17.20",
+    "mocha": "^8.2.1",
+    "mock-require": "3.0.3",
+    "mongodb": "^3.6.3",
+    "morgan": "~1.9.1",
+    "nock": "^13.0.5",
+    "node-mocks-http": "1.8.1",
+    "nyc": "^15.1.0",
+    "request": "^2.88.2",
+    "sb-config-util": "file:libs/sb-config-util",
+    "sb_logger_util": "file:libs/sb_logger_util",
+    "sinon": "^9.2.2"
+  }
+}
