@@ -18,6 +18,8 @@ let logObj = {
 };
 const _ = require('lodash');
 const errorCodes = require('../helpers/errorCodes.json');
+const sbConfig = require('sb-config-util');
+sbConfig.setConfig('ENABLE_LOGGING', 'true');
 const defaultErrorCode = 'err_500';
 const errorStatus = [400, 404, 500];
 let error_obj = {
@@ -82,6 +84,7 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, error) => {
     };
   } else if(error || errorStatus.includes(proxyRes.statusCode)) {
     edata['message'] = `${req.originalUrl} failed`;
+    edata.level = "ERROR";
     logger.info({message: `${req.originalUrl} failed`});
     logMessage(edata, req);
     return errorResponse(req, res,proxyRes, error);
@@ -100,10 +103,11 @@ function logMessage(data, req) {
   logObj.context.pdata = {
     "id": "org.sunbird.discussion-forum-middleware",
     "pid": "",
-    "ver": ""
+    "ver": "1.0"
   };
   logObj.context.cdata = [];
   logObj.edata = data;
+  logObj.edata.msgid = req.headers['x-request-id'] || req.headers['x-msg-id'];
   sbLogger.info(logObj);
 }
 
