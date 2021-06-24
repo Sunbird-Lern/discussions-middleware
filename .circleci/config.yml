@@ -23,7 +23,7 @@ jobs:
             - node_modules
       - run:
           name: Run Tests
-          command: npm run test:ci
+          command: npm run coverage
       - store_artifacts:
           path: coverage
       - run:
