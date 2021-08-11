@@ -195,7 +195,8 @@ function proxyObject() {
       let urlParam = req.originalUrl.replace('/discussion', '');
       logger.info({"message": `request comming from ${req.originalUrl}`})
       let query = require('url').parse(req.url).query;
-      if (query) {
+      console.log("query======>",query)
+      if (query && !query.includes('_uid')) {
         return require('url').parse(nodebbServiceUrl+ urlParam + '?' + query).path
       } else {
 		    const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
