@@ -10,7 +10,7 @@ const request = require('request');
 const Telemetry = require('../libs/sb_telemetry_util/telemetryService.js')
 const telemetry = new Telemetry()
 const methodSlug = '/update';
-const nodebbServiceUrl = NODEBB_SERVICE_URL+ nodebb_api_slug;
+const nodebbServiceUrl = NODEBB_SERVICE_URL + nodebb_api_slug;
 const _ = require('lodash')
 
 let logObj = {
@@ -123,7 +123,7 @@ app.delete(`${BASE_REPORT_URL}/v2/groups/:slug/membership/:uid`, proxyObject());
 // post apis 
 app.get(`${BASE_REPORT_URL}/post/pid/:pid`, proxyObject());
 app.post(`${BASE_REPORT_URL}/v2/posts/:pid`, isEditablePost(), proxyObjectForPutApi());
-app.delete(`${BASE_REPORT_URL}/v2/posts/:pid`,isEditablePost() , proxyObject());
+app.delete(`${BASE_REPORT_URL}/v2/posts/:pid`, isEditablePost(), proxyObject());
 app.put(`${BASE_REPORT_URL}/v2/posts/:pid/state`, proxyObject());
 app.delete(`${BASE_REPORT_URL}/v2/posts/:pid/state`, proxyObject());
 app.post(`${BASE_REPORT_URL}/v2/posts/:pid/vote`, proxyObject());
@@ -155,8 +155,8 @@ app.post(`${BASE_REPORT_URL}/user/v1/create`, proxyObject());
 app.get(`${BASE_REPORT_URL}/user/uid/:uid`, proxyObject());
 
 function isEditablePost() {
-  logger.info({message: "isEditablePost method called"});
-  return function(req, res, next) {
+  logger.info({ message: "isEditablePost method called" });
+  return function (req, res, next) {
     logger.info(req.body);
     const uid = parseInt(req.body.uid || req.query.uid, 10);
     const pid = parseInt(req.params.pid, 10);
@@ -167,23 +167,23 @@ function isEditablePost() {
       json: true
     };
     logger.info(options)
-      request(options, (error, response, body) => {
-        if(error) {
-          logger.info({message: `Error while call the api ${options.url}`})
-          logger.info({message: `Error message:  ${error.message}`})
-          next(error);
-          return;
-        }
-        logger.info(body)
-        if (body.uid === uid && body.pid === pid) {
-          logger.info({message: 'Uid got matched and the post can be deleted'})
-          next();
-        } else {
-          logger.info({message: 'Uid is not matched and you can not delete the post'})
-          res.status(400)
-          res.send(responseObj)
-        }
-      });
+    request(options, (error, response, body) => {
+      if (error) {
+        logger.info({ message: `Error while call the api ${options.url}` })
+        logger.info({ message: `Error message:  ${error.message}` })
+        next(error);
+        return;
+      }
+      logger.info(body)
+      if (body.uid === uid && body.pid === pid) {
+        logger.info({ message: 'Uid got matched and the post can be deleted' })
+        next();
+      } else {
+        logger.info({ message: 'Uid is not matched and you can not delete the post' })
+        res.status(400)
+        res.send(responseObj)
+      }
+    });
   }
 }
 
@@ -193,16 +193,16 @@ function proxyObject() {
     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
     proxyReqPathResolver: function (req) {
       let urlParam = req.originalUrl.replace('/discussion', '');
-      logger.info({"message": `request comming from ${req.originalUrl}`})
+      logger.info({ "message": `request comming from ${req.originalUrl}` })
       let query = require('url').parse(req.url).query;
-      console.log("query======>",query)
+      console.log("query======>", query)
       if (query && !query.includes('_uid')) {
-        return require('url').parse(nodebbServiceUrl+ urlParam + '?' + query).path
+        return require('url').parse(nodebbServiceUrl + urlParam + '?' + query).path
       } else {
-		    const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+        const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
         const proxyUrl = require('url').parse(nodebbServiceUrl + urlParam);
-        logger.info({message: `Proxy req url :  ${incomingUrl}`});
-        logger.info({message: `Upstream req url :  ${proxyUrl.href}`});
+        logger.info({ message: `Proxy req url :  ${incomingUrl}` });
+        logger.info({ message: `Upstream req url :  ${proxyUrl.href}` });
         return proxyUrl.path;
       }
     },
@@ -221,7 +221,7 @@ function proxyObject() {
           logMessage(edata, req);
           logger.info({ message: `${req.originalUrl} Not found ${data}` })
           const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);
-          logTelemetryEvent(req, res, data, proxyResData, proxyRes, resCode)     
+          logTelemetryEvent(req, res, data, proxyResData, proxyRes, resCode)
           return resCode;
         } else {
           edata['message'] = `${req.originalUrl} successfull`;
@@ -236,7 +236,7 @@ function proxyObject() {
         edata['message'] = `Error: ${err.message}, Url:  ${req.originalUrl}`;
         logMessage(edata, req);
         logger.info({ message: `Error while htting the ${req.url}  ${err.message}` });
-        return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req,res, err);
+        return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, err);
       }
     }
   })
@@ -246,19 +246,19 @@ function proxyObjectForPutApi() {
   return proxy(nodebbServiceUrl, {
     proxyReqOptDecorator: proxyUtils.decorateRequestHeadersForPutApi(),
     proxyReqPathResolver: function (req) {
-      let urlParam= req.originalUrl.replace(BASE_REPORT_URL, '')
-      if(urlParam.includes(methodSlug)) {
+      let urlParam = req.originalUrl.replace(BASE_REPORT_URL, '')
+      if (urlParam.includes(methodSlug)) {
         urlParam = urlParam.replace(methodSlug, '');
       }
-      logger.info({"message": `request comming from ${req.originalUrl}`})
+      logger.info({ "message": `request comming from ${req.originalUrl}` })
       let query = require('url').parse(req.url).query;
-      if (query) {
-        return require('url').parse(nodebbServiceUrl+ urlParam + '?' + query).path
+      if (query && !query.includes('_uid')) {
+        return require('url').parse(nodebbServiceUrl + urlParam + '?' + query).path
       } else {
-		    const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+        const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
         const proxyUrl = require('url').parse(nodebbServiceUrl + urlParam);
-        logger.info({message: `Proxy req url :  ${incomingUrl}`});
-        logger.info({message: `Upstream req url :  ${proxyUrl.href}`});
+        logger.info({ message: `Proxy req url :  ${incomingUrl}` });
+        logger.info({ message: `Upstream req url :  ${proxyUrl.href}` });
         return proxyUrl.path;
       }
     },
@@ -270,12 +270,12 @@ function proxyObjectForPutApi() {
         "message": ''
       };
       try {
-        logger.info({message: `request came from ${req.originalUrl}`})
+        logger.info({ message: `request came from ${req.originalUrl}` })
         const data = (proxyResData.toString('utf8'));
-        if (proxyRes.statusCode === 404 ) {
+        if (proxyRes.statusCode === 404) {
           edata['message'] = `Request url ${req.originalUrl} not found`;
           logMessage(edata, req);
-          logger.info({message: `${req.originalUrl} Not found ${data}`})
+          logger.info({ message: `${req.originalUrl} Not found ${data}` })
           return proxyUtils.errorResponse(req, res, proxyRes, null);
         } else {
           edata['message'] = `${req.originalUrl} successfull`;
@@ -307,48 +307,48 @@ function logMessage(data, req) {
   sbLogger.info(logObj);
 }
 
-function logTelemetryEvent (req, res, data, proxyResData, proxyRes, resCode) {
- const context = {
+function logTelemetryEvent(req, res, data, proxyResData, proxyRes, resCode) {
+  const context = {
     env: 'discussion-middleware'
   }
   let telemetryObj = {};
-  if(proxyRes.statusCode === 404 ) {
-      if (data !== 'Not Found' && (typeof data) !== 'string') {
-        telemetryObj =   JSON.parse(proxyResData.toString('utf8'));
-      } else {
-        telemetryObj =  resCode;
-      }
+  if (proxyRes.statusCode === 404) {
+    if (data !== 'Not Found' && (typeof data) !== 'string') {
+      telemetryObj = JSON.parse(proxyResData.toString('utf8'));
     } else {
-        if (resCode.params) {
-          telemetryObj = resCode;
-        } else {
-          telemetryObj =  JSON.parse(proxyResData.toString('utf8'));
-        }
+      telemetryObj = resCode;
     }
+  } else {
+    if (resCode.params) {
+      telemetryObj = resCode;
+    } else {
+      telemetryObj = JSON.parse(proxyResData.toString('utf8'));
+    }
+  }
   const option = telemetry.getTelemetryAPIError(telemetryObj, proxyRes, context);
-   if(option) { logApiErrorEventV2(req, telemetryObj, option) }
+  if (option) { logApiErrorEventV2(req, telemetryObj, option) }
 }
 
-function logApiErrorEventV2 (req, data, option) {
+function logApiErrorEventV2(req, data, option) {
   let object = data.obj || {}
   let channel = req.headers['x-channel-id']
   const context = {
     channel: channel,
     env: option.context.env,
     cdata: [],
-    did:  req.headers['x-device-id'],
-    sid: req.headers['x-session-id'] 
+    did: req.headers['x-device-id'],
+    sid: req.headers['x-session-id']
   }
   const actor = {
     id: req.userId ? req.userId.toString() : 'anonymous',
     type: 'user'
   }
- telemetry.error({
-  edata: option.edata,
-  context: _.pickBy(context, value => !_.isEmpty(value)),
-  object: _.pickBy(object, value => !_.isEmpty(value)),
-  actor: _.pickBy(actor, value => !_.isEmpty(value))
-}) 
+  telemetry.error({
+    edata: option.edata,
+    context: _.pickBy(context, value => !_.isEmpty(value)),
+    object: _.pickBy(object, value => !_.isEmpty(value)),
+    actor: _.pickBy(actor, value => !_.isEmpty(value))
+  })
 }
 
 module.exports = app;
