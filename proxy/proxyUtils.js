@@ -41,9 +41,7 @@ let error_obj = {
 const decorateRequestHeaders = function () {
   return function (proxyReqOpts) {
     logger.info({message: `adding headers in the request ${proxyReqOpts.path}`});
-    if (userCreate === proxyReqOpts.path || groupCreate === proxyReqOpts.path) {
       proxyReqOpts.headers.Authorization = 'Bearer ' + Authorization;
-    }
     return proxyReqOpts;
   }
 }
@@ -52,6 +50,7 @@ const decorateRequestHeadersForPutApi = function () {
   return function (proxyReqOpts) {
     logger.info({message: `Changing the method name for the request ${proxyReqOpts.path}`});
       proxyReqOpts.method = 'PUT';
+      proxyReqOpts.headers.Authorization = 'Bearer ' + Authorization;
     return proxyReqOpts;
   }
 }

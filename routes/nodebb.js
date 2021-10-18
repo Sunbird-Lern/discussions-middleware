@@ -196,7 +196,7 @@ function proxyObject() {
       logger.info({"message": `request comming from ${req.originalUrl}`})
       let query = require('url').parse(req.url).query;
       if (query) {
-        return require('url').parse(nodebbServiceUrl+ urlParam + '?' + query).path
+        return require('url').parse(nodebbServiceUrl+ urlParam).path
       } else {
 		    const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
         const proxyUrl = require('url').parse(nodebbServiceUrl + urlParam);
@@ -252,7 +252,7 @@ function proxyObjectForPutApi() {
       logger.info({"message": `request comming from ${req.originalUrl}`})
       let query = require('url').parse(req.url).query;
       if (query) {
-        return require('url').parse(nodebbServiceUrl+ urlParam + '?' + query).path
+        return require('url').parse(nodebbServiceUrl+ urlParam).path
       } else {
 		    const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
         const proxyUrl = require('url').parse(nodebbServiceUrl + urlParam);
