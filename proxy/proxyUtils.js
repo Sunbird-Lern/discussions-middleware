@@ -52,6 +52,7 @@ const decorateRequestHeadersForPutApi = function () {
   return function (proxyReqOpts) {
     logger.info({ message: `Changing the method name for the request ${proxyReqOpts.path}` });
     proxyReqOpts.method = 'PUT';
+    proxyReqOpts.headers.Authorization = 'Bearer ' + Authorization;
     return proxyReqOpts;
   }
 }
