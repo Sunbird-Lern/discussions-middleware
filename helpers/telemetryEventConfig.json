@@ -1,6 +1,7 @@
 {
     "default_username": "user",
     "default_userid": "public",
+    "default_channel": "discussion-middleware",
     "URL": {
         "discussion-middleware": {
             "title": "discussion-middleware",

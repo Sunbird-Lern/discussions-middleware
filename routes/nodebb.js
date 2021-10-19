@@ -217,21 +217,18 @@ function proxyObject() {
       try {
         logger.info({ message: `request came from ${req.originalUrl}` })
         const data = proxyResData.toString('utf8');
-        const contextObj = {
-          env: 'discussion-middleware'
-        }
         if (proxyRes.statusCode === 404) {
           edata['message'] = `Request url ${req.originalUrl} not found`;
           logMessage(edata, req);
           logger.info({ message: `${req.originalUrl} Not found ${data}` })
           const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);
           // logging the Error events
-          telemetryHelper.logTelemetryErrorEvent(req, res, data, proxyResData, proxyRes, resCode, contextObj.env)     
+          telemetryHelper.logTelemetryErrorEvent(req, res, data, proxyResData, proxyRes, resCode)     
           return resCode;
         } else {
           const resCode = proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null)
           // logging the Error events
-          telemetryHelper.logTelemetryErrorEvent(req, res, data, proxyResData, proxyRes, resCode, contextObj.env)     
+          telemetryHelper.logTelemetryErrorEvent(req, res, data, proxyResData, proxyRes, resCode)     
           return resCode;
         }
       } catch (err) {
