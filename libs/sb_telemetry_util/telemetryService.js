@@ -328,11 +328,11 @@ telemetryService.prototype.generateApiCallLogEvent = function (data) {
 
 telemetryService.prototype.getTelemetryAPIError = function (data, res, context) {
   try {
-  if ( (data.responseCode !== 'OK' && data.responseCode !== 200) || res.statusCode !== 200) {
-      const result = data.params;
+  if ( data && (( data.responseCode !== 'OK' &&  data.responseCode !== 200) || res.statusCode !== 200)) {
+      const result =  data.params;
   if (result) {
   const edata = {
-    err: data.responseCode  || res.statusCode,
+    err: data && data.responseCode  || res.statusCode,
     errtype: result.err || res.statusMessage,
     requestid:  result.resmsgid || 'null',
     errmsg: result.errmsg  || 'null'

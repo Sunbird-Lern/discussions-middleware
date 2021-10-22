@@ -126,8 +126,8 @@ function errorResponse(req, res, proxyRes, error) {
   error_obj['id'] = id.join('.');
   error_obj['ts'] = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo');
   error_obj['params']['msgid'] = req.headers['x-request-id']; // TODO: replace with x-request-id;
-  error_obj['params']['errmsg'] = errorObj.errMsg
-  error_obj['params']['err'] = errorObj.err;
+  error_obj['params']['errmsg'] = errorObj && errorObj.errMsg || ''
+  error_obj['params']['err'] = errorObj && errorObj.err || '';
   return error_obj;
 }
 

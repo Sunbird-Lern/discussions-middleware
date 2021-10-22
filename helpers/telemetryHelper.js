@@ -20,18 +20,12 @@ module.exports = {
    * @param  {} env
    */
   logTelemetryErrorEvent(req, res, data, proxyResData, proxyRes, resCode) {
+    console.log('apierror===');
     let telemetryObj = this.getTelemetryObject(proxyRes, data, proxyResData, resCode);
     const option = telemetry.getTelemetryAPIError(telemetryObj, proxyRes, telemtryEventConfig.default_channel);
     if (option) {
-      let object = telemetryObj.obj || {}
-      const context = this.getContextData(req);
-      const actor =  this.getTelemetryActorData(req);
-      telemetry.error({
-        edata: option.edata,
-        context: _.pickBy(context, value => !_.isEmpty(value)),
-        object: _.pickBy(object, value => !_.isEmpty(value)),
-        actor: _.pickBy(actor, value => !_.isEmpty(value))
-      })
+      let object = this.getTelemetryParams(req, option.edata);
+      telemetry.error(object);
     }
   },
 
@@ -45,15 +39,21 @@ module.exports = {
     }
     const edata = telemetry.logEventData('api_call', 'TRACE', apiConfig.message, JSON.stringify(params))
     edata.message = JSON.stringify({ title: 'API Log', url: req.path })
+    let object = this.getTelemetryParams(req, edata);
+    telemetry.log(object);
+  },
+
+  getTelemetryParams(req, edata) {
     let object = {}
     const context = this.getContextData(req);
     const actor =  this.getTelemetryActorData(req);
-    telemetry.log({
+    const logData = {
       edata: edata,
       context: _.pickBy(context, value => !_.isEmpty(value)),
       object: _.pickBy(object, value => !_.isEmpty(value)),
       actor: _.pickBy(actor, value => !_.isEmpty(value))
-    })
+    }
+    return logData;
   },
 
   /**
@@ -114,8 +114,8 @@ module.exports = {
       } else {
         telemetryObj = JSON.parse(proxyResData.toString('utf8'));
       }
-      return telemetryObj;
     }
+    return telemetryObj;
   },
   getContextData(req) {
     const contextObj =  {

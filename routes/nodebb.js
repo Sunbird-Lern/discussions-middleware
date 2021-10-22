@@ -254,6 +254,8 @@ function proxyObjectForPutApi() {
       }
       logger.info({"message": `request comming from ${req.originalUrl}`})
       let query = require('url').parse(req.url).query;
+      // logging the Entry events
+      telemetryHelper.logAPIEvent(req,'discussion-middleware');
       if (query) {
         return require('url').parse(nodebbServiceUrl+ urlParam).path
       } else {
@@ -278,10 +280,16 @@ function proxyObjectForPutApi() {
           edata['message'] = `Request url ${req.originalUrl} not found`;
           logMessage(edata, req);
           logger.info({message: `${req.originalUrl} Not found ${data}`})
+          const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);
+          // logging the Error events
+          telemetryHelper.logTelemetryErrorEvent(req, res, data, proxyResData, proxyRes, resCode) 
           return proxyUtils.errorResponse(req, res, proxyRes, null);
         } else {
           edata['message'] = `${req.originalUrl} successfull`;
           logMessage(edata, req);
+          const resCode = proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null)
+          // logging the Error events
+          telemetryHelper.logTelemetryErrorEvent(req, res, data, proxyResData, proxyRes, resCode) 
           return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null);
         }
       } catch (err) {
