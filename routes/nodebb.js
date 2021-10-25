@@ -227,7 +227,7 @@ function proxyObject() {
           telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode)     
           return resCode;
         } else {
-          proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null, data )
+          const resCode = proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null, data )
           return resCode;
         }
       } catch (err) {
