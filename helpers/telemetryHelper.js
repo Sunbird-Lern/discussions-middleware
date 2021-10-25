@@ -19,7 +19,7 @@ module.exports = {
    * @param  {} resCode
    * @param  {} env
    */
-  logTelemetryErrorEvent(req, res, data, proxyResData, proxyRes, resCode) {
+  logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode) {
     let telemetryObj = this.getTelemetryObject(proxyRes, data, proxyResData, resCode);
     const option = telemetry.getTelemetryAPIError(telemetryObj, proxyRes, telemtryEventConfig.default_channel);
     if (option) {

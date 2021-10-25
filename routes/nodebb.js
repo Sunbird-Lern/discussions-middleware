@@ -224,12 +224,10 @@ function proxyObject() {
           logger.info({ message: `${req.originalUrl} Not found ${data}` })
           const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);
           // logging the Error events
-          telemetryHelper.logTelemetryErrorEvent(req, res, data, proxyResData, proxyRes, resCode)     
+          telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode)     
           return resCode;
         } else {
-          const resCode = proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null)
-          // logging the Error events
-          telemetryHelper.logTelemetryErrorEvent(req, res, data, proxyResData, proxyRes, resCode)     
+          const resCode = proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null, data )
           return resCode;
         }
       } catch (err) {
@@ -282,14 +280,12 @@ function proxyObjectForPutApi() {
           logger.info({message: `${req.originalUrl} Not found ${data}`})
           const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);
           // logging the Error events
-          telemetryHelper.logTelemetryErrorEvent(req, res, data, proxyResData, proxyRes, resCode) 
+          telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode) 
           return proxyUtils.errorResponse(req, res, proxyRes, null);
         } else {
           edata['message'] = `${req.originalUrl} successfull`;
           logMessage(edata, req);
-          const resCode = proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null)
-          // logging the Error events
-          telemetryHelper.logTelemetryErrorEvent(req, res, data, proxyResData, proxyRes, resCode) 
+          const resCode = proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null, data);
           return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null);
         }
       } catch (err) {
