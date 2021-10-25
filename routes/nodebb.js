@@ -227,7 +227,7 @@ function proxyObject() {
           telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode)     
           return resCode;
         } else {
-          const resCode = proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null, data )
+          proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null, data )
           return resCode;
         }
       } catch (err) {
@@ -285,7 +285,7 @@ function proxyObjectForPutApi() {
         } else {
           edata['message'] = `${req.originalUrl} successfull`;
           logMessage(edata, req);
-          const resCode = proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null, data);
+          proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null, data);
           return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null);
         }
       } catch (err) {
