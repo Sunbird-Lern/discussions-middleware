@@ -30,6 +30,7 @@ const responseObj = {
   message: 'You are not authorized to perform this action.'
 };
 
+
 app.post(`${BASE_REPORT_URL}/forum/v2/read`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v2/create`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v2/remove`, proxyObject());
@@ -196,15 +197,20 @@ function proxyObject() {
     proxyReqPathResolver: function (req) {
       let urlParam = req.originalUrl.replace(BASE_REPORT_URL, '');
       logger.info({"message": `request comming from ${req.originalUrl}`})
-      let query = require('url').parse(req.url).query;
-      if (query) {
+      const user = req.session['user'] ? JSON.parse(req.session['user']) : {};
+      const uid = _.get(user, 'userId.uid');
+      if (!_.isEmpty(req.body)) {
+        req.body['_uid'] = _.get(user, 'userId.uid');
         return require('url').parse(nodebbServiceUrl+ urlParam).path
       } else {
-		    const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-        const proxyUrl = require('url').parse(nodebbServiceUrl + urlParam);
-        logger.info({message: `Proxy req url :  ${incomingUrl}`});
-        logger.info({message: `Upstream req url :  ${proxyUrl.href}`});
-        return proxyUrl.path;
+        let query = require('url').parse(req.url).query;
+        if (query) {
+            const queryData = _.isEmpty(req.query._uid) ? `&_uid=${uid}` : '';
+            const path = require('url').parse(nodebbServiceUrl + urlParam + queryData).path;
+            return path;
+        } else {
+            return require('url').parse(nodebbServiceUrl + urlParam+ '?_uid='+ uid).path;
+        }
       }
     },
     userResDecorator: (proxyRes, proxyResData, req, res) => {
@@ -247,20 +253,25 @@ function proxyObjectForPutApi() {
   return proxy(nodebbServiceUrl, {
     proxyReqOptDecorator: proxyUtils.decorateRequestHeadersForPutApi(),
     proxyReqPathResolver: function (req) {
-      let urlParam= req.originalUrl.replace(BASE_REPORT_URL, '')
+      let urlParam= req.originalUrl.replace(BASE_REPORT_URL, '');
       if(urlParam.includes(methodSlug)) {
         urlParam = urlParam.replace(methodSlug, '');
       }
-      logger.info({"message": `request comming from ${req.originalUrl}`})
-      let query = require('url').parse(req.url).query;
-      if (query) {
+      logger.info({"message": `request comming from ${req.originalUrl}`});
+      const user = req.session['user'] ? JSON.parse(req.session['user']) : {};
+      const uid = _.get(user, 'userId.uid');
+      if (!_.isEmpty(req.body)) {
+        req.body['_uid'] = _.get(user, 'userId.uid');
         return require('url').parse(nodebbServiceUrl+ urlParam).path
       } else {
-		    const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-        const proxyUrl = require('url').parse(nodebbServiceUrl + urlParam);
-        logger.info({message: `Proxy req url :  ${incomingUrl}`});
-        logger.info({message: `Upstream req url :  ${proxyUrl.href}`});
-        return proxyUrl.path;
+        let query = require('url').parse(req.url).query;
+        if (query) {
+            const queryData = _.isEmpty(req.query._uid) ? `&_uid=${uid}` : '';
+            const path = require('url').parse(nodebbServiceUrl + urlParam + queryData).path;
+            return path;
+        } else {
+            return require('url').parse(nodebbServiceUrl + urlParam+ '?_uid='+ uid).path;
+        }
       }
     },
     userResDecorator: (proxyRes, proxyResData, req, res) => {

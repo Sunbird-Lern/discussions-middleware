@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@project-sunbird/logger": "^0.0.9",
+    "body-parser": "^1.19.0",
     "chai": "4.2.0",
     "chai-http": "^4.3.0",
     "cookie-parser": "~1.4.4",
@@ -17,6 +18,7 @@
     "debug": "~2.6.9",
     "express": "~4.16.1",
     "express-http-proxy": "1.0.6",
+    "express-session": "^1.17.2",
     "http-errors": "~1.6.3",
     "istanbul": "^0.4.5",
     "jade": "~1.11.0",

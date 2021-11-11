@@ -7,6 +7,9 @@ var nodebb = require('./routes/nodebb');
 var cors = require('cors');
 var app = express();
 const telemetry = new (require('./libs/sb_telemetry_util/telemetryService'))()
+var session = require('express-session');
+var env = require('./helpers/environmentVariablesHelper');
+var bodyParser = require('body-parser')
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -16,6 +19,18 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+app.use(bodyParser.urlencoded({ extended: false }));
+// DMW session
+app.use(session({
+  secret: env.nodebb_session_secret,
+  resave: false,
+  saveUninitialized: true,
+  store:  new session.MemoryStore(),
+  cookie: {
+    maxAge: env.dmw_session_ttl
+   }
+}));
 
 app.use(cors());
 app.all('/health', (req,res,next) => {

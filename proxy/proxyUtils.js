@@ -93,6 +93,7 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, error) => {
     edata['message'] = `${req.originalUrl} successfull`;
     logger.info({message: `${req.originalUrl} successfull`});
     logMessage(edata, req);
+    addDataIntoSession(req, res, proxyResData);
     return proxyResData;
   }
 }
@@ -112,6 +113,22 @@ function logMessage(data, req) {
   sbLogger.info(logObj);
 }
 
+/***
+ * this function add the data into session object.
+ */
+function addDataIntoSession(req, res, proxyResData) {
+  const data = JSON.parse(proxyResData.toString('utf8'));
+  const key = req.route.path;
+  switch(key) {
+    case '/discussion/user/v1/create': 
+      req.session['user'] = JSON.stringify(data.result);
+      break;
+    case '/discussion/forum/v2/read':
+      req.session['context'] = JSON.stringify(data.result);
+      break; 
+  }
+  req.session.save();
+}
 
 /***
  * This method will construct the error response 
