@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var nodebb = require('./routes/nodebb');
 var cors = require('cors');
+var redisStore = require('./helpers/redis');
 var app = express();
 const telemetry = new (require('./libs/sb_telemetry_util/telemetryService'))()
 var session = require('express-session');
@@ -26,7 +27,7 @@ app.use(session({
   secret: env.nodebb_session_secret,
   resave: false,
   saveUninitialized: true,
-  store:  new session.MemoryStore(),
+  store: redisStore.memoryStore,
   cookie: {
     maxAge: env.dmw_session_ttl
    }
