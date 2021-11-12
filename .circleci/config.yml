@@ -31,4 +31,4 @@ jobs:
           command: sudo npm install -g sonarqube-scanner
       - run:
           name: Run SonarScanner
-          command: sonar-scanner
+          command: /tmp/sonar-scanner-4.6.2.2472-linux/bin/sonar-scanner
