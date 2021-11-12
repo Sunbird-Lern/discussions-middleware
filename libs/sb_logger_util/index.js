@@ -25,7 +25,7 @@ var options = {
         'appender': {
           'type': 'file',
           'maxLogSize': 26214400,
-          'filename': '../../log/microService.log'
+          'filename': '../log/microService.log'
         }
       }
     ]
