@@ -7,7 +7,7 @@ var log4js = require('log4js')
 var fs = require('fs')
 var dir = '../../log'
 var configUtil = require('sb-config-util')
-
+console.log('is file exists: ', fs.existsSync(dir))
 if (!fs.existsSync(dir)) {
   fs.mkdirSync(dir)
 }
