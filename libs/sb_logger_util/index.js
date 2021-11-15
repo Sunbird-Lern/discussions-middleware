@@ -5,7 +5,7 @@
  */
 var log4js = require('log4js')
 var fs = require('fs')
-var dir = '../../log'
+var dir = '../log'
 var configUtil = require('sb-config-util')
 
 if (!fs.existsSync(dir)) {
@@ -25,7 +25,7 @@ var options = {
         'appender': {
           'type': 'file',
           'maxLogSize': 26214400,
-          'filename': '../../log/microService.log'
+          'filename': '../log/microService.log'
         }
       }
     ]
