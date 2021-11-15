@@ -40,10 +40,10 @@ let error_obj = {
 */
 const decorateRequestHeaders = function () {
   return function (proxyReqOpts) {
-    console.log("Before appending master token:", JSON.stringify(proxyReqOpts.headers))
+    // console.log("Before appending master token:", JSON.stringify(proxyReqOpts.headers))
     logger.info({message: `adding headers in the request ${proxyReqOpts.path}`});
       proxyReqOpts.headers.Authorization = 'Bearer ' + Authorization;
-      console.log("After appending master token:", JSON.stringify(proxyReqOpts.headers))
+      // console.log("After appending master token:", JSON.stringify(proxyReqOpts.headers))
     return proxyReqOpts;
   }
 }
