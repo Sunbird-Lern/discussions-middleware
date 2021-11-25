@@ -88,7 +88,7 @@ module.exports = {
       actor.id = req.session && req.session.userId
       actor.type = 'User'
     } else {
-      actor.id = req.headers['x-consumer-id'] || telemtryEventConfig.default_userid
+      actor.id = req.headers['x-consumer-id'] || req.headers['x-authenticated-userid'] || telemtryEventConfig.default_userid
       actor.type = req.headers['x-consumer-username'] || telemtryEventConfig.default_username
     }
     return actor
