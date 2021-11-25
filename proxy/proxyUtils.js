@@ -1,6 +1,7 @@
 const dateFormat = require('dateformat')
 const { Authorization } = require('../helpers/environmentVariablesHelper');
 const { logger } = require('@project-sunbird/logger');
+const telemetryHelper = require('../helpers/telemetryHelper.js')
 const sbLogger = require('sb_logger_util');
 const userCreate = '/discussion/user/v1/create';
 const groupCreate = '/discussion/forum/v3/create';
@@ -57,7 +58,7 @@ const decorateRequestHeadersForPutApi = function () {
   }
 }
 
-const handleSessionExpiry = (proxyRes, proxyResData, req, res, error) => {
+const handleSessionExpiry = (proxyRes, proxyResData, req, res, error, data) => {
   let edata = {
     "type": "log",
     "level": "INFO",
@@ -69,7 +70,7 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, error) => {
     edata.level = "WARN";
     logger.info({message: `You are not authorized to access ${req.originalUrl}`});
     logMessage(edata, req);
-    return {
+    const resCode = {
       id: 'app.error',
       ver: '1.0',
       ts: dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
@@ -83,12 +84,18 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, error) => {
       responseCode: 'SESSION_EXPIRED',
       result: {}
     };
+    // logging the Error events
+    telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode);
+    return resCode;
   } else if(error || errorStatus.includes(proxyRes.statusCode)) {
     edata['message'] = `${req.originalUrl} failed`;
     edata.level = "ERROR";
     logger.info({message: `${req.originalUrl} failed`});
     logMessage(edata, req);
-    return errorResponse(req, res,proxyRes, error);
+    const resCode = errorResponse(req, res,proxyRes, error);
+    // logging the Error events
+    telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode);
+    return resCode;
   } else {
     edata['message'] = `${req.originalUrl} successfull`;
     logger.info({message: `${req.originalUrl} successfull`});
@@ -126,8 +133,8 @@ function errorResponse(req, res, proxyRes, error) {
   error_obj['id'] = id.join('.');
   error_obj['ts'] = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo');
   error_obj['params']['msgid'] = req.headers['x-request-id']; // TODO: replace with x-request-id;
-  error_obj['params']['errmsg'] = errorObj.errMsg
-  error_obj['params']['err'] = errorObj.err;
+  error_obj['params']['errmsg'] = errorObj && errorObj.errMsg || ''
+  error_obj['params']['err'] = errorObj && errorObj.err || '';
   return error_obj;
 }
 

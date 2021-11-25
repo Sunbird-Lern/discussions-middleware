@@ -7,8 +7,8 @@ const express = require('express');
 const app = express();
 const sbLogger = require('sb_logger_util');
 const request = require('request');
-const Telemetry = require('../libs/sb_telemetry_util/telemetryService.js')
-const telemetry = new Telemetry()
+const telemetryHelper = require('../helpers/telemetryHelper.js')
+
 const methodSlug = '/update';
 const nodebbServiceUrl = NODEBB_SERVICE_URL+ nodebb_api_slug;
 const _ = require('lodash')
@@ -34,10 +34,9 @@ app.post(`${BASE_REPORT_URL}/forum/v2/read`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v2/create`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v2/remove`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v3/create`, proxyObject());
-app.post(`${BASE_REPORT_URL}/forum/tags`, proxyObject())
+app.post(`${BASE_REPORT_URL}/forum/tags`, proxyObject());
 app.post(`${BASE_REPORT_URL}/privileges/v2/copy`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v3/user/profile`, proxyObject());
-
 
 app.post(`${BASE_REPORT_URL}/forum/v3/group/membership`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v3/groups/users`, proxyObject());
@@ -197,6 +196,8 @@ function proxyObject() {
       let urlParam = req.originalUrl.replace(BASE_REPORT_URL, '');
       logger.info({"message": `request comming from ${req.originalUrl}`})
       let query = require('url').parse(req.url).query;
+      // logging the Entry events
+      telemetryHelper.logAPIEvent(req,'discussion-middleware');
       if (query) {
         return require('url').parse(nodebbServiceUrl+ urlParam).path
       } else {
@@ -222,14 +223,11 @@ function proxyObject() {
           logMessage(edata, req);
           logger.info({ message: `${req.originalUrl} Not found ${data}` })
           const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);
-          logTelemetryEvent(req, res, data, proxyResData, proxyRes, resCode)     
+          // logging the Error events
+          telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode)     
           return resCode;
         } else {
-          edata['message'] = `${req.originalUrl} successfull`;
-          const resCode = proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null)
-          logTelemetryEvent(req, res, data, proxyResData, proxyRes, resCode)
-          logMessage(edata, req);
-          return resCode;
+          return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null, data);
         }
       } catch (err) {
         console.log('catch', err)
@@ -253,6 +251,8 @@ function proxyObjectForPutApi() {
       }
       logger.info({"message": `request comming from ${req.originalUrl}`})
       let query = require('url').parse(req.url).query;
+      // logging the Entry events
+      telemetryHelper.logAPIEvent(req,'discussion-middleware');
       if (query) {
         return require('url').parse(nodebbServiceUrl+ urlParam).path
       } else {
@@ -277,11 +277,14 @@ function proxyObjectForPutApi() {
           edata['message'] = `Request url ${req.originalUrl} not found`;
           logMessage(edata, req);
           logger.info({message: `${req.originalUrl} Not found ${data}`})
+          const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);
+          // logging the Error events
+          telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode) 
           return proxyUtils.errorResponse(req, res, proxyRes, null);
         } else {
           edata['message'] = `${req.originalUrl} successfull`;
           logMessage(edata, req);
-          return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null);
+          return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null, data);
         }
       } catch (err) {
         edata['level'] = "Error";
@@ -358,50 +361,6 @@ function logMessage(data, req) {
   logObj.context.cdata = [];
   logObj.edata = data;
   sbLogger.info(logObj);
-}
-
-function logTelemetryEvent (req, res, data, proxyResData, proxyRes, resCode) {
- const context = {
-    env: 'discussion-middleware'
-  }
-  let telemetryObj = {};
-  if(proxyRes.statusCode === 404 ) {
-      if (data !== 'Not Found' && (typeof data) !== 'string') {
-        telemetryObj =   JSON.parse(proxyResData.toString('utf8'));
-      } else {
-        telemetryObj =  resCode;
-      }
-    } else {
-        if (resCode.params) {
-          telemetryObj = resCode;
-        } else {
-          telemetryObj =  JSON.parse(proxyResData.toString('utf8'));
-        }
-    }
-  const option = telemetry.getTelemetryAPIError(telemetryObj, proxyRes, context);
-   if(option) { logApiErrorEventV2(req, telemetryObj, option) }
-}
-
-function logApiErrorEventV2 (req, data, option) {
-  let object = data.obj || {}
-  let channel = req.headers['x-channel-id']
-  const context = {
-    channel: channel,
-    env: option.context.env,
-    cdata: [],
-    did:  req.headers['x-device-id'],
-    sid: req.headers['x-session-id'] 
-  }
-  const actor = {
-    id: req.userId ? req.userId.toString() : 'anonymous',
-    type: 'user'
-  }
- telemetry.error({
-  edata: option.edata,
-  context: _.pickBy(context, value => !_.isEmpty(value)),
-  object: _.pickBy(object, value => !_.isEmpty(value)),
-  actor: _.pickBy(actor, value => !_.isEmpty(value))
-}) 
 }
 
 module.exports = app;
