@@ -10,7 +10,7 @@ var app = express();
 const telemetry = new (require('./libs/sb_telemetry_util/telemetryService'))()
 var session = require('express-session');
 var env = require('./helpers/environmentVariablesHelper');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -25,12 +25,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // DMW session
 app.use(session({
   secret: env.nodebb_session_secret,
-  resave: false,
+  resave: true,
   saveUninitialized: true,
   store: redisStore.memoryStore,
-  cookie: {
-    maxAge: env.dmw_session_ttl
-   }
 }));
 
 app.use(cors());

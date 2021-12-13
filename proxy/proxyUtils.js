@@ -4,6 +4,9 @@ const { logger } = require('@project-sunbird/logger');
 const sbLogger = require('sb_logger_util');
 const userCreate = '/discussion/user/v1/create';
 const groupCreate = '/discussion/forum/v3/create';
+const kafkaService = require('../helpers/kafka');
+const redis = require('../helpers/redis');
+
 let logObj = {
   "eid": "LOG",
   "ets": 1518460198146,
@@ -92,10 +95,36 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, error) => {
   } else {
     edata['message'] = `${req.originalUrl} successfull`;
     logger.info({message: `${req.originalUrl} successfull`});
+    // triggerMessage(req, proxyResData);
     logMessage(edata, req);
-    addDataIntoSession(req, res, proxyResData);
+    // addDataIntoSession(req, res, proxyResData);
     return proxyResData;
   }
+}
+
+function triggerMessage(req, data) {
+    const method = req.method.toLowerCase();
+    const path = `${req.route.path}.${method}.key`;
+    const topicName = _.get(errorCodes,  path)
+    if (topicName) {
+      kafkaService.createTopic(topicName)
+      kafkaService.sendMessage(data, topicName)
+    }
+}
+
+function prepareObject(req, data ) {
+  const obj = {
+    req : {
+      url: req.url,
+      type: req.method,
+      headers: req.headers
+    },
+    user: {},
+    context: {},
+    data: data
+  };
+  // const context = 
+
 }
 
 function logMessage(data, req) {
@@ -119,15 +148,28 @@ function logMessage(data, req) {
 function addDataIntoSession(req, res, proxyResData) {
   const data = JSON.parse(proxyResData.toString('utf8'));
   const key = req.route.path;
+  let resData;
+  let redis_key;
+  console.log('session called')
   switch(key) {
     case '/discussion/user/v1/create': 
-      req.session['user'] = JSON.stringify(data.result);
+      resData = data.result;
+      resData['uid'] = _.get(resData, 'userId.uid');
+      delete resData.userId;
+      redis_key = _.get(resData, 'sbUserIdentifier');
+      redis.setObject(redis_key, JSON.stringify(resData));
       break;
     case '/discussion/forum/v2/read':
-      req.session['context'] = JSON.stringify(data.result);
-      break; 
+      resData = data.result[0];
+      redis_key = _.get(resData, 'sbIdentifier');
+      redis.setObject(redis_key, JSON.stringify(resData));
+      break;
+    case '/discussion/forum/v2/remove':
+      resData = _.get(req.body, 'request')
+      redis_key = _.get(resData, 'identifier');
+      redis.removeObject(redis_key);
+      break;  
   }
-  req.session.save();
 }
 
 /***

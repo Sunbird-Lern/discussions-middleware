@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@project-sunbird/logger": "^0.0.9",
+    "avsc": "^5.7.3",
+    "bluebird": "^3.7.2",
     "body-parser": "^1.19.0",
     "chai": "4.2.0",
     "chai-http": "^4.3.0",
@@ -31,11 +33,15 @@
     "morgan": "~1.9.1",
     "nock": "^13.0.5",
     "node-mocks-http": "1.8.1",
+    "node-rdkafka": "^2.12.0",
     "nyc": "^15.1.0",
+    "redis-search": "0.0.1",
+    "redredisearch": "0.0.1",
     "request": "^2.88.2",
     "sb-config-util": "file:libs/sb-config-util",
     "sb_logger_util": "file:libs/sb_logger_util",
     "sb_telemetry_util": "file:libs/sb_telemetry_util",
-    "sinon": "^9.2.2"
+    "sinon": "^9.2.2",
+    "util": "^0.12.4"
   }
 }

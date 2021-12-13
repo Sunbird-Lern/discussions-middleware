@@ -31,11 +31,12 @@ const responseObj = {
 };
 
 
+
 app.post(`${BASE_REPORT_URL}/forum/v2/read`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v2/create`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v2/remove`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v3/create`, proxyObject());
-app.post(`${BASE_REPORT_URL}/forum/tags`, proxyObject())
+app.post(`${BASE_REPORT_URL}/forum/tags`, proxyObject());
 app.post(`${BASE_REPORT_URL}/privileges/v2/copy`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v3/user/profile`, proxyObject());
 
@@ -200,16 +201,16 @@ function proxyObject() {
       const user = req.session['user'] ? JSON.parse(req.session['user']) : {};
       const uid = _.get(user, 'userId.uid');
       if (!_.isEmpty(req.body)) {
-        req.body['_uid'] = _.get(user, 'userId.uid');
+        req.body['_uid'] = 12; // _.get(user, 'userId.uid');
         return require('url').parse(nodebbServiceUrl+ urlParam).path
       } else {
         let query = require('url').parse(req.url).query;
         if (query) {
-            const queryData = _.isEmpty(req.query._uid) ? `&_uid=${uid}` : '';
+            const queryData = _.isEmpty(req.query._uid) ? `&_uid=12` : '';
             const path = require('url').parse(nodebbServiceUrl + urlParam + queryData).path;
             return path;
         } else {
-            return require('url').parse(nodebbServiceUrl + urlParam+ '?_uid='+ uid).path;
+            return require('url').parse(nodebbServiceUrl + urlParam+ '?_uid='+ 12).path;
         }
       }
     },
@@ -223,6 +224,7 @@ function proxyObject() {
       try {
         logger.info({ message: `request came from ${req.originalUrl}` })
         const data = proxyResData.toString('utf8');
+        console.log("data---------", data)
         if (proxyRes.statusCode === 404) {
           edata['message'] = `Request url ${req.originalUrl} not found`;
           logMessage(edata, req);

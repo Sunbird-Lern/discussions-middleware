@@ -458,7 +458,7 @@
         "/discussion/v2/posts/:pid/vote": {
             "post": {
                 "endPoint": "/discussion/v2/posts/:pid/vote",
-                "key": "DiscussionForumCreatePost",
+                "key": "DiscussionForumVote",
                 "errorObject": {
                     "err_500": {
                         "errMsg": "Adding vote to a post failed",
