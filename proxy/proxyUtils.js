@@ -3,8 +3,8 @@ const { Authorization } = require('../helpers/environmentVariablesHelper');
 const { logger } = require('@project-sunbird/logger');
 const telemetryHelper = require('../helpers/telemetryHelper.js')
 const sbLogger = require('sb_logger_util');
-const userCreate = '/discussion/user/v1/create';
-const groupCreate = '/discussion/forum/v3/create';
+const auditEvent = require('../helpers/auditEvent');
+
 let logObj = {
   "eid": "LOG",
   "ets": 1518460198146,
@@ -100,6 +100,7 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, error, data) => {
     edata['message'] = `${req.originalUrl} successfull`;
     logger.info({message: `${req.originalUrl} successfull`});
     logMessage(edata, req);
+    auditEventObject(req);
     return proxyResData;
   }
 }
@@ -138,6 +139,19 @@ function errorResponse(req, res, proxyRes, error) {
   return error_obj;
 }
 
+function auditEventObject(req) {
+    // auditEvent.mid = req;
+    // auditEvent.actor = req;
+    // auditEvent.channel = req;
+    // auditEvent.pdata = req;
+    // auditEvent.rollup = req;
+    auditEvent.reqData = req;
+    auditEvent.cdata = {type: 'user', id: '323-fer34-42-423'}; // need to take from cache
+    auditEvent.object = 'rerererererer';
+    auditEvent.edata = {type: '334'};
+
+    console.log('aud-----------------------', JSON.stringify(auditEvent.auditEventObject))
+}
 
 module.exports.decorateRequestHeaders = decorateRequestHeaders
 module.exports.handleSessionExpiry = handleSessionExpiry
