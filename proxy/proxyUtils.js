@@ -100,7 +100,7 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, error, data) => {
     edata['message'] = `${req.originalUrl} successfull`;
     logger.info({message: `${req.originalUrl} successfull`});
     logMessage(edata, req);
-    auditEventObject(req);
+    auditEventObject(req, proxyResData);
     return proxyResData;
   }
 }
@@ -139,11 +139,22 @@ function errorResponse(req, res, proxyRes, error) {
   return error_obj;
 }
 
-function auditEventObject(req) {
+function auditEventObject(req, proxyResData) {
+  const data = JSON.parse(proxyResData.toString('utf8'));
+  const responseObject = _.get(data, 'payload');
+    const obj = {
+      id: _.get(responseObject, 'topicData.tid') || _.get(responseObject, 'pid'),
+      type: _.get(responseObject, 'isMain') ? 'Topic' : 'Post',
+      version: '1.0'
+    };
+    const edata = {
+      type: _.get(req, 'route.path'),
+      props: Object.keys(req.body)
+    }
+    auditEvent.object = obj;
+    auditEvent.edata = edata; // need type & props
     auditEvent.reqData = req;
     auditEvent.cdata = {}; // need to take from cache
-    auditEvent.object = 'rerererererer';
-    auditEvent.edata = {type: '334'};
 
     console.log('aud-----------------------', JSON.stringify(auditEvent.auditEventObject));
 }

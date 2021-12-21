@@ -75,12 +75,7 @@ let auditEvent = {
     get rollup() {
         return this._rollup;
     },
-    set object(id) {
-        const obj = {
-            id: id,
-            type: 'type',
-            version: '1.0'
-        };
+    set object(obj) {
         this._object = obj;
     },
     get object() {
