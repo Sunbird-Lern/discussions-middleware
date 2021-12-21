@@ -140,17 +140,12 @@ function errorResponse(req, res, proxyRes, error) {
 }
 
 function auditEventObject(req) {
-    // auditEvent.mid = req;
-    // auditEvent.actor = req;
-    // auditEvent.channel = req;
-    // auditEvent.pdata = req;
-    // auditEvent.rollup = req;
     auditEvent.reqData = req;
-    auditEvent.cdata = {type: 'user', id: '323-fer34-42-423'}; // need to take from cache
+    auditEvent.cdata = {}; // need to take from cache
     auditEvent.object = 'rerererererer';
     auditEvent.edata = {type: '334'};
 
-    console.log('aud-----------------------', JSON.stringify(auditEvent.auditEventObject))
+    console.log('aud-----------------------', JSON.stringify(auditEvent.auditEventObject));
 }
 
 module.exports.decorateRequestHeaders = decorateRequestHeaders

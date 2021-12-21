@@ -64,7 +64,7 @@ let auditEvent = {
         return this._pdata;
     },
     set cdata (data) {
-        this._cdata.push(data);
+        this._cdata = data;
     },
     get cdata() {
         return this._cdata;
