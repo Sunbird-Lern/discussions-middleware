@@ -92,7 +92,7 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, error, data) => {
     edata.level = "ERROR";
     logger.info({message: `${req.originalUrl} failed`});
     logMessage(edata, req);
-    const resCode = errorResponse(req, res,proxyRes, error);
+    const resCode = errorResponse(req, res, proxyRes, proxyResData, error);
     // logging the Error events
     telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode);
     return resCode;
@@ -124,7 +124,11 @@ function logMessage(data, req) {
  * This method will construct the error response 
  * 
  */
-function errorResponse(req, res, proxyRes, error) {
+function errorResponse(req, res, proxyRes, proxyResData, error) {
+  let  data = proxyResData.toString('utf8');
+  if (proxyRes.statusCode !== 404) {
+    data = JSON.parse(data);
+  }
   const errorCode = `err_${proxyRes.statusCode}`;
   const method = req.method.toLowerCase();
   const path = `${req.route.path}.${method}.errorObject`;
@@ -133,7 +137,7 @@ function errorResponse(req, res, proxyRes, error) {
   error_obj['id'] = id.join('.');
   error_obj['ts'] = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo');
   error_obj['params']['msgid'] = req.headers['x-request-id']; // TODO: replace with x-request-id;
-  error_obj['params']['errmsg'] = errorObj && errorObj.errMsg || ''
+  error_obj['params']['errmsg'] = (data && data.params && data.params.error) || (errorObj && errorObj.errMsg) || '';
   error_obj['params']['err'] = errorObj && errorObj.err || '';
   return error_obj;
 }
