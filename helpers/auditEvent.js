@@ -27,7 +27,9 @@ let auditEventObject = {
             case '/discussion/v2/topics': 
                 return { type: 'topicCreate',name: 'Topic created'};
             case '/discussion/v2/topics/:tid':
-                return { type: 'topicReply',name: 'Topic replied'};  
+                return { type: 'topicReply',name: 'Topic replied'};
+            case '/discussion/forum/v3/create':
+                    return { type: 'enableDf', name: 'Enable Discussions'};       
         }
     },
     set reqData (req) {
@@ -119,7 +121,8 @@ let auditEventObject = {
     }
   }
 
-function auditeventForVote(req, responseObject) {
+function auditeventForVote(req, data) {
+    const responseObject = _.get(data, 'payload');
     const obj = {
         id:  _.get(responseObject, 'pid'),
         type: 'Post',
@@ -132,7 +135,8 @@ function auditeventForVote(req, responseObject) {
       return {obj, edata};
 }
 
-function auditeventForTopic(req, responseObject) {
+function auditeventForTopic(req, data) {
+    const responseObject = _.get(data, 'payload');
     const obj = {
         id: _.get(responseObject, 'topicData.tid'),
         type: _.get(responseObject, 'postData.isMain') ? 'Topic' : 'Post',
@@ -145,4 +149,22 @@ function auditeventForTopic(req, responseObject) {
       return {obj, edata};
 }
 
-  module.exports = {auditEventObject, auditeventForVote, auditeventForTopic};
+function auditeventForDFEnable(req, data) {
+    const responseObject = _.get(data, 'result.forums')[0];
+    const obj = {
+        id: _.get(responseObject, 'newCid'),
+        type: 'Category',
+        version: '1.0'
+      };
+      const cdata = {
+          type: _.get(responseObject, 'sbType'),
+          id: _.get(responseObject, 'sbIdentifier')
+      }
+      const edata = {
+        type: 'Enable Discussions',
+        props: Object.keys(req.body.category)
+      }
+      return {obj, edata, cdata};
+}
+
+  module.exports = {auditEventObject, auditeventForVote, auditeventForTopic, auditeventForDFEnable};

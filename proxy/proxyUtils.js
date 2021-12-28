@@ -139,21 +139,24 @@ function errorResponse(req, res, proxyRes, error) {
 }
 
 function auditEventObject(req, proxyResData) {
-  const data = JSON.parse(proxyResData.toString('utf8'));
-  const responseObject = _.get(data, 'payload');
-  let auditdata;
-  const reqType = auditEvent.auditEventObject.getEdataType(_.get(req, 'route.path'));
-  if (reqType.type === 'vote') {
-    auditdata = auditEvent.auditeventForVote(req, responseObject);
-  } else {
-    auditdata = auditEvent.auditeventForTopic(req, responseObject);
+  if (req.enableAudit) {
+    const data = JSON.parse(proxyResData.toString('utf8'));
+    let auditdata;
+    const reqType = auditEvent.auditEventObject.getEdataType(_.get(req, 'route.path'));
+    if (reqType.type === 'vote') {
+      auditdata = auditEvent.auditeventForVote(req, data);
+    } else if (reqType.type === 'enableDf') {
+      auditdata = auditEvent.auditeventForDFEnable(req, data);
+    } else {
+      auditdata = auditEvent.auditeventForTopic(req, data);
+    }
+      auditEvent.auditEventObject.object = auditdata.obj;
+      auditEvent.auditEventObject.edata = auditdata.edata; // need type & props
+      auditEvent.auditEventObject.reqData = req;
+      auditEvent.auditEventObject.cdata = auditdata.cdata || {} ; // need to take from cache
+      logger.info({'message': JSON.stringify(auditEvent.auditEventObject.auditEventObj)});
+      telemetryHelper.logTelemetryAuditEvent(auditEvent);
   }
-    auditEvent.auditEventObject.object = auditdata.obj;
-    auditEvent.auditEventObject.edata = auditdata.edata; // need type & props
-    auditEvent.auditEventObject.reqData = req;
-    auditEvent.auditEventObject.cdata = {}; // need to take from cache
-    logger.info({'message': JSON.stringify(auditEvent.auditEventObject.auditEventObj)});
-    telemetryHelper.logTelemetryAuditEvent(auditEvent);
 }
 
 module.exports.decorateRequestHeaders = decorateRequestHeaders
