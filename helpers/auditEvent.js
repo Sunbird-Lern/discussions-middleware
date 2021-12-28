@@ -2,7 +2,8 @@ const dateFormat = require('dateformat');
 const _ = require('lodash');
 const telemetry = require('./telemetryHelper');
 
-let auditEvent = {
+
+let auditEventObject = {
     _eid: 'AUDIT',
     _ets: '',
     _ver: '1.0',
@@ -17,8 +18,18 @@ let auditEvent = {
     _object: {},
     _edata: {},
     _reqData: {},
-    auditEventObject:{},
-
+    auditEventObj:{},
+    
+    getEdataType (url) {
+        switch (url) {
+            case '/discussion/v2/posts/:pid/vote': 
+                return { type: 'vote',name: 'Voted', };
+            case '/discussion/v2/topics': 
+                return { type: 'topicCreate',name: 'Topic created'};
+            case '/discussion/v2/topics/:tid':
+                return { type: 'topicReply',name: 'Topic replied'};  
+        }
+    },
     set reqData (req) {
         this._mid = req.headers['x-request-id'];
         this._actor = telemetry.getTelemetryActorData(req);
@@ -87,7 +98,7 @@ let auditEvent = {
     get edata() {
         return this._edata;
     },
-    get auditEventObject() {
+    get auditEventObj() {
         const data = {
             eid: this._eid,
             ets: dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
@@ -108,4 +119,30 @@ let auditEvent = {
     }
   }
 
-  module.exports = auditEvent;
+function auditeventForVote(req, responseObject) {
+    const obj = {
+        id:  _.get(responseObject, 'pid'),
+        type: 'Post',
+        version: '1.0'
+      };
+      const edata = {
+        type: _.get(responseObject, 'upvote') ? 'Upvoted' : 'Downvoted',
+        props: Object.keys(req.body)
+      };
+      return {obj, edata};
+}
+
+function auditeventForTopic(req, responseObject) {
+    const obj = {
+        id: _.get(responseObject, 'topicData.tid'),
+        type: _.get(responseObject, 'postData.isMain') ? 'Topic' : 'Post',
+        version: '1.0'
+      };
+      const edata = {
+        type: _.get(responseObject, 'postData.isMain') ? 'Topic created' : 'Topic replied',
+        props: Object.keys(req.body)
+      }
+      return {obj, edata};
+}
+
+  module.exports = {auditEventObject, auditeventForVote, auditeventForTopic};

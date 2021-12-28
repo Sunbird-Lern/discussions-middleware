@@ -126,5 +126,8 @@ module.exports = {
     sid: _.get(req.headers, 'X-Session-Id') || _.get(req.headers, 'x-session-id') || ''
   };
   return contextObj;
+},
+logTelemetryAuditEvent(data) {
+    telemetry.audit(data);
 }
 }

@@ -4,7 +4,6 @@ const { logger } = require('@project-sunbird/logger');
 const telemetryHelper = require('../helpers/telemetryHelper.js')
 const sbLogger = require('sb_logger_util');
 const auditEvent = require('../helpers/auditEvent');
-
 let logObj = {
   "eid": "LOG",
   "ets": 1518460198146,
@@ -142,21 +141,19 @@ function errorResponse(req, res, proxyRes, error) {
 function auditEventObject(req, proxyResData) {
   const data = JSON.parse(proxyResData.toString('utf8'));
   const responseObject = _.get(data, 'payload');
-    const obj = {
-      id: _.get(responseObject, 'topicData.tid') || _.get(responseObject, 'pid'),
-      type: _.get(responseObject, 'isMain') ? 'Topic' : 'Post',
-      version: '1.0'
-    };
-    const edata = {
-      type: _.get(req, 'route.path'),
-      props: Object.keys(req.body)
-    }
-    auditEvent.object = obj;
-    auditEvent.edata = edata; // need type & props
-    auditEvent.reqData = req;
-    auditEvent.cdata = {}; // need to take from cache
-
-    console.log('aud-----------------------', JSON.stringify(auditEvent.auditEventObject));
+  let auditdata;
+  const reqType = auditEvent.auditEventObject.getEdataType(_.get(req, 'route.path'));
+  if (reqType.type === 'vote') {
+    auditdata = auditEvent.auditeventForVote(req, responseObject);
+  } else {
+    auditdata = auditEvent.auditeventForTopic(req, responseObject);
+  }
+    auditEvent.auditEventObject.object = auditdata.obj;
+    auditEvent.auditEventObject.edata = auditdata.edata; // need type & props
+    auditEvent.auditEventObject.reqData = req;
+    auditEvent.auditEventObject.cdata = {}; // need to take from cache
+    logger.info({'message': JSON.stringify(auditEvent.auditEventObject.auditEventObj)});
+    telemetryHelper.logTelemetryAuditEvent(auditEvent);
 }
 
 module.exports.decorateRequestHeaders = decorateRequestHeaders

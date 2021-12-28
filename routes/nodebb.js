@@ -91,8 +91,8 @@ app.get(`${BASE_REPORT_URL}/user/admin/upvoted`, proxyObject());
 app.get(`${BASE_REPORT_URL}/user/admin/downvoted`, proxyObject());
 
 // topics apis
-app.post(`${BASE_REPORT_URL}/v2/topics`, proxyObject());
-app.post(`${BASE_REPORT_URL}/v2/topics/:tid`, proxyObject());
+app.post(`${BASE_REPORT_URL}/v2/topics`, proxyObjectForAudit());
+app.post(`${BASE_REPORT_URL}/v2/topics/:tid`, proxyObjectForAudit());
 app.post(`${BASE_REPORT_URL}/v2/topics/update/:tid`, proxyObjectForPutApi());
 app.delete(`${BASE_REPORT_URL}/v2/topics/:tid`, proxyObject());
 app.put(`${BASE_REPORT_URL}/v2/topics/:tid/state`, proxyObject());
@@ -127,7 +127,7 @@ app.post(`${BASE_REPORT_URL}/v2/posts/:pid`, isEditablePost(), proxyObjectForPut
 app.delete(`${BASE_REPORT_URL}/v2/posts/:pid`,isEditablePost() , proxyObject());
 app.put(`${BASE_REPORT_URL}/v2/posts/:pid/state`, proxyObject());
 app.delete(`${BASE_REPORT_URL}/v2/posts/:pid/state`, proxyObject());
-app.post(`${BASE_REPORT_URL}/v2/posts/:pid/vote`, proxyObject());
+app.post(`${BASE_REPORT_URL}/v2/posts/:pid/vote`, proxyObjectForAudit());
 app.delete(`${BASE_REPORT_URL}/v2/posts/:pid/vote`, proxyObject());
 app.post(`${BASE_REPORT_URL}/v2/posts/:pid/bookmark`, proxyObject());
 app.delete(`${BASE_REPORT_URL}/v2/posts/:pid/bookmark`, proxyObject());
@@ -349,6 +349,47 @@ function proxyObjectWithoutAuth() {
   })
 }
 
+function proxyObjectForAudit() {
+  return proxy(nodebbServiceUrl, {
+    proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+    proxyReqPathResolver: function (req) {
+      let urlParam = req.originalUrl.replace(BASE_REPORT_URL, '');
+      logger.info({"message": `request comming from ${req.originalUrl}`});
+      telemetryHelper.logAPIEvent(req,'discussion-middleware');
+      req.enableAudit = true;
+      return require('url').parse(nodebbServiceUrl+ urlParam).path;
+    },
+    userResDecorator: (proxyRes, proxyResData, req, res) => {
+      let edata = {
+        "type": "log",
+        "level": "INFO",
+        "requestid": req.headers['x-request-id'] || '',
+        "message": ''
+      };
+      try {
+        logger.info({ message: `request came from ${req.originalUrl}` })
+        const data = proxyResData.toString('utf8');
+        if (proxyRes.statusCode === 404) {
+          edata['message'] = `Request url ${req.originalUrl} not found`;
+          logMessage(edata, req);
+          logger.info({ message: `${req.originalUrl} Not found ${data}` })
+          const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);
+          telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode)     
+          return resCode;
+        } else {
+          return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null, data);
+        }
+      } catch (err) {
+        console.log('catch', err)
+        edata['level'] = "Error";
+        edata['message'] = `Error: ${err.message}, Url:  ${req.originalUrl}`;
+        logMessage(edata, req);
+        logger.info({ message: `Error while htting the ${req.url}  ${err.message}` });
+        return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req,res, err);
+      }
+    }
+  })
+}
 function logMessage(data, req) {
   logObj.context.env = req.originalUrl;
   logObj.context.did = req.headers['x-device-id'];
