@@ -1,7 +1,7 @@
 const dateFormat = require('dateformat');
 const _ = require('lodash');
 const telemetry = require('./telemetryHelper');
-
+const evObject = require('./constant.json');
 
 let auditEventObject = {
     _eid: 'AUDIT',
@@ -121,50 +121,29 @@ let auditEventObject = {
     }
   }
 
-function auditeventForVote(req, data) {
-    const responseObject = _.get(data, 'payload');
-    const obj = {
-        id:  _.get(responseObject, 'pid'),
-        type: 'Post',
-        version: '1.0'
-      };
-      const edata = {
-        type: _.get(responseObject, 'upvote') ? 'Upvoted' : 'Downvoted',
-        props: Object.keys(req.body)
-      };
-      return {obj, edata};
-}
 
-function auditeventForTopic(req, data) {
-    const responseObject = _.get(data, 'payload');
+function auditeventForDF(req, data) {
+    const ref = _.get(evObject, req.route.path);
+    const responseObject = _.get(data, ref.response);
+    const isTypeConst = _.get(ref, 'isTypeConst');
+    let cdata = {};
+    const objType = isTypeConst ? _.get(ref, 'obj.type') : _.get(responseObject, ref.obj.type) ? _.get(ref, ref.obj.type) : _.get(ref, 'default')
     const obj = {
-        id: _.get(responseObject, 'topicData.tid'),
-        type: _.get(responseObject, 'postData.isMain') ? 'Topic' : 'Post',
-        version: '1.0'
+        id: _.get(responseObject, ref.obj.id),
+        type: objType,
+        version: _.get(ref, 'obj.version')
       };
-      const edata = {
-        type: _.get(responseObject, 'postData.isMain') ? 'Topic created' : 'Topic replied',
-        props: Object.keys(req.body)
-      }
-      return {obj, edata};
-}
 
-function auditeventForDFEnable(req, data) {
-    const responseObject = _.get(data, 'result.forums')[0];
-    const obj = {
-        id: _.get(responseObject, 'newCid'),
-        type: 'Category',
-        version: '1.0'
-      };
-      const cdata = {
-          type: _.get(responseObject, 'sbType'),
-          id: _.get(responseObject, 'sbIdentifier')
-      }
       const edata = {
-        type: 'Enable Discussions',
-        props: Object.keys(req.body.category)
+        type: isTypeConst ? _.get(ref, 'edata.type') : objType,
+        props: Object.keys(_.get(req, ref.edata.props))
+      }
+      if (_.get(ref, 'cdata')) {
+        cdata = {
+            type: _.get(responseObject, ref.cdata.type),
+            id: _.get(responseObject, ref.cdata.id)
+        }
       }
       return {obj, edata, cdata};
 }
-
-  module.exports = {auditEventObject, auditeventForVote, auditeventForTopic, auditeventForDFEnable};
+  module.exports = {auditEventObject, auditeventForDF};
