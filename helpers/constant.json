@@ -1,0 +1,62 @@
+{
+    "/discussion/v2/posts/:pid/vote": {
+        "response": "payload",
+        "isTypeConst": false,
+        "obj": {
+            "id": "post.pid",
+            "type": "upvote",
+            "version": "1.0"
+        },
+        "edata": {
+            "type": "upvote",
+            "props": "body"
+        },
+        "default": "Downvoted",
+        "upvote": "Upvoted"
+    },
+    "/discussion/v2/topics": {
+        "response": "payload",
+        "isTypeConst": true,
+        "obj": {
+            "id": "topicData.tid",
+            "type": "Topic",
+            "version": "1.0"
+        },
+        "edata": {
+            "type": "Topic created",
+            "props": "body"
+        }
+    },
+    "/discussion/v2/topics/:tid": {
+        "response": "payload",
+        "isTypeConst": false,
+        "obj": {
+            "id": "pid",
+            "type": "postData.isMain",
+            "version": "1.0"
+        },
+        "edata": {
+            "type": "postData.isMain",
+            "props": "body"
+        },
+        "default": "Post Replied",
+        "postData.isMain": "Topic Replied"
+    },
+    "/discussion/forum/v3/create": {
+        "response": "result.forums[0]",
+        "isTypeConst": true,
+        "obj": {
+            "id": "newCid",
+            "type": "Category",
+            "version": "1.0"
+        },
+        "edata": {
+            "type": "Enable Discussions",
+            "props": "body.category"
+        },
+        "cdata": {
+            "type": "sbType",
+            "id": "sbIdentifier"
+        }
+    }
+}

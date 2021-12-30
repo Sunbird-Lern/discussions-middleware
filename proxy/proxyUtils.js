@@ -3,8 +3,8 @@ const { Authorization } = require('../helpers/environmentVariablesHelper');
 const { logger } = require('@project-sunbird/logger');
 const telemetryHelper = require('../helpers/telemetryHelper.js')
 const sbLogger = require('sb_logger_util');
-const userCreate = '/discussion/user/v1/create';
-const groupCreate = '/discussion/forum/v3/create';
+const auditEvent = require('../helpers/auditEvent');
+const evObject = require('../helpers/constant.json');
 let logObj = {
   "eid": "LOG",
   "ets": 1518460198146,
@@ -100,6 +100,7 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, error, data) => {
     edata['message'] = `${req.originalUrl} successfull`;
     logger.info({message: `${req.originalUrl} successfull`});
     logMessage(edata, req);
+    auditEventObject(req, proxyResData);
     return proxyResData;
   }
 }
@@ -138,6 +139,19 @@ function errorResponse(req, res, proxyRes, error) {
   return error_obj;
 }
 
+function auditEventObject(req, proxyResData) {
+  const ref = _.get(evObject, req.route.path);
+  if (ref) {
+    const data = JSON.parse(proxyResData.toString('utf8'));
+    let auditdata = auditEvent.auditeventForDF(req, data, ref);
+    auditEvent.auditEventObject.object = auditdata.obj;
+    auditEvent.auditEventObject.edata = auditdata.edata; // need type & props
+    auditEvent.auditEventObject.reqData = req;
+    auditEvent.auditEventObject.cdata = auditdata.cdata || {} ; // need to take from cache
+    logger.info({'DF Audit event': JSON.stringify(auditEvent.auditEventObject.auditEventObj)});
+    telemetryHelper.logTelemetryAuditEvent(auditEvent);
+  }
+}
 
 module.exports.decorateRequestHeaders = decorateRequestHeaders
 module.exports.handleSessionExpiry = handleSessionExpiry
