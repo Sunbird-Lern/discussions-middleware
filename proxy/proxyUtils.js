@@ -4,6 +4,7 @@ const { logger } = require('@project-sunbird/logger');
 const telemetryHelper = require('../helpers/telemetryHelper.js')
 const sbLogger = require('sb_logger_util');
 const auditEvent = require('../helpers/auditEvent');
+const evObject = require('../helpers/constant.json');
 let logObj = {
   "eid": "LOG",
   "ets": 1518460198146,
@@ -139,14 +140,15 @@ function errorResponse(req, res, proxyRes, error) {
 }
 
 function auditEventObject(req, proxyResData) {
-  if (req.enableAudit) {
+  const ref = _.get(evObject, req.route.path);
+  if (ref) {
     const data = JSON.parse(proxyResData.toString('utf8'));
-    let auditdata = auditEvent.auditeventForDF(req, data);
+    let auditdata = auditEvent.auditeventForDF(req, data, ref);
     auditEvent.auditEventObject.object = auditdata.obj;
     auditEvent.auditEventObject.edata = auditdata.edata; // need type & props
     auditEvent.auditEventObject.reqData = req;
     auditEvent.auditEventObject.cdata = auditdata.cdata || {} ; // need to take from cache
-    logger.info({'message': JSON.stringify(auditEvent.auditEventObject.auditEventObj)});
+    logger.info({'DF Audit event': JSON.stringify(auditEvent.auditEventObject.auditEventObj)});
     telemetryHelper.logTelemetryAuditEvent(auditEvent);
   }
 }

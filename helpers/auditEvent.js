@@ -1,7 +1,6 @@
 const dateFormat = require('dateformat');
 const _ = require('lodash');
 const telemetry = require('./telemetryHelper');
-const evObject = require('./constant.json');
 
 let auditEventObject = {
     _eid: 'AUDIT',
@@ -122,8 +121,7 @@ let auditEventObject = {
   }
 
 
-function auditeventForDF(req, data) {
-    const ref = _.get(evObject, req.route.path);
+function auditeventForDF(req, data, ref) {
     const responseObject = _.get(data, ref.response);
     const isTypeConst = _.get(ref, 'isTypeConst');
     let cdata = {};
