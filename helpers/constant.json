@@ -11,6 +11,39 @@
             "type": "upvote",
             "props": "body"
         },
+        "notificationObj": {
+            "fromUid": "payload.fromuid",
+            "toUid": "payload.post.uid",
+            "category": "discussion-forum",
+            "key": "post",
+            "action": "downvote",
+            "types": {
+                "type1": "post",
+                "type2": ""
+            },
+            "actions": {
+                "action1": "downvoted",
+                "action2": "upvoted"
+            },
+            "params": {
+                "param1": "",
+                "param2": "",
+                "param3": ""
+            },
+            "categoryObj": {
+                "cid": "",
+                "title": "",
+                "pid": ""
+            },
+            "topic": {
+                "tid": "payload.post.tid",
+                "title": "payload.post.title"
+            },
+            "post": {
+                "pid": "payload.post.pid",
+                "title": "payload.post.title"
+            }
+        },
         "default": "Downvoted",
         "upvote": "Upvoted"
     },
@@ -38,6 +71,40 @@
         "edata": {
             "type": "postData.isMain",
             "props": "body"
+        },
+        "notificationObj": {
+            "fromUid": "payload.user.uid",
+            "toUid": "payload.topic.uid",
+            "category": "discussion-forum",
+            "cid": "payload.cid",
+            "key": "parent",
+            "action": "topic",
+            "types": {
+                "type1": "post",
+                "type2": "topic"
+            },
+            "actions": {
+                "action1": "replied",
+                "action2": ""
+            },
+            "params": {
+                "param1": "",
+                "param2": "replied",
+                "param3": ""
+            },
+            "categoryObj": {
+                "cid": "payload.cid",
+                "title": "",
+                "pid": ""
+            },
+            "topic": {
+                "tid": "payload.topic.tid",
+                "title": "payload.topic.title"
+            },
+            "post": {
+                "pid": "payload.pid",
+                "title": "payload.topic.title"
+            }
         },
         "default": "Post Replied",
         "postData.isMain": "Topic Replied"

@@ -5,6 +5,7 @@ const telemetryHelper = require('../helpers/telemetryHelper.js')
 const sbLogger = require('sb_logger_util');
 const auditEvent = require('../helpers/auditEvent');
 const evObject = require('../helpers/constant.json');
+const notification = require('../helpers/notification.js');
 let logObj = {
   "eid": "LOG",
   "ets": 1518460198146,
@@ -58,7 +59,7 @@ const decorateRequestHeadersForPutApi = function () {
   }
 }
 
-const handleSessionExpiry = (proxyRes, proxyResData, req, res, error, data) => {
+const handleSessionExpiry = (proxyRes, proxyResData, req, res, error, data, triggerNotification = false) => {
   let edata = {
     "type": "log",
     "level": "INFO",
@@ -101,6 +102,10 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, error, data) => {
     logger.info({message: `${req.originalUrl} successfull`});
     logMessage(edata, req);
     auditEventObject(req, proxyResData);
+    if (triggerNotification) {
+      const resData = proxyResData.toString('utf8');
+      notification.notificationObj(req, resData);
+    }
     return proxyResData;
   }
 }
