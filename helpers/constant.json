@@ -25,11 +25,6 @@
                 "action1": "downvoted",
                 "action2": "upvoted"
             },
-            "params": {
-                "param1": "",
-                "param2": "",
-                "param3": ""
-            },
             "categoryObj": {
                 "cid": "",
                 "title": "",
@@ -86,11 +81,6 @@
             "actions": {
                 "action1": "replied",
                 "action2": ""
-            },
-            "params": {
-                "param1": "",
-                "param2": "replied",
-                "param3": ""
             },
             "categoryObj": {
                 "cid": "payload.cid",
