@@ -121,27 +121,32 @@ let auditEventObject = {
   }
 
 
-function auditeventForDF(req, data, ref) {
+  function auditeventForDF(req, data, ref) {
     const responseObject = _.get(data, ref.response);
     const isTypeConst = _.get(ref, 'isTypeConst');
-    let cdata = {};
-    const objType = isTypeConst ? _.get(ref, 'obj.type') : _.get(responseObject, ref.obj.type) ? _.get(ref, ref.obj.type) : _.get(ref, 'default')
-    const obj = {
-        id: _.get(responseObject, ref.obj.id),
-        type: objType,
-        version: _.get(ref, 'obj.version')
-      };
+    let cdata = [];
+    let refCdata = _.get(ref, 'cdata');
 
+    const objType = isTypeConst ? _.get(ref, 'obj.type') : _.get(responseObject, ref.obj.type) ? _.get(ref, ref.obj.type) : _.get(ref, 'default')
       const edata = {
         type: isTypeConst ? _.get(ref, 'edata.type') : objType,
         props: Object.keys(_.get(req, ref.edata.props))
       }
-      if (_.get(ref, 'cdata')) {
-        cdata = {
-            type: _.get(responseObject, ref.cdata.type),
-            id: _.get(responseObject, ref.cdata.id)
-        }
+      if (refCdata) {
+          let cDataArr = [];
+          refCdata.forEach((cdataObj, index) => {
+            const type = _.get(responseObject, cdataObj.type) || cdataObj.type;
+            const data = {
+                type: type.charAt(0).toUpperCase() + type.slice(1),
+                id: _.get(responseObject, cdataObj.id)
+            }
+            cDataArr.push(data);
+            if (index === (refCdata.length -1)) {
+                cdata = cDataArr;
+            }
+          });
       }
-      return {obj, edata, cdata};
+      return {edata, cdata};
 }
+
   module.exports = {auditEventObject, auditeventForDF};

@@ -11,8 +11,8 @@
             "type": "upvote",
             "props": "body"
         },
-        "default": "Downvoted",
-        "upvote": "Upvoted"
+        "default": "downvote",
+        "upvote": "upvote"
     },
     "/discussion/v2/topics": {
         "response": "payload",
@@ -23,7 +23,7 @@
             "version": "1.0"
         },
         "edata": {
-            "type": "Topic created",
+            "type": "topic-created",
             "props": "body"
         }
     },
@@ -32,31 +32,37 @@
         "isTypeConst": false,
         "obj": {
             "id": "pid",
-            "type": "postData.isMain",
+            "type": "parent",
             "version": "1.0"
         },
         "edata": {
-            "type": "postData.isMain",
+            "type": "parent",
             "props": "body"
         },
-        "default": "Post Replied",
-        "postData.isMain": "Topic Replied"
+        "default": "topic-replied",
+        "parent": "post-replied"
     },
     "/discussion/forum/v3/create": {
         "response": "result.forums[0]",
         "isTypeConst": true,
         "obj": {
             "id": "newCid",
-            "type": "Category",
+            "type": "Forum",
             "version": "1.0"
         },
         "edata": {
-            "type": "Enable Discussions",
+            "type": "discussion-enabled",
             "props": "body.category"
         },
-        "cdata": {
-            "type": "sbType",
-            "id": "sbIdentifier"
-        }
+        "cdata": [
+            {
+                "type": "sbType",
+                "id": "sbIdentifier"
+            },
+            {
+                "type": "Forum",
+                "id": "newCid"  
+            }
+        ]
     }
 }
