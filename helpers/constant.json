@@ -15,11 +15,11 @@
             "fromUid": "payload.fromuid",
             "toUid": "payload.post.uid",
             "category": "discussion-forum",
+            "action-type": "member-voted",
             "key": "post",
             "action": "downvote",
             "types": {
-                "type1": "post",
-                "type2": ""
+                "type1": "post"
             },
             "actions": {
                 "action1": "downvoted",
@@ -71,6 +71,7 @@
             "fromUid": "payload.user.uid",
             "toUid": "payload.topic.uid",
             "category": "discussion-forum",
+            "action-type": "member-replied",
             "cid": "payload.cid",
             "key": "parent",
             "action": "topic",
@@ -79,12 +80,11 @@
                 "type2": "topic"
             },
             "actions": {
-                "action1": "replied",
-                "action2": ""
+                "action1": "replied"
             },
             "categoryObj": {
                 "cid": "payload.cid",
-                "title": "",
+                "title": "payload.category.title",
                 "pid": ""
             },
             "topic": {

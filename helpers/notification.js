@@ -24,7 +24,7 @@ const notificationObj = async (req, data) => {
         },
         action: {
           category: 'discussion-forum',
-          type: _.get(userDetails.templateData, 'action-type'),
+          type: _.get(resData, 'action-type'),
           template: {
             type: 'JSON',
             params: {
@@ -35,22 +35,18 @@ const notificationObj = async (req, data) => {
           }
         },
         additionalInfo: {
-          context: {
-            cid: '',
-            sbItendifier: '',
-            sbType: ''
-          },
+          context: { }, // once the session is implemented will get this object
           category: {
             cid:  _.get(res, resData.cid),
-            title: '',
-            pid: ''
+            title: _.get(res, resData.title),
+            pid: '' // once the session is implemented will get this object
           },
           topic: {
             tid: _.get(res, resData.topic.tid),
             title: _.get(res, resData.topic.title)
           },
           post: {
-            pid: _.get(res, resData.post.pid), // need to check
+            pid: _.get(res, resData.post.pid),
             title: _.get(res, resData.post.title),
           }
         }
@@ -64,7 +60,6 @@ async function getUserObject(req, fromUid, toUid) {
   return {
    createdBy: sbUserData.find(user => user.uid === fromUid),
    ids: sbUserData.filter(user => user.uid !== fromUid).map(x => x['sunbird-oidcId']),
-   templateData:  template[_.get(req, 'route.path')],
   }
 }
 
