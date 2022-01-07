@@ -1,68 +1,61 @@
 {
     "/discussion/v2/posts/:pid/vote": {
-        "response": "payload",
-        "isTypeConst": false,
-        "obj": {
-            "id": "post.pid",
-            "type": "upvote",
-            "version": "1.0"
+        "audit": {
+            "edata": {
+                "type": "payload.upvote?",
+                "props": "body#"
+            }
         },
-        "edata": {
-            "type": "upvote",
-            "props": "body"
-        },
-        "default": "downvote",
-        "upvote": "upvote"
+        "cdata": [ ],
+        "expression": {
+            "payload.upvote": "? 'upvote' : 'downvote'",
+            "body": "((obj) => {return Object.keys(obj);})"
+        }
     },
     "/discussion/v2/topics": {
-        "response": "payload",
-        "isTypeConst": true,
-        "obj": {
-            "id": "topicData.tid",
-            "type": "Topic",
-            "version": "1.0"
+        "audit": {
+            "edata": {
+                "type": "topic-created",
+                "props": "body#"
+            }
         },
-        "edata": {
-            "type": "topic-created",
-            "props": "body"
+        "cdata": [ ],
+        "expression": {
+            "body": "((obj) => {return Object.keys(obj);})"
         }
     },
     "/discussion/v2/topics/:tid": {
-        "response": "payload",
-        "isTypeConst": false,
-        "obj": {
-            "id": "pid",
-            "type": "parent",
-            "version": "1.0"
+        "audit": {
+            "edata": {
+                "type": "payload.parent?",
+                "props": "body#"
+            }
         },
-        "edata": {
-            "type": "parent",
-            "props": "body"
-        },
-        "default": "topic-replied",
-        "parent": "post-replied"
+        "cdata": [ ],
+        "expression": {
+            "payload.parent": "? 'post-replied' : 'topic-replied'",
+            "body": "((obj) => {return Object.keys(obj);})"
+        }
     },
     "/discussion/forum/v3/create": {
-        "response": "result.forums[0]",
-        "isTypeConst": true,
-        "obj": {
-            "id": "newCid",
-            "type": "Forum",
-            "version": "1.0"
-        },
-        "edata": {
-            "type": "discussion-enabled",
-            "props": "body.category"
-        },
-        "cdata": [
-            {
-                "type": "sbType",
-                "id": "sbIdentifier"
+        "audit": {
+            "edata": {
+                "type": "discussion-enabled",
+                "props": "body.category#"
             },
-            {
-                "type": "Forum",
-                "id": "newCid"  
-            }
-        ]
+            "cdata": [
+                {
+                    "type": "result.forums[0].sbType",
+                    "id": "result.forums[0].sbIdentifier"
+                },
+                {
+                    "type": "Forum",
+                    "id": "result.forums[0].newCid"
+                }
+            ]
+        },
+        "expression": {
+            "body.category": "((obj) => {return Object.keys(obj);})"
+        }
     }
 }

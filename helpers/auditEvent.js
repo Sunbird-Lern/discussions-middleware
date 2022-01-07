@@ -120,33 +120,65 @@ let auditEventObject = {
     }
   }
 
-
-  function auditeventForDF(req, data, ref) {
-    const responseObject = _.get(data, ref.response);
-    const isTypeConst = _.get(ref, 'isTypeConst');
-    let cdata = [];
-    let refCdata = _.get(ref, 'cdata');
-
-    const objType = isTypeConst ? _.get(ref, 'obj.type') : _.get(responseObject, ref.obj.type) ? _.get(ref, ref.obj.type) : _.get(ref, 'default')
-      const edata = {
-        type: isTypeConst ? _.get(ref, 'edata.type') : objType,
-        props: Object.keys(_.get(req, ref.edata.props))
-      }
-      if (refCdata) {
-          let cDataArr = [];
-          refCdata.forEach((cdataObj, index) => {
-            const type = _.get(responseObject, cdataObj.type) || cdataObj.type;
-            const data = {
-                type: type.charAt(0).toUpperCase() + type.slice(1),
-                id: _.get(responseObject, cdataObj.id)
+function deepMap(obj, mapfn) {
+    function recurse(obj) {
+        let res = {}
+        for (const key in obj) {
+            const value = obj[key];
+            if (value && typeof value === 'object') {
+                res[key] = recurse(value);
+            } else if (value && Array.isArray(value)) {
+                value.forEach(loopObj => {
+                    res[key] = recurse(loopObj);
+                })
+            } else {
+                res[key] = mapfn(value);
             }
-            cDataArr.push(data);
-            if (index === (refCdata.length -1)) {
-                cdata = cDataArr;
-            }
-          });
-      }
-      return {edata, cdata};
+        }
+        return res
+    }
+    return recurse(obj);
 }
 
-  module.exports = {auditEventObject, auditeventForDF};
+function getValue(resp, val) {
+    const objectVal = _.get(resp, String(val));
+    if (typeof objectVal === 'object') {
+        return true
+    }
+    return objectVal;
+}
+
+function auditEventData(refObject, resp, req) {
+    return deepMap(refObject.audit, (val) => {
+        let isExpression = (val.indexOf("?") > 0) ? true : false;
+        let isFunction = (val.indexOf("#") > 0) ? true : false;
+        let keyVal;
+        if (isExpression) {
+            let exprKey =  val.substr(0, val.length - 1);
+            let expr = getValue(resp, exprKey) + refObject.expression[exprKey];
+            keyVal = eval(expr);
+        } else if (isFunction) {
+            let exprKey =  val.substr(0, val.length - 1);
+            const expr = refObject.expression[exprKey];
+            keyVal = eval(expr)(_.get(req, exprKey));
+        } else {
+            keyVal = getValue(resp, val) || val;
+        }
+        return keyVal;
+    })
+}
+
+function caplitilizeFirstChar(rawCdata) {
+    if (rawCdata) {
+        return rawCdata.map(cdata => {
+            return {
+                type: cdata.type.charAt(0).toUpperCase() + cdata.type.slice(1),
+                id: cdata.id
+            }
+        })
+    } else {
+        return [];
+    }
+}
+
+  module.exports = {auditEventObject, auditEventData, caplitilizeFirstChar};

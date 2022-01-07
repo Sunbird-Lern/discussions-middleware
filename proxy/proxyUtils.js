@@ -143,11 +143,12 @@ function auditEventObject(req, proxyResData) {
   const ref = _.get(evObject, req.route.path);
   if (ref) {
     const data = JSON.parse(proxyResData.toString('utf8'));
-    let auditdata = auditEvent.auditeventForDF(req, data, ref);
+    let auditdata = auditEvent.auditEventData(ref, data, req);
+    const cdata  = auditdata.cdata ? Object.values(auditdata.cdata) : [];
     auditEvent.auditEventObject.object = auditdata.obj || {};
     auditEvent.auditEventObject.edata = auditdata.edata; // need type & props
     auditEvent.auditEventObject.reqData = req;
-    auditEvent.auditEventObject.cdata = auditdata.cdata || [] ; // need to take from cache
+    auditEvent.auditEventObject.cdata =  auditEvent.caplitilizeFirstChar(cdata); // need to take from cache
     logger.info({'DF Audit event': JSON.stringify(auditEvent.auditEventObject.auditEventObj)});
     telemetryHelper.logTelemetryAuditEvent(auditEvent);
   }
