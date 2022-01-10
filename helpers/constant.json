@@ -1,119 +1,155 @@
 {
     "/discussion/v2/posts/:pid/vote": {
-        "response": "payload",
-        "isTypeConst": false,
-        "obj": {
-            "id": "post.pid",
-            "type": "upvote",
-            "version": "1.0"
+      "response": "payload",
+      "isTypeConst": false,
+      "obj": {
+        "id": "post.pid",
+        "type": "upvote",
+        "version": "1.0"
+      },
+      "edata": {
+        "type": "upvote",
+        "props": "body"
+      },
+      "fromUid": "payload.fromuid",
+      "toUid": "payload.post.uid",
+      "notificationObj": {
+        "headers": {
+          "sid": "_.get(res.payload.headers, 'x-session-id') || _.get(req.headers, 'X-Session-Id')",
+          "traceID": "_.get(res.payload.headers, 'x-request-id')"
         },
-        "edata": {
-            "type": "upvote",
-            "props": "body"
-        },
-        "notificationObj": {
-            "fromUid": "payload.fromuid",
-            "toUid": "payload.post.uid",
+        "notificationData": {
+          "ids": "_.get(res.payload.userDetails, 'ids')",
+          "createdBy": {
+            "id": "_.get(res.payload.userDetails.createdBy, 'sunbird-oidcId')",
+            "name": "_.get(res.payload.userDetails.createdBy, 'username')",
+            "type": "User"
+          },
+          "action": {
             "category": "discussion-forum",
-            "action-type": "member-voted",
-            "key": "post",
-            "action": "downvote",
-            "types": {
-                "type1": "post"
-            },
-            "actions": {
-                "action1": "downvoted",
-                "action2": "upvoted"
-            },
-            "categoryObj": {
-                "cid": "",
-                "title": "",
-                "pid": ""
+            "type": "member-voted",
+            "template": {
+              "type": "JSON",
+              "params": {
+                "param1": "_.get(res.payload.userDetails.createdBy, 'username')",
+                "param2": "payload.downvote?",
+                "param3": ""
+              }
+            }
+          },
+          "additionalInfo": {
+            "context": {},
+            "category": {
+              "cid": "",
+              "title": "",
+              "pid": ""
             },
             "topic": {
-                "tid": "payload.post.tid",
-                "title": "payload.post.title"
+              "tid": "payload.post.tid",
+              "title": "payload.post.title"
             },
             "post": {
-                "pid": "payload.post.pid",
-                "title": "payload.post.title"
+              "pid": "payload.post.pid",
+              "title": "payload.post.title"
             }
-        },
-        "default": "Downvoted",
-        "upvote": "Upvoted"
+          }
+        }
+      },
+      "expr": {
+        "payload.downvote": " ? 'downvoted' : 'upvoted'"
+      },
+      "default": "Downvoted",
+      "upvote": "Upvoted"
     },
     "/discussion/v2/topics": {
-        "response": "payload",
-        "isTypeConst": true,
-        "obj": {
-            "id": "topicData.tid",
-            "type": "Topic",
-            "version": "1.0"
-        },
-        "edata": {
-            "type": "Topic created",
-            "props": "body"
-        }
+      "response": "payload",
+      "isTypeConst": true,
+      "obj": {
+        "id": "topicData.tid",
+        "type": "Topic",
+        "version": "1.0"
+      },
+      "edata": {
+        "type": "Topic created",
+        "props": "body"
+      }
     },
     "/discussion/v2/topics/:tid": {
-        "response": "payload",
-        "isTypeConst": false,
-        "obj": {
-            "id": "pid",
-            "type": "postData.isMain",
-            "version": "1.0"
-        },
-        "edata": {
-            "type": "postData.isMain",
-            "props": "body"
-        },
-        "notificationObj": {
-            "fromUid": "payload.user.uid",
-            "toUid": "payload.topic.uid",
+      "response": "payload",
+      "isTypeConst": false,
+      "obj": {
+        "id": "pid",
+        "type": "postData.isMain",
+        "version": "1.0"
+      },
+      "edata": {
+        "type": "postData.isMain",
+        "props": "body"
+      },
+      "fromUid": "payload.user.uid",
+      "toUid": "payload.topic.uid",
+      "notificationObj": {
+        "headers": {
+            "sid": "_.get(res.payload.headers, 'x-session-id') || _.get(req.headers, 'X-Session-Id')",
+            "traceID": "_.get(res.payload.headers, 'x-request-id')"
+          },
+        "notificationData": {
+          "ids": "_.get(res.payload.userDetails, 'ids')",
+          "createdBy": {
+            "id": "_.get(res.payload.userDetails.createdBy, 'sunbird-oidcId')",
+            "name": "_.get(res.payload.userDetails.createdBy, 'username')",
+            "type": "User"
+          },
+          "action": {
             "category": "discussion-forum",
-            "action-type": "member-replied",
-            "cid": "payload.cid",
-            "key": "parent",
-            "action": "topic",
-            "types": {
-                "type1": "post",
-                "type2": "topic"
-            },
-            "actions": {
-                "action1": "replied"
-            },
-            "categoryObj": {
-                "cid": "payload.cid",
-                "title": "payload.category.title",
-                "pid": ""
+            "type": "member-replied",
+            "template": {
+              "type": "JSON",
+              "params": {
+                "param1": "_.get(res.payload.userDetails.createdBy, 'username')",
+                "param2": "replied",
+                "param3": "payload.parent?"
+              }
+            }
+          },
+          "additionalInfo": {
+            "category": {
+              "cid": "payload.cid",
+              "title": "",
+              "pid": ""
             },
             "topic": {
-                "tid": "payload.topic.tid",
-                "title": "payload.topic.title"
+              "tid": "payload.topic.tid",
+              "title": "payload.topic.title"
             },
             "post": {
-                "pid": "payload.pid",
-                "title": "payload.topic.title"
+              "pid": "payload.pid",
+              "title": "payload.topic.title"
             }
-        },
-        "default": "Post Replied",
-        "postData.isMain": "Topic Replied"
+          }
+        }
+      },
+      "expr": {
+        "payload.parent": " ? 'post' : 'topic'"
+      },
+      "default": "Post Replied",
+      "postData.isMain": "Topic Replied"
     },
     "/discussion/forum/v3/create": {
-        "response": "result.forums[0]",
-        "isTypeConst": true,
-        "obj": {
-            "id": "newCid",
-            "type": "Category",
-            "version": "1.0"
-        },
-        "edata": {
-            "type": "Enable Discussions",
-            "props": "body.category"
-        },
-        "cdata": {
-            "type": "sbType",
-            "id": "sbIdentifier"
-        }
+      "response": "result.forums[0]",
+      "isTypeConst": true,
+      "obj": {
+        "id": "newCid",
+        "type": "Category",
+        "version": "1.0"
+      },
+      "edata": {
+        "type": "Enable Discussions",
+        "props": "body.category"
+      },
+      "cdata": {
+        "type": "sbType",
+        "id": "sbIdentifier"
+      }
     }
-}
+  }

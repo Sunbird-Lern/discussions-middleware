@@ -1,65 +1,69 @@
 const _ = require('lodash')
 const request = require('request');
-const response = require('../helpers/constant.json');
-
+const notificationJSON = require('../helpers/constant.json');
 
 const notificationObj = async (req, data) => {
   if (data) {
     const res = JSON.parse(data);
-    const resData = response[req.route.path].notificationObj;
-    const fromUid =  _.get(res, resData.fromUid);
-    const toUid = _.get(res, resData.toUid);
+    const notificationRef = notificationJSON[req.route.path]
+    const fromUid = _.get(res, notificationRef.fromUid);
+    const toUid = _.get(res, notificationRef.toUid);
     const userDetails = await getUserObject(req, fromUid, toUid);
-    const notificationObject = {
-      headers: {
-        sid: _.get(req.headers, 'X-Session-Id') || _.get(req.headers, 'x-session-id'),
-        traceID: _.get(req.headers, 'x-request-id')
-      },
-      notifcationData: {
-        ids: userDetails.ids,
-        createdBy: {
-          id: _.get(userDetails.createdBy, 'sunbird-oidcId'),
-          name: _.get(userDetails.createdBy, 'username'),
-          type: 'User'
-        },
-        action: {
-          category: 'discussion-forum',
-          type: _.get(resData, 'action-type'),
-          template: {
-            type: 'JSON',
-            params: {
-              param1: _.get(userDetails.createdBy, 'username'),
-              param2: _.get(res.payload, resData.action) ? _.get(resData.actions, 'action1') : _.get(resData.actions, 'action2') ,
-              param3: _.get(res.payload, resData.key) ? _.get(resData.types, 'type1') : _.get(resData.types, 'type2'),
-            }
-          }
-        },
-        additionalInfo: {
-          context: { }, // once the session is implemented will get this object
-          category: {
-            cid:  _.get(res, resData.cid),
-            title: _.get(res, resData.title),
-            pid: '' // once the session is implemented will get this object
-          },
-          topic: {
-            tid: _.get(res, resData.topic.tid),
-            title: _.get(res, resData.topic.title)
-          },
-          post: {
-            pid: _.get(res, resData.post.pid),
-            title: _.get(res, resData.post.title),
-          }
-        }
+    res.payload['userDetails'] = userDetails;
+    res.payload['headers'] = req.headers;
+
+    let result = deepMap(notificationRef.notificationObj, (val) => {
+      // Check whether the value is an expression or not
+      let isExpression = (val.indexOf("?") > 0) ? true : false;
+      let keyVal;
+      if (isExpression) {
+        // If val is expression, then get the key of the expression
+        let exprKey = val.substr(0, val.length - 1);
+
+        // Construct the ternory opreation to evaluate the expression(only suppports ternary operations now)
+        let expression = getValue(res, exprKey) + notificationRef.expr[exprKey];
+        keyVal = eval(expression);
+      } else if (_.includes(val, '_.')) {
+        keyVal = eval(val);
+      } else {
+        keyVal = getValue(res, val) || val;
       }
-    }
-    console.log('notification 0bj for Reply-----------', JSON.stringify(notificationObject))
+      return keyVal;
+    })
+    console.log('notification 0bj for Reply-----------', JSON.stringify(result))
   }
 }
+
+function getValue(resp, val) {
+  const objectVal = _.get(resp, String(val));
+  if (typeof objectVal === 'object') {
+    return true
+  }
+  console.log('getvalue===', val);
+  return objectVal;
+}
+
+function deepMap(obj, mapfn) {
+  function recurse(obj) {
+    let res = {}
+    for (const key in obj) {
+      const value = obj[key];
+      if (value && typeof value === 'object') {
+        res[key] = recurse(value);
+      } else {
+        res[key] = mapfn(value);
+      }
+    }
+    return res
+  }
+  return recurse(obj);
+}
+
 async function getUserObject(req, fromUid, toUid) {
-  const sbUserData =  await getSunbirdIds(req, [fromUid, toUid]);
+  const sbUserData = await getSunbirdIds(req, [fromUid, toUid]);
   return {
-   createdBy: sbUserData.find(user => user.uid === fromUid),
-   ids: sbUserData.filter(user => user.uid !== fromUid).map(x => x['sunbird-oidcId']),
+    createdBy: sbUserData.find(user => user.uid === fromUid),
+    ids: sbUserData.filter(user => user.uid !== fromUid).map(x => x['sunbird-oidcId']),
   }
 }
 
