@@ -168,7 +168,7 @@ function auditEventData(refObject, resp, req) {
     })
 }
 
-function caplitilizeFirstChar(rawCdata) {
+function cdataArray(rawCdata) {
     if (rawCdata) {
         return rawCdata.map(cdata => {
             return {
@@ -181,4 +181,4 @@ function caplitilizeFirstChar(rawCdata) {
     }
 }
 
-  module.exports = {auditEventObject, auditEventData, caplitilizeFirstChar};
+  module.exports = {auditEventObject, auditEventData, cdataArray};
