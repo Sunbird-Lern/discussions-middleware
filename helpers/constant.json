@@ -1,62 +1,61 @@
 {
     "/discussion/v2/posts/:pid/vote": {
-        "response": "payload",
-        "isTypeConst": false,
-        "obj": {
-            "id": "post.pid",
-            "type": "upvote",
-            "version": "1.0"
+        "audit": {
+            "edata": {
+                "type": "payload.upvote?",
+                "props": "body#"
+            }
         },
-        "edata": {
-            "type": "upvote",
-            "props": "body"
-        },
-        "default": "Downvoted",
-        "upvote": "Upvoted"
+        "cdata": [ ],
+        "expression": {
+            "payload.upvote": "? 'upvote' : 'downvote'",
+            "body": "((obj) => {return Object.keys(obj);})"
+        }
     },
     "/discussion/v2/topics": {
-        "response": "payload",
-        "isTypeConst": true,
-        "obj": {
-            "id": "topicData.tid",
-            "type": "Topic",
-            "version": "1.0"
+        "audit": {
+            "edata": {
+                "type": "topic-created",
+                "props": "body#"
+            }
         },
-        "edata": {
-            "type": "Topic created",
-            "props": "body"
+        "cdata": [ ],
+        "expression": {
+            "body": "((obj) => {return Object.keys(obj);})"
         }
     },
     "/discussion/v2/topics/:tid": {
-        "response": "payload",
-        "isTypeConst": false,
-        "obj": {
-            "id": "pid",
-            "type": "postData.isMain",
-            "version": "1.0"
+        "audit": {
+            "edata": {
+                "type": "payload.parent?",
+                "props": "body#"
+            }
         },
-        "edata": {
-            "type": "postData.isMain",
-            "props": "body"
-        },
-        "default": "Post Replied",
-        "postData.isMain": "Topic Replied"
+        "cdata": [ ],
+        "expression": {
+            "payload.parent": "? 'post-replied' : 'topic-replied'",
+            "body": "((obj) => {return Object.keys(obj);})"
+        }
     },
     "/discussion/forum/v3/create": {
-        "response": "result.forums[0]",
-        "isTypeConst": true,
-        "obj": {
-            "id": "newCid",
-            "type": "Category",
-            "version": "1.0"
+        "audit": {
+            "edata": {
+                "type": "discussion-enabled",
+                "props": "body.category#"
+            },
+            "cdata": [
+                {
+                    "type": "result.forums[0].sbType",
+                    "id": "result.forums[0].sbIdentifier"
+                },
+                {
+                    "type": "Forum",
+                    "id": "result.forums[0].newCid"
+                }
+            ]
         },
-        "edata": {
-            "type": "Enable Discussions",
-            "props": "body.category"
-        },
-        "cdata": {
-            "type": "sbType",
-            "id": "sbIdentifier"
+        "expression": {
+            "body.category": "((obj) => {return Object.keys(obj);})"
         }
     }
 }
