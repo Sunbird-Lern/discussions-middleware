@@ -17,29 +17,26 @@ const notificationObj = async (req, resp) => {
     let value;
     if (isExpression) {
       let exprKey = val.substr(0, val.length - 1);
-      const objectVal = _.get(resp, String(exprKey));
-      if (typeof objectVal === 'object') {
-        value = true;
-      } else {
-        value = objectVal;
-      }
-      let expr = value + refObject.expression[exprKey];
+      let expr = getValue(resp, exprKey) + refObject.expression[exprKey];
       keyVal = eval(expr);
     } else if (isFunction) {
       let exprKey = val.substr(0, val.length - 1);
       const expr = refObject.expression[exprKey];
       keyVal = eval(expr)(_.get(resp, exprKey));
     } else {
-      keyVal = getValue(resp, val) || val;
+      keyVal = _.get(resp, String(val)) || val;
     }
     return keyVal;
   })
-  console.log('notification 0bj for Reply-----------', JSON.stringify(result))
+  console.log('notification payload-----------', JSON.stringify(result))
 }
 
 function getValue(resp, val) {
   const objectVal = _.get(resp, String(val));
-  return objectVal;
+    if (typeof objectVal === 'object') {
+        return true
+    }
+    return objectVal;
 }
 
 async function getUserObject(req, fromUid, toUid) {
@@ -47,7 +44,6 @@ async function getUserObject(req, fromUid, toUid) {
   return {
     createdBy: sbUserData.find(user => user.uid === fromUid),
     ids: sbUserData.filter(user => user.uid !== fromUid).map(x => x['sunbird-oidcId']),
-    id: sbUserData.filter(user => user.uid === fromUid).map(x => x['sunbird-oidcId'])
   }
 }
 

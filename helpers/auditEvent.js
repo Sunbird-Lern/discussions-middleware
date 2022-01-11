@@ -181,5 +181,4 @@ function cdataArray(rawCdata) {
     }
 }
 
-  module.exports = {auditEventObject, auditEventData, cdataArray};
-  module.exports.deepMap = deepMap;
+  module.exports = {auditEventObject, auditEventData, cdataArray, deepMap};

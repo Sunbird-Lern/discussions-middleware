@@ -14,7 +14,7 @@
             "notificationData": {
                 "ids": "payload.userDetails.ids",
                 "createdBy": {
-                    "id": "payload.userDetails.id",
+                    "id": "payload.userDetails.createdBy['sunbird-oidcId']",
                     "name": "payload.userDetails.createdBy['username']",
                     "type": "User"
                 },
@@ -81,7 +81,7 @@
             "notificationData": {
                 "ids": "payload.userDetails.ids",
                 "createdBy": {
-                    "id": "payload.userDetails.id",
+                    "id": "payload.userDetails.createdBy['sunbird-oidcId']",
                     "name": "payload.userDetails.createdBy['username']",
                     "type": "User"
                 },
