@@ -6,10 +6,52 @@
                 "props": "body#"
             }
         },
-        "cdata": [ ],
+        "cdata": [],
+        "fromUid": "payload.fromuid",
+        "toUid": "payload.post.uid",
+        "notificationObj": {
+            "headers": "payload.headers#",
+            "notificationData": {
+                "ids": "payload.userDetails.ids",
+                "createdBy": {
+                    "id": "payload.userDetails.createdBy['sunbird-oidcId']",
+                    "name": "payload.userDetails.createdBy['username']",
+                    "type": "User"
+                },
+                "action": {
+                    "category": "discussion-forum",
+                    "type": "member-voted",
+                    "template": {
+                        "type": "JSON",
+                        "params": {
+                            "param1": "payload.userDetails.createdBy['username']",
+                            "param2": "payload.upvote?",
+                            "param3": ""
+                        }
+                    }
+                },
+                "additionalInfo": {
+                    "context": {},
+                    "category": {
+                        "cid": "",
+                        "title": "",
+                        "pid": ""
+                    },
+                    "topic": {
+                        "tid": "payload.post.tid",
+                        "title": "payload.post.title"
+                    },
+                    "post": {
+                        "pid": "payload.post.pid",
+                        "title": "payload.post.title"
+                    }
+                }
+            }
+        },
         "expression": {
             "payload.upvote": "? 'upvote' : 'downvote'",
-            "body": "((obj) => {return Object.keys(obj);})"
+            "body": "((obj) => {return Object.keys(obj);})",
+            "payload.headers": "((obj) => {return {'sid': obj['x-session-id'] || obj['X-Session-Id'], 'traceID': obj['x-request-id']};})"
         }
     },
     "/discussion/v2/topics": {
@@ -19,7 +61,7 @@
                 "props": "body#"
             }
         },
-        "cdata": [ ],
+        "cdata": [],
         "expression": {
             "body": "((obj) => {return Object.keys(obj);})"
         }
@@ -31,10 +73,51 @@
                 "props": "body#"
             }
         },
-        "cdata": [ ],
+        "cdata": [],
+        "fromUid": "payload.user.uid",
+        "toUid": "payload.topic.uid",
+        "notificationObj": {
+            "headers": "payload.headers#",
+            "notificationData": {
+                "ids": "payload.userDetails.ids",
+                "createdBy": {
+                    "id": "payload.userDetails.createdBy['sunbird-oidcId']",
+                    "name": "payload.userDetails.createdBy['username']",
+                    "type": "User"
+                },
+                "action": {
+                    "category": "discussion-forum",
+                    "type": "member-replied",
+                    "template": {
+                        "type": "JSON",
+                        "params": {
+                            "param1": "payload.userDetails.createdBy['username']",
+                            "param2": "replied",
+                            "param3": "payload.parent?"
+                        }
+                    }
+                },
+                "additionalInfo": {
+                    "category": {
+                        "cid": "payload.cid",
+                        "title": "",
+                        "pid": ""
+                    },
+                    "topic": {
+                        "tid": "payload.topic.tid",
+                        "title": "payload.topic.title"
+                    },
+                    "post": {
+                        "pid": "payload.pid",
+                        "title": "payload.topic.title"
+                    }
+                }
+            }
+        },
         "expression": {
             "payload.parent": "? 'post-replied' : 'topic-replied'",
-            "body": "((obj) => {return Object.keys(obj);})"
+            "body": "((obj) => {return Object.keys(obj);})",
+            "payload.headers": "((obj) => {return {'sid': obj['x-session-id'] || obj['X-Session-Id'], 'traceID': obj['x-request-id']};})"
         }
     },
     "/discussion/forum/v3/create": {

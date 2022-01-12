@@ -38,6 +38,8 @@ app.post(`${BASE_REPORT_URL}/forum/tags`, proxyObject());
 app.post(`${BASE_REPORT_URL}/privileges/v2/copy`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v3/user/profile`, proxyObject());
 
+app.post(`${BASE_REPORT_URL}/forum/v2/users/details`, proxyObject());
+
 app.post(`${BASE_REPORT_URL}/forum/v3/group/membership`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v3/groups/users`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v3/category/:cid/privileges`, proxyObject());
