@@ -12,7 +12,6 @@ const telemetryHelper = require('../helpers/telemetryHelper.js')
 const methodSlug = '/update';
 const nodebbServiceUrl = NODEBB_SERVICE_URL+ nodebb_api_slug;
 const _ = require('lodash')
-const triggerNotification = true;
 
 let logObj = {
   "eid": "LOG",
@@ -95,7 +94,7 @@ app.get(`${BASE_REPORT_URL}/user/admin/downvoted`, proxyObject());
 
 // topics apis
 app.post(`${BASE_REPORT_URL}/v2/topics`, proxyObject());
-app.post(`${BASE_REPORT_URL}/v2/topics/:tid`, proxyObject(triggerNotification));
+app.post(`${BASE_REPORT_URL}/v2/topics/:tid`, proxyObject());
 app.post(`${BASE_REPORT_URL}/v2/topics/update/:tid`, proxyObjectForPutApi());
 app.delete(`${BASE_REPORT_URL}/v2/topics/:tid`, proxyObject());
 app.put(`${BASE_REPORT_URL}/v2/topics/:tid/state`, proxyObject());
@@ -130,8 +129,8 @@ app.post(`${BASE_REPORT_URL}/v2/posts/:pid`, isEditablePost(), proxyObjectForPut
 app.delete(`${BASE_REPORT_URL}/v2/posts/:pid`,isEditablePost() , proxyObject());
 app.put(`${BASE_REPORT_URL}/v2/posts/:pid/state`, proxyObject());
 app.delete(`${BASE_REPORT_URL}/v2/posts/:pid/state`, proxyObject());
-app.post(`${BASE_REPORT_URL}/v2/posts/:pid/vote`, proxyObject(triggerNotification));
-app.delete(`${BASE_REPORT_URL}/v2/posts/:pid/vote`, proxyObject(triggerNotification));
+app.post(`${BASE_REPORT_URL}/v2/posts/:pid/vote`, proxyObject());
+app.delete(`${BASE_REPORT_URL}/v2/posts/:pid/vote`, proxyObject());
 app.post(`${BASE_REPORT_URL}/v2/posts/:pid/bookmark`, proxyObject());
 app.delete(`${BASE_REPORT_URL}/v2/posts/:pid/bookmark`, proxyObject());
 
@@ -192,7 +191,7 @@ function isEditablePost() {
 }
 
 
-function proxyObject(triggerNotification) {
+function proxyObject() {
   return proxy(nodebbServiceUrl, {
     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
     proxyReqPathResolver: function (req) {
@@ -230,7 +229,7 @@ function proxyObject(triggerNotification) {
           telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode)     
           return resCode;
         } else {
-          return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null, data, triggerNotification);
+          return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null, data);
         }
       } catch (err) {
         console.log('catch', err)

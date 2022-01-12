@@ -1,5 +1,5 @@
 const dateFormat = require('dateformat')
-const { Authorization } = require('../helpers/environmentVariablesHelper');
+const { Authorization, enable_notifications } = require('../helpers/environmentVariablesHelper');
 const { logger } = require('@project-sunbird/logger');
 const telemetryHelper = require('../helpers/telemetryHelper.js')
 const sbLogger = require('sb_logger_util');
@@ -59,7 +59,7 @@ const decorateRequestHeadersForPutApi = function () {
   }
 }
 
-const handleSessionExpiry = (proxyRes, proxyResData, req, res, error, data, triggerNotification = false) => {
+const handleSessionExpiry = (proxyRes, proxyResData, req, res, error, data) => {
   let edata = {
     "type": "log",
     "level": "INFO",
@@ -102,7 +102,8 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, error, data, trig
     logger.info({message: `${req.originalUrl} successfull`});
     logMessage(edata, req);
     auditEventObject(req, proxyResData);
-    if (triggerNotification) {
+    const refObject = _.get(evObject, req.route.path);
+    if (enable_notifications && _.get(refObject, 'notificationObj')) {
       const resData = JSON.parse(proxyResData.toString('utf8'));
       notification.notificationObj(req, resData);
     }
