@@ -557,35 +557,35 @@ describe('Nodebb Routes', () => {
     //         });
     // });
 
-    it('it should not create new post', (done) => {
-        const payload = {uid:1}
-        nock(nodebbUrl)
-            .post('/v2/posts/1', payload)
-            .reply(400, mockData.errorResponse);
+    // it('it should not create new post', (done) => {
+    //     const payload = {uid:1}
+    //     nock(nodebbUrl)
+    //         .post('/v2/posts/1', payload)
+    //         .reply(400, mockData.errorResponse);
 
-        chai.request(server)
-            .post('/discussion/v2/posts/1')
-            .send(payload)
-            .end((err, res) => {
-                expect(res.body).to.be.a('object');
-                expect(res.status).to.equal(400);
-                done();
-            });
-    });
+    //     chai.request(server)
+    //         .post('/discussion/v2/posts/1')
+    //         .send(payload)
+    //         .end().then(res => {
+    //             expect(res.body).to.be.a('object');
+    //             expect(res.status).to.equal(400);
+    //             done();
+    //         })
+    // });
 
-    it('it should not delete post', (done) => {
-        nock(nodebbUrl)
-            .delete('/v2/posts/1?uid=1')
-            .reply(400, mockData.errorMessage);
+    // it('it should not delete post', (done) => {
+    //     nock(nodebbUrl)
+    //         .delete('/v2/posts/1?uid=1')
+    //         .reply(400, mockData.errorMessage);
 
-        chai.request(server)
-            .delete('/discussion/v2/posts/12345')
-            .end((err, res) => {
-                expect(res.body).to.be.a('object');
-                expect(res.status).to.equal(400);
-                done();
-            });
-    });
+    //     chai.request(server)
+    //         .delete('/discussion/v2/posts/12345')
+    //         .end((err, res) => {
+    //             expect(res.body).to.be.a('object');
+    //             expect(res.status).to.equal(400);
+    //             done();
+    //         });
+    // });
     it('it should vote the post', (done) => {
         const payload = {delta: 1};
         nock(nodebbUrl)
