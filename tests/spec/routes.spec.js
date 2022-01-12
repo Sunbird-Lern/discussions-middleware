@@ -556,7 +556,7 @@ describe('Nodebb Routes', () => {
     //             done();
     //         });
     // });
-
+    // post/pid/:pid api expired 
     // it('it should not create new post', (done) => {
     //     const payload = {uid:1}
     //     nock(nodebbUrl)
