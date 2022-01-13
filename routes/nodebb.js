@@ -222,7 +222,7 @@ function proxyObject() {
           edata['message'] = `Request url ${req.originalUrl} not found`;
           logMessage(edata, req);
           logger.info({ message: `${req.originalUrl} Not found ${data}` })
-          const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);
+          const resCode = proxyUtils.errorResponse(req, res, proxyRes, proxyResData, null);
           // logging the Error events
           telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode)     
           return resCode;
@@ -277,10 +277,10 @@ function proxyObjectForPutApi() {
           edata['message'] = `Request url ${req.originalUrl} not found`;
           logMessage(edata, req);
           logger.info({message: `${req.originalUrl} Not found ${data}`})
-          const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);
+          const resCode = proxyUtils.errorResponse(req, res, proxyRes, proxyResData, null);
           // logging the Error events
           telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode) 
-          return proxyUtils.errorResponse(req, res, proxyRes, null);
+          return resCode;
         } else {
           edata['message'] = `${req.originalUrl} successfull`;
           logMessage(edata, req);
@@ -327,7 +327,7 @@ function proxyObjectWithoutAuth() {
           edata['message'] = `Request url ${req.originalUrl} not found`;
           logMessage(edata, req);
           logger.info({ message: `${req.originalUrl} Not found ${data}` })
-          const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);
+          const resCode = proxyUtils.errorResponse(req, res, proxyRes, proxyResData, null);
           logTelemetryEvent(req, res, data, proxyResData, proxyRes, resCode)     
           return resCode;
         } else {
