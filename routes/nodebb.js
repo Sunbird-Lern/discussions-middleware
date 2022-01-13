@@ -162,27 +162,29 @@ function isEditablePost() {
     logger.info(req.body);
     const uid = parseInt(req.body.uid || req.query.uid, 10);
     const pid = parseInt(req.params.pid, 10);
-    const url = `${req.protocol}://${req.get('host')}${BASE_REPORT_URL}/v3/posts/${pid}`
+    let baseUrl = `${req.protocol}://${req.get('host')}${BASE_REPORT_URL}`;
+
     let options = {
-      url: url,
+      url: '',
       method: 'GET',
       json: true
     };
-    logger.info(options)
     let response;
     try {
+      // INFO: This will support nodebb version v1.18.6.
+      options.url = baseUrl+`/v3/posts/${pid}`;
       response = await getPostDetails(options);
     } catch(error) {
         if (error.statusCode === 404) {
-          const url = `${req.protocol}://${req.get('host')}${BASE_REPORT_URL}/post/pid/${pid}`;
-          options.url = url;
+          //  DEPRECATE-V1.16.0: This api will support only for nodebb version v1.16.0 and can be removed once nodebb updated to latest version.
+          options.url  = baseUrl+`/post/pid/${pid}`;
           response = await getPostDetails(options);
         } else {
           next(error);
         }
-    }
-
-    logger.info(response)
+    };
+    
+    logger.info({message: `Getting Post details using: ${options.url} `});
     if (response.uid === uid && response.pid === pid) {
       logger.info({message: 'Uid got matched and the post can be deleted'})
       next();
