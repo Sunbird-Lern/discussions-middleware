@@ -124,7 +124,8 @@ app.delete(`${BASE_REPORT_URL}/v2/groups/:slug/membership/:uid`, proxyObject());
 
 
 // post apis 
-app.get(`${BASE_REPORT_URL}/post/pid/:pid`, proxyObjectWithoutAuth());
+app.get(`${BASE_REPORT_URL}/post/pid/:pid`, proxyObjectWithoutAuth()); // DEPRECATE-V1.16.0: This api used for nodebb version v1.16.0 and will be deprecated in the next upgrade.
+app.get(`${BASE_REPORT_URL}/v3/posts/:pid`, proxyObjectWithoutAuth()); // INFO: This api used for nodebb version v1.18.6
 app.post(`${BASE_REPORT_URL}/v2/posts/:pid`, isEditablePost(), proxyObjectForPutApi());
 app.delete(`${BASE_REPORT_URL}/v2/posts/:pid`,isEditablePost() , proxyObject());
 app.put(`${BASE_REPORT_URL}/v2/posts/:pid/state`, proxyObject());
@@ -159,37 +160,61 @@ app.get(`${BASE_REPORT_URL}/user/uid/:uid`, proxyObject());
 
 function isEditablePost() {
   logger.info({message: "isEditablePost method called"});
-  return function(req, res, next) {
+  return async function(req, res, next) {
     logger.info(req.body);
     const uid = parseInt(req.body.uid || req.query.uid, 10);
     const pid = parseInt(req.params.pid, 10);
-    const url = `${req.protocol}://${req.get('host')}${BASE_REPORT_URL}/post/pid/${pid}`
-    const options = {
-      url: url,
+    let baseUrl = `${req.protocol}://${req.get('host')}${BASE_REPORT_URL}`;
+
+    let options = {
+      url: '',
       method: 'GET',
       json: true
     };
-    logger.info(options)
-      request(options, (error, response, body) => {
-        if(error) {
-          logger.info({message: `Error while call the api ${options.url}`})
-          logger.info({message: `Error message:  ${error.message}`})
-          next(error);
-          return;
-        }
-        logger.info(body)
-        if (body.uid === uid && body.pid === pid) {
-          logger.info({message: 'Uid got matched and the post can be deleted'})
-          next();
+    let response;
+    try {
+      // INFO: This will support nodebb version v1.18.6.
+      options.url = baseUrl+`/v3/posts/${pid}`;
+      response = await getPostDetails(options);
+    } catch(error) {
+        if (error.statusCode === 404) {
+          //  DEPRECATE-V1.16.0: This api will support only for nodebb version v1.16.0 and can be removed once nodebb updated to latest version.
+          logger.info({"message": 'Old nodebb V.1.16 is used.'});
+          options.url  = baseUrl+`/post/pid/${pid}`;
+          response = await getPostDetails(options);
         } else {
-          logger.info({message: 'Uid is not matched and you can not delete the post'})
-          res.status(400)
-          res.send(responseObj)
+          next(error);
         }
-      });
+    };
+    
+    logger.info({message: `Getting Post details using: ${options.url} `});
+    if (response.uid === uid && response.pid === pid) {
+      logger.info({message: 'Uid got matched and the post can be deleted'})
+      next();
+    } else {
+      logger.info({message: 'Uid is not matched and you can not delete the post'})
+      res.status(400)
+      res.send(responseObj)
+    }
   }
 }
 
+function getPostDetails(options) {
+  if (options) {
+    return new Promise((resolve, reject) => {
+      request(options, (error, response, body) => {
+        if(error || response.statusCode === 404) {
+          logger.info({message: `Error while call the api ${options.url}`})
+          logger.info({message: `Error message:  ${error}`})
+          reject(response);
+          return;
+        }
+        const result = _.get(body, 'response') || body;
+        resolve(result);
+       });
+    });
+  }
+}
 
 function proxyObject() {
   return proxy(nodebbServiceUrl, {
@@ -329,13 +354,11 @@ function proxyObjectWithoutAuth() {
           edata['message'] = `Request url ${req.originalUrl} not found`;
           logMessage(edata, req);
           logger.info({ message: `${req.originalUrl} Not found ${data}` })
-          const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);
-          logTelemetryEvent(req, res, data, proxyResData, proxyRes, resCode)     
+          const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);   
           return resCode;
         } else {
           edata['message'] = `${req.originalUrl} successfull`;
           const resCode = proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null)
-          logTelemetryEvent(req, res, data, proxyResData, proxyRes, resCode)
           logMessage(edata, req);
           return resCode;
         }
