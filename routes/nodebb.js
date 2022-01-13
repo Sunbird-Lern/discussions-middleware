@@ -124,8 +124,8 @@ app.delete(`${BASE_REPORT_URL}/v2/groups/:slug/membership/:uid`, proxyObject());
 
 
 // post apis 
-app.get(`${BASE_REPORT_URL}/post/pid/:pid`, proxyObjectWithoutAuth());
-app.get(`${BASE_REPORT_URL}/v3/posts/:pid`, proxyObjectWithoutAuth());
+app.get(`${BASE_REPORT_URL}/post/pid/:pid`, proxyObjectWithoutAuth()); // DEPRECATE-V1.16.0: This api used for nodebb version v1.16.0 and will be deprecated in the next upgrade.
+app.get(`${BASE_REPORT_URL}/v3/posts/:pid`, proxyObjectWithoutAuth()); // INFO: This api used for nodebb version v1.18.6
 app.post(`${BASE_REPORT_URL}/v2/posts/:pid`, isEditablePost(), proxyObjectForPutApi());
 app.delete(`${BASE_REPORT_URL}/v2/posts/:pid`,isEditablePost() , proxyObject());
 app.put(`${BASE_REPORT_URL}/v2/posts/:pid/state`, proxyObject());
@@ -179,6 +179,7 @@ function isEditablePost() {
     } catch(error) {
         if (error.statusCode === 404) {
           //  DEPRECATE-V1.16.0: This api will support only for nodebb version v1.16.0 and can be removed once nodebb updated to latest version.
+          logger.info({"message": 'Old nodebb V.1.16 is used.'});
           options.url  = baseUrl+`/post/pid/${pid}`;
           response = await getPostDetails(options);
         } else {
