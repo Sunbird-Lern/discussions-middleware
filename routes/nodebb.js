@@ -261,7 +261,7 @@ function proxyObject() {
         edata['level'] = "Error";
         edata['message'] = `Error: ${err.message}, Url:  ${req.originalUrl}`;
         logMessage(edata, req);
-        logger.info({ message: `Error while htting the ${req.url}  ${err.message}` });
+        // logger.info({ message: `Error while htting the ${req.url}  ${err.message}` });
         return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req,res, err);
       }
     }
