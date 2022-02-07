@@ -5,7 +5,7 @@ const telemetry = require('./telemetryHelper');
 let auditEventObject = {
     _eid: 'AUDIT',
     _ets: '',
-    _ver: '1.0',
+    _ver: '3.0',
     _mid: '',
     _actor: {},
     _context: {},
@@ -102,7 +102,7 @@ let auditEventObject = {
     get auditEventObj() {
         const data = {
             eid: this._eid,
-            ets: dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
+            ets: Date.now(),
             ver: this._ver,
             mid: this._mid,
             actor: this._actor,
