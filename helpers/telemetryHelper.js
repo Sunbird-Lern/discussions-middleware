@@ -91,6 +91,7 @@ module.exports = {
       actor.id = req.headers['x-consumer-id'] || req.headers['x-authenticated-userid'] || telemtryEventConfig.default_userid
       actor.type = req.headers['x-consumer-username'] || telemtryEventConfig.default_username
     }
+    actor.type = actor.type.charAt(0).toUpperCase() + actor.type.slice(1);
     return actor
   },
 
