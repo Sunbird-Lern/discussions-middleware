@@ -1391,5 +1391,58 @@ module.exports = {
     "code": "not-found",
     "message": "Invalid API call",
     "params": {}
-} 
+},
+nbbUserDetailsById: {
+    "id": ".discussions.api.forum.v2.users.details",
+    "ver": "1.0",
+    "ets": 1644401072015,
+    "params": {
+        "resmsgid": "ceaa53ca-9753-4efd-952c-c3bb77baf953",
+        "msgid": "",
+        "status": "Success"
+    },
+    "responseCode": "OK",
+    "result": [
+        {
+            "uid": 3,
+            "username": "naveen123_zpev",
+            "userslug": "naveen123_zpev",
+            "email": "naveen123_zpev@staging.sunbirded.org",
+            "email:confirmed": 0,
+            "joindate": 1635143829968,
+            "lastonline": 1643631841003,
+            "picture": null,
+            "icon:bgColor": "#2196f3",
+            "fullname": null,
+            "location": null,
+            "birthday": null,
+            "website": null,
+            "aboutme": null,
+            "signature": null,
+            "uploadedpicture": null,
+            "profileviews": 4,
+            "reputation": -19,
+            "postcount": 813,
+            "topiccount": 615,
+            "lastposttime": 1642656022355,
+            "banned": false,
+            "banned:expire": 0,
+            "status": "offline",
+            "flags": null,
+            "followerCount": 0,
+            "followingCount": 0,
+            "cover:url": null,
+            "cover:position": null,
+            "groupTitle": null,
+            "sunbird-oidcId": "d9b6751b-7d49-42e0-840a-209acff2dcee",
+            "displayname": "naveen123_zpev",
+            "groupTitleArray": [],
+            "icon:text": "N",
+            "joindateISO": "2021-10-25T06:37:09.968Z",
+            "lastonlineISO": "2022-01-31T12:24:01.003Z",
+            "banned_until": 0,
+            "banned_until_readable": "Not Banned"
+        }
+    ]
+}  
 }
