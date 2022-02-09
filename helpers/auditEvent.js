@@ -37,8 +37,8 @@ let auditEventObject = {
         this._channel = _.get(req.headers, 'x-channel-id') || '';
         this._rollup = { l1: _.get(req.headers, 'x-channel-id') || '' };
         const obj = {
-            id: 'discussion-middleware',
-            pid:  _.get(req.headers, 'x-app-id') || '',
+            id: _.get(req.headers, 'x-app-id') || '', 
+            pid:  'discussion-middleware',
             ver: '4.6.0'
         };
         this._pdata = obj;
