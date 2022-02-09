@@ -33,12 +33,16 @@ let auditEventObject = {
     },
     set reqData (req) {
         this._mid = req.headers['x-request-id'];
-        this._actor = telemetry.getTelemetryActorData(req);
+        const actorData = telemetry.getTelemetryActorData(req);
+        this._actor = {
+            "id": _.get(actorData, 'id'),
+            "type": ""
+          };
         this._channel = _.get(req.headers, 'x-channel-id') || '';
         this._rollup = { l1: _.get(req.headers, 'x-channel-id') || '' };
         const obj = {
-            id: 'discussion-middleware',
-            pid:  _.get(req.headers, 'x-app-id') || '',
+            id: _.get(req.headers, 'x-app-id') || '', 
+            pid:  'discussion-middleware',
             ver: '4.6.0'
         };
         this._pdata = obj;
@@ -53,7 +57,11 @@ let auditEventObject = {
         return this._mid;
     },
     set actor(req) {
-       this._actor = telemetry.getTelemetryActorData(req);
+        const actorData = telemetry.getTelemetryActorData(req);
+        this._actor = {
+            "id": _.get(actorData, 'id'),
+            "type": ""
+          };
     },
     get actor() {
         return this._actor;
