@@ -1,6 +1,7 @@
 const dateFormat = require('dateformat');
 const _ = require('lodash');
 const telemetry = require('./telemetryHelper');
+const package = require('../package.json');
 
 let auditEventObject = {
     _eid: 'AUDIT',
@@ -39,7 +40,7 @@ let auditEventObject = {
         const obj = {
             id: _.get(req.headers, 'x-app-id') || '', 
             pid:  'discussion-middleware',
-            ver: '4.6.0'
+            ver: _.get(package, 'version')
         };
         this._pdata = obj;
     },

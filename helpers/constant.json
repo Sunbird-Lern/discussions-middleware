@@ -2,7 +2,7 @@
     "/discussion/v2/posts/:pid/vote": {
         "audit": {
             "edata": {
-                "type": "payload.upvote?",
+                "state": "payload.upvote?",
                 "props": "body#"
             }
         },
@@ -57,7 +57,7 @@
     "/discussion/v2/topics": {
         "audit": {
             "edata": {
-                "type": "topic-created",
+                "state": "topic-created",
                 "props": "body#"
             }
         },
@@ -69,7 +69,7 @@
     "/discussion/v2/topics/:tid": {
         "audit": {
             "edata": {
-                "type": "payload.parent?",
+                "state": "payload.parent?",
                 "props": "body#"
             }
         },
@@ -123,7 +123,7 @@
     "/discussion/forum/v3/create": {
         "audit": {
             "edata": {
-                "type": "discussion-enabled",
+                "state": "discussion-enabled",
                 "props": "body.category#"
             },
             "cdata": [
