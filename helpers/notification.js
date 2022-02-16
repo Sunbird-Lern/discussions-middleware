@@ -66,7 +66,7 @@ function getSunbirdIds(req, uids) {
         console.log(error);
         reject(error);
       }
-      resolve(body.result);
+      resolve(_.get(body, 'result'));
     });
   })
 }

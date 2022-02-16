@@ -1,11 +1,12 @@
 const dateFormat = require('dateformat');
 const _ = require('lodash');
 const telemetry = require('./telemetryHelper');
+const packageData = require('../package.json');
 
 let auditEventObject = {
     _eid: 'AUDIT',
     _ets: '',
-    _ver: '1.0',
+    _ver: '3.0',
     _mid: '',
     _actor: {},
     _context: {},
@@ -37,9 +38,9 @@ let auditEventObject = {
         this._channel = _.get(req.headers, 'x-channel-id') || '';
         this._rollup = { l1: _.get(req.headers, 'x-channel-id') || '' };
         const obj = {
-            id: 'discussion-middleware',
-            pid:  _.get(req.headers, 'x-app-id') || '',
-            ver: '4.6.0'
+            id: _.get(req.headers, 'x-app-id') || '', 
+            pid:  'discussion-middleware',
+            ver: _.get(packageData, 'version')
         };
         this._pdata = obj;
     },
@@ -102,7 +103,7 @@ let auditEventObject = {
     get auditEventObj() {
         const data = {
             eid: this._eid,
-            ets: dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
+            ets: Date.now(),
             ver: this._ver,
             mid: this._mid,
             actor: this._actor,

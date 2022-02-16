@@ -324,6 +324,26 @@ describe('Nodebb Routes', () => {
             });
     });
 
+    it('it should get the sunbird user details', (done) => {
+        const payload = {
+            "request": {
+                "uids" : [3]
+            }
+        }
+        nock(nodebbUrl)
+            .post('/forum/v2/users/details', payload)
+            .reply(200, mockData.nbbUserDetailsById);
+
+        chai.request(server)
+            .post('/discussion/forum/v2/users/details')
+            .send(payload)
+            .end((err, res) => {
+                expect(res.body).to.be.a('object');
+                expect(res.status).to.equal(200);
+                done();
+            });
+    });
+
     // it('it should update the topic', (done) => {
     //     const topic = {
     //         pid: 1, content: "test content"
