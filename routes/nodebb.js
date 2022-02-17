@@ -11,6 +11,7 @@ const Telemetry = require('../libs/sb_telemetry_util/telemetryService.js')
 const telemetry = new Telemetry()
 const methodSlug = '/update';
 const nodebbServiceUrl = NODEBB_SERVICE_URL + nodebb_api_slug;
+const kafkaProducer = require('./kafka')
 const _ = require('lodash')
 
 let logObj = {
@@ -155,6 +156,11 @@ app.get(`${BASE_REPORT_URL}/user/username/:username`, proxyObject());
 
 app.post(`${BASE_REPORT_URL}/user/v1/create`, proxyObject());
 app.get(`${BASE_REPORT_URL}/user/uid/:uid`, proxyObject());
+app.post(`${BASE_REPORT_URL}/moderation`, (req, res) => {
+  
+  return kafkaProducer(req, res)
+})
+
 
 function isEditablePost() {
   logger.info({ message: "isEditablePost method called" });
@@ -304,10 +310,10 @@ function proxyObjectWithoutAuth() {
       if (query) {
         return require('url').parse(nodebbServiceUrl+ urlParam).path
       } else {
-		    const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+        const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
         const proxyUrl = require('url').parse(nodebbServiceUrl + urlParam);
-        logger.info({message: `Proxy req url :  ${incomingUrl}`});
-        logger.info({message: `Upstream req url :  ${proxyUrl.href}`});
+        logger.info({ message: `Proxy req url :  ${incomingUrl}` });
+        logger.info({ message: `Upstream req url :  ${proxyUrl.href}` });
         return proxyUrl.path;
       }
     },
