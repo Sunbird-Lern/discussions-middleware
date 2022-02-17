@@ -36,6 +36,8 @@ app.post(`${BASE_REPORT_URL}/forum/v2/remove`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v3/create`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/tags`, proxyObject())
 app.post(`${BASE_REPORT_URL}/privileges/v2/copy`, proxyObject());
+app.post(`${BASE_REPORT_URL}/forum/v3/user/profile`, proxyObject());
+
 
 app.post(`${BASE_REPORT_URL}/forum/v3/group/membership`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v3/groups/users`, proxyObject());
@@ -121,7 +123,7 @@ app.delete(`${BASE_REPORT_URL}/v2/groups/:slug/membership/:uid`, proxyObject());
 
 
 // post apis 
-app.get(`${BASE_REPORT_URL}/post/pid/:pid`, proxyObject());
+app.get(`${BASE_REPORT_URL}/post/pid/:pid`, proxyObjectWithoutAuth());
 app.post(`${BASE_REPORT_URL}/v2/posts/:pid`, isEditablePost(), proxyObjectForPutApi());
 app.delete(`${BASE_REPORT_URL}/v2/posts/:pid`, isEditablePost(), proxyObject());
 app.put(`${BASE_REPORT_URL}/v2/posts/:pid/state`, proxyObject());
@@ -288,6 +290,58 @@ function proxyObjectForPutApi() {
         logMessage(edata, req);
         logger.info({ message: `Error while htting the ${req.url}  ${err.message}` });
         return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, err);
+      }
+    }
+  })
+}
+
+function proxyObjectWithoutAuth() {
+  return proxy(nodebbServiceUrl, {
+    proxyReqPathResolver: function (req) {
+      let urlParam = req.originalUrl.replace(BASE_REPORT_URL, '');
+      logger.info({"message": `request comming from ${req.originalUrl}`})
+      let query = require('url').parse(req.url).query;
+      if (query) {
+        return require('url').parse(nodebbServiceUrl+ urlParam).path
+      } else {
+		    const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+        const proxyUrl = require('url').parse(nodebbServiceUrl + urlParam);
+        logger.info({message: `Proxy req url :  ${incomingUrl}`});
+        logger.info({message: `Upstream req url :  ${proxyUrl.href}`});
+        return proxyUrl.path;
+      }
+    },
+    userResDecorator: (proxyRes, proxyResData, req, res) => {
+      let edata = {
+        "type": "log",
+        "level": "INFO",
+        "requestid": req.headers['x-request-id'] || '',
+        "message": ''
+      };
+      try {
+        logger.info({ message: `request came from ${req.originalUrl}` })
+        const data = proxyResData.toString('utf8');
+        if (proxyRes.statusCode === 404) {
+          edata['message'] = `Request url ${req.originalUrl} not found`;
+          logMessage(edata, req);
+          logger.info({ message: `${req.originalUrl} Not found ${data}` })
+          const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);
+          logTelemetryEvent(req, res, data, proxyResData, proxyRes, resCode)     
+          return resCode;
+        } else {
+          edata['message'] = `${req.originalUrl} successfull`;
+          const resCode = proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null)
+          logTelemetryEvent(req, res, data, proxyResData, proxyRes, resCode)
+          logMessage(edata, req);
+          return resCode;
+        }
+      } catch (err) {
+        console.log('catch', err)
+        edata['level'] = "Error";
+        edata['message'] = `Error: ${err.message}, Url:  ${req.originalUrl}`;
+        logMessage(edata, req);
+        logger.info({ message: `Error while htting the ${req.url}  ${err.message}` });
+        return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req,res, err);
       }
     }
   })
