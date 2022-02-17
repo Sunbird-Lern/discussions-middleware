@@ -40,18 +40,19 @@ let error_obj = {
 */
 const decorateRequestHeaders = function () {
   return function (proxyReqOpts) {
-    logger.info({ message: `adding headers in the request ${proxyReqOpts.path}` });
-    // if (userCreate === proxyReqOpts.path || groupCreate === proxyReqOpts.path) {
-    proxyReqOpts.headers.Authorization = 'Bearer ' + Authorization;
-    // }
+    console.log("Before appending master token:", JSON.stringify(proxyReqOpts.headers))
+    logger.info({message: `adding headers in the request ${proxyReqOpts.path}`});
+      proxyReqOpts.headers.Authorization = 'Bearer ' + Authorization;
+      console.log("After appending master token:", JSON.stringify(proxyReqOpts.headers))
     return proxyReqOpts;
   }
 }
 
 const decorateRequestHeadersForPutApi = function () {
   return function (proxyReqOpts) {
-    logger.info({ message: `Changing the method name for the request ${proxyReqOpts.path}` });
-    proxyReqOpts.method = 'PUT';
+    logger.info({message: `Changing the method name for the request ${proxyReqOpts.path}`});
+      proxyReqOpts.method = 'PUT';
+      proxyReqOpts.headers.Authorization = 'Bearer ' + Authorization;
     return proxyReqOpts;
   }
 }

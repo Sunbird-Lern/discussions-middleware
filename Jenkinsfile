@@ -27,7 +27,7 @@ node('build-slave') {
                    sh('git submodule update --init')
                    sh('git submodule update --init --recursive --remote')
                    sh('chmod 777 build.sh')
-                   sh("./build.sh ${build_tag} ${env.NODE_NAME} ${hub_org}")
+                   sh("/bin/bash build.sh ${build_tag} ${env.NODE_NAME} ${hub_org}")
                   }
 
                 stage('ArchiveArtifacts') {
