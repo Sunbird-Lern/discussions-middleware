@@ -14,7 +14,7 @@ const kafka = new Kafka({ clientId, brokers })
 const producer = kafka.producer()
 
 // we define an async function that writes a new message each second
-const produce = async (req, res) => {
+exports.produce = async (req, res) => {
     await producer.connect()
 
     // // after the produce has connected, we start an interval timer
@@ -40,7 +40,7 @@ const produce = async (req, res) => {
 // is yet to receive
 const consumer = kafka.consumer({ groupId: clientId })
 
-const consume = async () => {
+exports.consume = async (req, res) => {
     // first, we wait for the client to connect and subscribe to the given topic
     await consumer.connect()
     await consumer.subscribe({ topic })
@@ -48,10 +48,9 @@ const consume = async () => {
         // this function is called every time the consumer gets a new message
         eachMessage: ({ message }) => {
             // here, we just log the message to the standard output
-            console.log(`received message: ${message.value}`)
+            return res.send(message.value)
         },
     })
 }
 
 
-module.exports = produce

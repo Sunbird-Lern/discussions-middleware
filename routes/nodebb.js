@@ -11,7 +11,7 @@ const Telemetry = require('../libs/sb_telemetry_util/telemetryService.js')
 const telemetry = new Telemetry()
 const methodSlug = '/update';
 const nodebbServiceUrl = NODEBB_SERVICE_URL + nodebb_api_slug;
-const kafkaProducer = require('./kafka')
+const kafka = require('./kafka')
 const _ = require('lodash')
 
 let logObj = {
@@ -156,10 +156,17 @@ app.get(`${BASE_REPORT_URL}/user/username/:username`, proxyObject());
 
 app.post(`${BASE_REPORT_URL}/user/v1/create`, proxyObject());
 app.get(`${BASE_REPORT_URL}/user/uid/:uid`, proxyObject());
-app.post(`${BASE_REPORT_URL}/moderation`, (req, res) => {
-  
-  return kafkaProducer(req, res)
-})
+app.post(`${BASE_REPORT_URL}/moderation/producer`, function (req, res) { kafkaProducer(req, res) })
+app.get(`${BASE_REPORT_URL}/moderation/consumer`, function (req, res) { kafkaConsumer(req, res) })
+
+function kafkaProducer(req, res) {
+  return kafka.produce(req, res)
+}
+
+function kafkaConsumer(req, res) {
+  return kafka.consume(req,res)
+}
+
 
 
 function isEditablePost() {
@@ -305,10 +312,10 @@ function proxyObjectWithoutAuth() {
   return proxy(nodebbServiceUrl, {
     proxyReqPathResolver: function (req) {
       let urlParam = req.originalUrl.replace(BASE_REPORT_URL, '');
-      logger.info({"message": `request comming from ${req.originalUrl}`})
+      logger.info({ "message": `request comming from ${req.originalUrl}` })
       let query = require('url').parse(req.url).query;
       if (query) {
-        return require('url').parse(nodebbServiceUrl+ urlParam).path
+        return require('url').parse(nodebbServiceUrl + urlParam).path
       } else {
         const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
         const proxyUrl = require('url').parse(nodebbServiceUrl + urlParam);
@@ -332,7 +339,7 @@ function proxyObjectWithoutAuth() {
           logMessage(edata, req);
           logger.info({ message: `${req.originalUrl} Not found ${data}` })
           const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);
-          logTelemetryEvent(req, res, data, proxyResData, proxyRes, resCode)     
+          logTelemetryEvent(req, res, data, proxyResData, proxyRes, resCode)
           return resCode;
         } else {
           edata['message'] = `${req.originalUrl} successfull`;
@@ -347,7 +354,7 @@ function proxyObjectWithoutAuth() {
         edata['message'] = `Error: ${err.message}, Url:  ${req.originalUrl}`;
         logMessage(edata, req);
         logger.info({ message: `Error while htting the ${req.url}  ${err.message}` });
-        return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req,res, err);
+        return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, err);
       }
     }
   })
