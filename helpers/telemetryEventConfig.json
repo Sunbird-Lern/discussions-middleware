@@ -1,5 +1,4 @@
 {
-    "endpoint": "/v1/telemetry",
     "default_username": "user",
     "default_userid": "public",
     "default_did": "discussion-middleware",

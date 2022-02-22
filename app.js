@@ -41,13 +41,13 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-telemetry.init({
-  pdata: { id: 'discussion-middleware', ver: '1.0.0' },
-  method: 'POST',
-  batchsize: envHelper.TELEMETRY_SERVICE_BATCH_SIZE,
-  endpoint: telemetryEventConfig.endpoint,
-  host: envHelper.TELEMETRY_SERVICE_LOCAL_URL,
-  authtoken: 'Bearer ' + envHelper.PORTAL_API_AUTH_TOKEN
-});
+  telemetry.init({
+    pdata: { id: 'discussion-middleware', ver: '1.0.0' },
+    method: 'POST',
+    batchsize: envHelper.TELEMETRY_EVENTS_BATCH_SIZE,
+    endpoint: envHelper.TELEMETRY_SERVICE_API_SLUG,
+    host: envHelper.TELEMETRY_SERVICE_URL,
+    authtoken: 'Bearer ' + envHelper.API_AUTH_TOKEN
+  });
 
 module.exports = app;
