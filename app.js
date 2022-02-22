@@ -5,6 +5,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var nodebb = require('./routes/nodebb');
 var cors = require('cors');
+var telemetryEventConfig = require('./helpers/telemetryEventConfig.json');
+var envHelper = require('./helpers/environmentVariablesHelper');
 var app = express();
 const telemetry = new (require('./libs/sb_telemetry_util/telemetryService'))()
 
@@ -41,10 +43,11 @@ app.use(function(err, req, res, next) {
 
 telemetry.init({
   pdata: { id: 'discussion-middleware', ver: '1.0.0' },
-  // method: 'POST',
-  batchsize: process.env.sunbird_telemetry_sync_batch_size || 1, 
-  // endpoint: telemetryEventConfig.endpoint,
-  // host: envHelper.TELEMETRY_SERVICE_LOCAL_URL,
-  // authtoken: 'Bearer ' + envHelper.PORTAL_API_AUTH_TOKEN
-})
+  method: 'POST',
+  batchsize: envHelper.TELEMETRY_SERVICE_BATCH_SIZE,
+  endpoint: telemetryEventConfig.endpoint,
+  host: envHelper.TELEMETRY_SERVICE_LOCAL_URL,
+  authtoken: 'Bearer ' + envHelper.PORTAL_API_AUTH_TOKEN
+});
+
 module.exports = app;
