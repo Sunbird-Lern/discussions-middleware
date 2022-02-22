@@ -164,7 +164,7 @@ function kafkaProducer(req, res) {
 }
 
 function kafkaConsumer(req, res) {
-  return kafka.consume(req,res)
+  return kafka.consume(req, res)
 }
 
 
@@ -214,7 +214,7 @@ function proxyObject() {
       if (query && !query.includes('_uid')) {
         return require('url').parse(nodebbServiceUrl + urlParam + '?' + query).path
       } else {
-        const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+        const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl + '?_uid=1';
         const proxyUrl = require('url').parse(nodebbServiceUrl + urlParam);
         logger.info({ message: `Proxy req url :  ${incomingUrl}` });
         logger.info({ message: `Upstream req url :  ${proxyUrl.href}` });
@@ -240,6 +240,7 @@ function proxyObject() {
           return resCode;
         } else {
           edata['message'] = `${req.originalUrl} successfull`;
+          kafka.produce(req, proxyRes)
           const resCode = proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null)
           logTelemetryEvent(req, res, data, proxyResData, proxyRes, resCode)
           logMessage(edata, req);
