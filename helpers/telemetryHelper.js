@@ -2,8 +2,9 @@ const Telemetry = require('sb_telemetry_util')
 const telemetry = new Telemetry()
 const _ = require('lodash')
 const fs = require('fs')
+const request = require('request');
 const path = require('path');
-
+const envHelper = require('./environmentVariablesHelper');
 const telemtryEventConfig = JSON.parse(fs.readFileSync(path.join(__dirname, './telemetryEventConfig.json')))
 
 
@@ -128,7 +129,63 @@ module.exports = {
   };
   return contextObj;
 },
-logTelemetryAuditEvent(data) {
-    telemetry.audit(data);
-}
+logTelemetryAuditEvent(req, data) {
+  // telemetry.audit(data);
+  this.sendTelemetry(req, data, function (err, status) {
+   if (err) {
+     console.log('telemetry sync error from  portal', err)
+   }
+ })
+},
+prepareTelemetryRequestBody: function (req, eventsData) {
+ var data = {
+   'id': 'ekstep.telemetry',
+   'ver': '3.0',
+   'ts': Date.now(),
+   'params': {
+     'requesterId': req.headers['x-request-id'],
+     'did': telemtryEventConfig.default_did,
+     'msgid': req.headers['x-request-id']
+   },
+   'events': eventsData
+ }
+ return data
+},
+sendTelemetry: function (req, eventsData, callback) {
+ /* istanbul ignore if  */
+ if (!eventsData || eventsData.length === 0) {
+   if (_.isFunction(callback)) {
+     callback(null, true)
+   }
+ }
+ var data = this.prepareTelemetryRequestBody(req, eventsData)
+ var options = {
+   method: 'POST',
+   url: envHelper.TELEMETRY_SERVICE_LOCAL_URL + telemtryEventConfig.endpoint,
+   headers: {
+     'Content-Type': 'application/json',
+     'Authorization': 'Bearer ' + envHelper.PORTAL_API_AUTH_TOKEN
+   },
+   body: data,
+   json: true
+ }
+ console.log('Option Data: ', JSON.stringify(options))
+ /* istanbul ignore next  */
+ request(options, function (error, response, body) {
+   if (_.isFunction(callback)) {
+     /* istanbul ignore if  */
+     if (error) {
+       console.log('telemetry sync error while syncing  portal', error)
+       callback(error, false)
+     } else if (body && body.params && body.params.err) {
+       /* istanbul ignore next  */
+       console.log('telemetry sync error while syncing  portal', body.params.err)
+       /* istanbul ignore next  */
+       callback(body, false)
+     } else {
+       callback(null, true)
+     }
+   }
+ })
+},
 }
