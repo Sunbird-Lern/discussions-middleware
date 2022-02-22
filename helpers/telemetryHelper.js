@@ -130,7 +130,6 @@ module.exports = {
   return contextObj;
 },
 logTelemetryAuditEvent(req, data) {
-  // telemetry.audit(data);
   this.sendTelemetry(req, data, function (err, status) {
    if (err) {
      console.log('telemetry sync error from  portal', err)
@@ -138,7 +137,7 @@ logTelemetryAuditEvent(req, data) {
  })
 },
 prepareTelemetryRequestBody: function (req, eventsData) {
- var data = {
+  return {
    'id': 'ekstep.telemetry',
    'ver': '3.0',
    'ts': Date.now(),
@@ -148,8 +147,7 @@ prepareTelemetryRequestBody: function (req, eventsData) {
      'msgid': req.headers['x-request-id']
    },
    'events': eventsData
- }
- return data
+ };
 },
 sendTelemetry: function (req, eventsData, callback) {
  /* istanbul ignore if  */
