@@ -1,5 +1,5 @@
 var Telemetry = require('@project-sunbird/telemetry-sdk')
-
+var telemetrySyncManager = require('./telemetrySyncManager');
 var default_config = {
   'runningEnv': 'server',
   'dispatcher': undefined,
@@ -25,7 +25,7 @@ telemetryService.prototype.config = {}
 telemetryService.prototype.context = []
 
 telemetryService.prototype.init = function (config) {
-  default_config.dispatcher = telemetrySyncManage
+  default_config.dispatcher = new telemetrySyncManager()
   config['host'] = config['host'] || process.env.sunbird_telemetry_service_local_url;
   default_config.dispatcher.init(config)
   this.config = Object.assign({}, config, default_config)
