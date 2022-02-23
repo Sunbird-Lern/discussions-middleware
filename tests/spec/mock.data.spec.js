@@ -1444,5 +1444,50 @@ nbbUserDetailsById: {
             "banned_until_readable": "Not Banned"
         }
     ]
-}  
+},
+telemetryData: {
+    "eid": "AUDIT",
+    "ets": 1645544012584,
+    "ver": "3.0",
+    "mid": "AUDIT:68e4811be0157eed57d35ad1dd7ea973",
+    "actor": {
+      "id": "public",
+      "type": "User"
+    },
+    "context": {
+      "channel": "324323243",
+      "pdata": {
+        "id": "preprod.ntp.net.in",
+        "pid": "discussion-middleware",
+        "ver": "4.7.0"
+      },
+      "env": "discussion-forum",
+      "sid": "",
+      "did": "",
+      "cdata": [
+        
+      ],
+      "rollup": {
+        "l1": "324323243"
+      }
+    },
+    "object": {
+      
+    },
+    "tags": [
+      
+    ],
+    "edata": {
+      "state": "topic-created",
+      "props": [
+        "cid",
+        "title",
+        "content"
+      ]
+    }
+  },
+  telemetryResponse: {
+      message: "error",
+      status: 404
+  }  
 }

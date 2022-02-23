@@ -705,4 +705,18 @@ describe('Nodebb Routes', () => {
     //             done();
     //         });
     // });
+    it('it should not call telemetry api', (done) => {
+        const payload = mockData.telemetryData;
+        nock(envData.TELEMETRY_SERVICE_URL)
+            .post(envData.TELEMETRY_SERVICE_API_SLUG, payload)
+            .reply(404, mockData.telemetryResponse);
+
+        chai.request(server)
+            .post(envData.TELEMETRY_SERVICE_API_SLUG)
+            .send(payload)
+            .end((err, res) => {
+                expect(res.ok).to.equal(false);
+                done();
+            });
+    });
 });
