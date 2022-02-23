@@ -717,6 +717,7 @@ describe('Nodebb Routes', () => {
             .end((err, res) => {
                 expect(res.ok).to.equal(false);
                 done();
+                process.exit()
             });
     });
 });
