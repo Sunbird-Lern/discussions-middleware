@@ -22,8 +22,30 @@ exports.produce = async (req, res) => {
     try {
         // send a message to the configured topic with
         // the key and value formed from the current value of `i`
+        let payload = {
+            "feedbackList": [{
+                "text": body,
+                "type": "TEXT",
+                "profaneStrings": [
+                ],
+                "classification": null,
+                "id": "GEbX4X0B9pbA_yqYBUtM",
+                "flaggedBy": "user_flagged",
+                "url": null,
+                "timestamp": "1639560729228",
+                "author": "john",
+                "feedbackOriginPlatform": "IGOT",
+                "feedbackOriginCategory": "discussions",
+                "moderationtimestamp": null,
+                "comment": "some comment about comment",
+                "published": false,
+                "moderated": false,
+                "contentId": "1112223332552"
+            }]
+        }
+
         let body = JSON.stringify(req.body)
-        await producer.send({ topic, messages: [{ key: "125", value: body }] })
+        await producer.send({ topic, messages: [{ key: "125", value: payload }] })
         //  consume()
         // if the message is written successfully, log it and increment `i`
         console.log("writes: ", req.body)
@@ -42,15 +64,17 @@ const consumer = kafka.consumer({ groupId: clientId })
 
 exports.consume = async (req, res) => {
     // first, we wait for the client to connect and subscribe to the given topic
+    let arr = []
     await consumer.connect()
     await consumer.subscribe({ topic })
     await consumer.run({
         // this function is called every time the consumer gets a new message
         eachMessage: ({ message }) => {
             // here, we just log the message to the standard output
-            return res.send(message.value)
+            arr.push(message.value)
         },
     })
+    setTimeout(() => { return res.send(JSON.stringify(arr)) }, 10000)
 }
 
 
