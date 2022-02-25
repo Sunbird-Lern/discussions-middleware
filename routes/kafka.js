@@ -23,7 +23,7 @@ exports.produce = async (req, res) => {
         // send a message to the configured topic with
         // the key and value formed from the current value of `i`
         let body = JSON.stringify(req.body)
-        return res.send(await producer.send({ topic, messages: [{ key: "125", value: body }] }))
+        await producer.send({ topic, messages: [{ key: "125", value: body }] })
         //  consume()
         // if the message is written successfully, log it and increment `i`
         console.log("writes: ", req.body)
