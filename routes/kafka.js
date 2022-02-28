@@ -25,7 +25,7 @@ exports.produce = async (req, res) => {
         let body = req.body
 
         let payload = {
-            "feedbackList": [{
+          
                 "text": '',
                 "type": "TEXT",
                 "profaneStrings": [body
@@ -43,7 +43,7 @@ exports.produce = async (req, res) => {
                 "published": false,
                 "moderated": false,
                 "contentId": "1112223332552"
-            }]
+            
         }
 
         await producer.send({ topic, messages: [{ key: "125", value: JSON.stringify(payload) }] })
