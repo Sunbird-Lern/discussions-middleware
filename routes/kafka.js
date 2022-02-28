@@ -22,11 +22,11 @@ exports.produce = async (req, res) => {
     try {
         // send a message to the configured topic with
         // the key and value formed from the current value of `i`
-        let body = req.body
+        let body = JSON.stringify(req.body)
 
         let payload = {
 
-            "text": "how you doing maniac thug?",
+            "text": body,
             "type": "TEXT",
             "profaneStrings": [
                 "maniac",
