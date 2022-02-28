@@ -49,7 +49,7 @@ exports.produce = async (req, res) => {
         await producer.send({ topic, messages: [{ key: "125", value: JSON.stringify(payload) }] })
         //  consume()
         // if the message is written successfully, log it and increment `i`
-        console.log("writes: ", req.body)
+        console.log("writes: ", payload)
     } catch (err) {
         console.error("could not write message " + err)
     }
