@@ -22,6 +22,8 @@ exports.produce = async (req, res) => {
     try {
         // send a message to the configured topic with
         // the key and value formed from the current value of `i`
+        let body = JSON.stringify(req.body)
+
         let payload = {
             "feedbackList": [{
                 "text": body,
@@ -44,8 +46,7 @@ exports.produce = async (req, res) => {
             }]
         }
 
-        let body = JSON.stringify(req.body)
-        await producer.send({ topic, messages: [{ key: "125", value: payload }] })
+        await producer.send({ topic, messages: [{ key: "125", value: JSON.stringify(payload) }] })
         //  consume()
         // if the message is written successfully, log it and increment `i`
         console.log("writes: ", req.body)
@@ -71,7 +72,9 @@ exports.consume = async (req, res) => {
         // this function is called every time the consumer gets a new message
         eachMessage: ({ message }) => {
             // here, we just log the message to the standard output
-            arr.push(message.value)
+            console.log(message)
+            let val = message.value
+            arr.push(val.toString())
         },
     })
     setTimeout(() => { return res.send(JSON.stringify(arr)) }, 10000)
