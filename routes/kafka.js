@@ -78,6 +78,8 @@ exports.consume = async (req, res) => {
             // here, we just log the message to the standard output
 
             let val = message.value
+            let str = val.text
+            val.text  = str.replace(/\\/g, "")
             console.log(val.toString())
         },
     })
