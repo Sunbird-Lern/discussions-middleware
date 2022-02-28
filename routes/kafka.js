@@ -26,7 +26,6 @@ exports.produce = async (req, res) => {
         if (body && Object.keys(body).length != 0) {
             body = JSON.stringify(body)
             let payload = {
-
                 "text": body,
                 "type": "TEXT",
                 "profaneStrings": [
@@ -35,7 +34,7 @@ exports.produce = async (req, res) => {
                 ],
                 "classification": null,
                 "id": "GEbX4X0B9pbA_yqYBUtM",
-                "flaggedBy": "user_flagged",
+                "flaggedBy": "system_flagged",
                 "url": null,
                 "timestamp": "1639560729228",
                 "author": "john",
@@ -71,6 +70,7 @@ const consumer = kafka.consumer({ groupId: clientId })
 exports.consume = async (req, res) => {
     // first, we wait for the client to connect and subscribe to the given topic
     let arr = []
+    let topic = 'moderated'
     await consumer.connect()
     await consumer.subscribe({ topic })
     await consumer.run({
@@ -78,11 +78,11 @@ exports.consume = async (req, res) => {
         eachMessage: ({ message }) => {
             // here, we just log the message to the standard output
             console.log(message)
-            let val = message.value
-            arr.push(val.toString())
+            // let val = message.value
+            // arr.push(val.toString())
         },
     })
-    setTimeout(() => { return res.send(JSON.stringify(arr)) }, 10000)
+    // setTimeout(() => { return res.send(JSON.stringify(arr)) }, 10000)
 }
 
 
