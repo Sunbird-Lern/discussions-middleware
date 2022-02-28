@@ -22,13 +22,13 @@ exports.produce = async (req, res) => {
     try {
         // send a message to the configured topic with
         // the key and value formed from the current value of `i`
-        let body = JSON.stringify(req.body)
+        let body = req.body
 
         let payload = {
             "feedbackList": [{
-                "text": body,
+                "text": '',
                 "type": "TEXT",
-                "profaneStrings": [
+                "profaneStrings": [body
                 ],
                 "classification": null,
                 "id": "GEbX4X0B9pbA_yqYBUtM",
