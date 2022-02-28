@@ -76,9 +76,9 @@ exports.consume = async (req, res) => {
         // this function is called every time the consumer gets a new message
         eachMessage: ({ message }) => {
             // here, we just log the message to the standard output
-            console.log(message.value)
-            // let val = message.value
-            // arr.push(val.toString())
+
+            let val = message.value
+            console.log(val.toString())
         },
     })
     // setTimeout(() => { return res.send(JSON.stringify(arr)) }, 10000)
