@@ -22,40 +22,43 @@ exports.produce = async (req, res) => {
     try {
         // send a message to the configured topic with
         // the key and value formed from the current value of `i`
-        let body = JSON.stringify(req.body)
+        if (req.body) {
+            let body = JSON.stringify(req.body)
 
-        let payload = {
+            let payload = {
 
-            "text": body,
-            "type": "TEXT",
-            "profaneStrings": [
-                "maniac",
-                "thug"
-            ],
-            "classification": null,
-            "id": "GEbX4X0B9pbA_yqYBUtM",
-            "flaggedBy": "user_flagged",
-            "url": null,
-            "timestamp": "1639560729228",
-            "author": "john",
-            "feedbackOriginPlatform": "IGOT",
-            "feedbackOriginCategory": "discussions",
-            "moderationtimestamp": null,
-            "comment": "some comment about comment",
-            "published": false,
-            "moderated": false,
-            "contentId": "1112223332552"
+                "text": body,
+                "type": "TEXT",
+                "profaneStrings": [
+                    "maniac",
+                    "thug"
+                ],
+                "classification": null,
+                "id": "GEbX4X0B9pbA_yqYBUtM",
+                "flaggedBy": "user_flagged",
+                "url": null,
+                "timestamp": "1639560729228",
+                "author": "john",
+                "feedbackOriginPlatform": "IGOT",
+                "feedbackOriginCategory": "discussions",
+                "moderationtimestamp": null,
+                "comment": "some comment about comment",
+                "published": false,
+                "moderated": false,
+                "contentId": "1112223332552"
 
+            }
+
+            await producer.send({ topic, messages: [{ key: "125", value: JSON.stringify(payload) }] })
+            //  consume()
+            // if the message is written successfully, log it and increment `i`
+            console.log("writes: ", payload)
         }
-
-        await producer.send({ topic, messages: [{ key: "125", value: JSON.stringify(payload) }] })
-        //  consume()
-        // if the message is written successfully, log it and increment `i`
-        console.log("writes: ", payload)
     } catch (err) {
         console.error("could not write message " + err)
     }
     // }, 1000)
+
 }
 
 // the kafka instance and configuration variables are the same as before
