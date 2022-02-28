@@ -22,9 +22,9 @@ exports.produce = async (req, res) => {
     try {
         // send a message to the configured topic with
         // the key and value formed from the current value of `i`
-        if (req.body) {
-            let body = JSON.stringify(req.body)
-
+        let body = req.body
+        if (body && Object.keys(body).length != 0) {
+            body = JSON.stringify(body)
             let payload = {
 
                 "text": body,
