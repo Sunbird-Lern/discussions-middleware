@@ -70,9 +70,9 @@ const consumer = kafka.consumer({ groupId: clientId })
 exports.consume = async (req, res) => {
     // first, we wait for the client to connect and subscribe to the given topic
     let arr = []
-    let moderateTopic = 'moderated'
+    let topic = 'moderated'
     await consumer.connect()
-    await consumer.subscribe({ moderateTopic })
+    await consumer.subscribe({ topic })
     await consumer.run({
         // this function is called every time the consumer gets a new message
         eachMessage: ({ message }) => {
