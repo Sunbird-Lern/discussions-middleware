@@ -25,25 +25,27 @@ exports.produce = async (req, res) => {
         let body = req.body
 
         let payload = {
-          
-                "text": '',
-                "type": "TEXT",
-                "profaneStrings": [body
-                ],
-                "classification": null,
-                "id": "GEbX4X0B9pbA_yqYBUtM",
-                "flaggedBy": "user_flagged",
-                "url": null,
-                "timestamp": "1639560729228",
-                "author": "john",
-                "feedbackOriginPlatform": "IGOT",
-                "feedbackOriginCategory": "discussions",
-                "moderationtimestamp": null,
-                "comment": "some comment about comment",
-                "published": false,
-                "moderated": false,
-                "contentId": "1112223332552"
-            
+
+            "text": "how you doing maniac thug?",
+            "type": "TEXT",
+            "profaneStrings": [
+                "maniac",
+                "thug"
+            ],
+            "classification": null,
+            "id": "GEbX4X0B9pbA_yqYBUtM",
+            "flaggedBy": "user_flagged",
+            "url": null,
+            "timestamp": "1639560729228",
+            "author": "john",
+            "feedbackOriginPlatform": "IGOT",
+            "feedbackOriginCategory": "discussions",
+            "moderationtimestamp": null,
+            "comment": "some comment about comment",
+            "published": false,
+            "moderated": false,
+            "contentId": "1112223332552"
+
         }
 
         await producer.send({ topic, messages: [{ key: "125", value: JSON.stringify(payload) }] })
