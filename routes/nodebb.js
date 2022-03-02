@@ -240,10 +240,10 @@ function proxyObject() {
           return resCode;
         } else {
           edata['message'] = `${req.originalUrl} successfull`;
-          kafka.produce(req, proxyRes)
           const resCode = proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null)
           logTelemetryEvent(req, res, data, proxyResData, proxyRes, resCode)
           logMessage(edata, req);
+          kafka.produce(req, data)
           return resCode;
         }
       } catch (err) {
