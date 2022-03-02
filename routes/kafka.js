@@ -26,7 +26,8 @@ exports.produce = async (req, res) => {
         if (body && Object.keys(body).length != 0) {
             body = JSON.stringify(body)
             let payload = {
-                "text": body,
+                "text": `${req.body.title} ${req.body.content}`,
+                "raw": body,
                 "type": "TEXT",
                 "profaneStrings": [
                     "maniac",
@@ -34,7 +35,7 @@ exports.produce = async (req, res) => {
                 ],
                 "classification": null,
                 "id": "GEbX4X0B9pbA_yqYBUtM",
-                "flaggedBy": "system_flagged",
+                "flaggedBy": "AI_flagged",
                 "url": null,
                 "timestamp": "1639560729228",
                 "author": "john",
@@ -78,9 +79,7 @@ exports.consume = async (req, res) => {
             // here, we just log the message to the standard output
 
             let val = message.value
-            let str = val.text
-            val.text  = str.replace(/\\/g, "")
-            console.log(val.toString())
+            console.log(val.toJSON())
         },
     })
     // setTimeout(() => { return res.send(JSON.stringify(arr)) }, 10000)
