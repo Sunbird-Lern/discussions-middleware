@@ -82,9 +82,11 @@ exports.consume = async (req, res) => {
             val = val.toString()
             val = JSON.parse(val)
             console.log(val)
-            let raw = val.raw
-            raw.replace(/({)([a-zA-Z0-9]+)(:)/,'$1"$2"$3')
-            console.log(raw)
+            if (val.raw) {
+                let raw = val.raw
+                raw.replace(/({)([a-zA-Z0-9]+)(:)/,'$1"$2"$3')
+                console.log(raw)
+            }
         },
     })
     // setTimeout(() => { return res.send(JSON.stringify(arr)) }, 10000)
