@@ -79,7 +79,7 @@ exports.consume = async (req, res) => {
             // here, we just log the message to the standard output
 
             let val = message.value
-            console.log(val.toJSON())
+            console.log(val.toString())
         },
     })
     // setTimeout(() => { return res.send(JSON.stringify(arr)) }, 10000)
