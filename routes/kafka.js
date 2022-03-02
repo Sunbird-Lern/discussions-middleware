@@ -80,6 +80,7 @@ exports.consume = async (req, res) => {
 
             let val = message.value
             val = val.toString()
+            console.log(val)
             let raw = val.raw
             raw.replace(/({)([a-zA-Z0-9]+)(:)/,'$1"$2"$3')
             console.log(raw)
