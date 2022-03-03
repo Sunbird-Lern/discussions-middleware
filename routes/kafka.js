@@ -91,7 +91,7 @@ exports.consume = async (req, res) => {
                 console.log(raw)
                 raw = JSON.parse(raw)
                 console.log('class ===>',raw.classification)
-                if (raw.classification != "SFW") {
+                if (val.classification != "SFW") {
                      moderation.deleteTopic(raw)
                 }
             }
