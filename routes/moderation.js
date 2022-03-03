@@ -10,7 +10,7 @@ exports.deleteTopic = async (body) => {
         })
         console.log(response)
     } catch (err) {
-        console.log(response)
+        console.log(err)
 
     }
 }
