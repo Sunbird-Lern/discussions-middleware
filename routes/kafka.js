@@ -12,6 +12,7 @@ const topic = "flagged"
 // initialize a new kafka client and initialize a producer from it
 const kafka = new Kafka({ clientId, brokers })
 const producer = kafka.producer()
+const moderation = require('./moderation')
 
 // we define an async function that writes a new message each second
 exports.produce = async (req, res) => {
@@ -87,9 +88,11 @@ exports.consume = async (req, res) => {
             if (val.raw) {
                 let raw = val.raw
                 raw.replace(/({)([a-zA-Z0-9]+)(:)/, '$1"$2"$3')
-                let response = raw.response
-                response.replace(/({)([a-zA-Z0-9]+)(:)/, '$1"$2"$3')
-                console.log(response)
+                console.log(raw)
+                raw = JSON.parse(raw)
+                if (raw.classification !== "SFW") {
+                    moderation.deleteTopic(raw)
+                }
             }
         },
     })
