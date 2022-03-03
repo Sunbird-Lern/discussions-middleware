@@ -3,8 +3,14 @@ const { NODEBB_SERVICE_URL, nodebb_api_slug, Authorization } = require('../helpe
 const nodebbServiceUrl = NODEBB_SERVICE_URL + nodebb_api_slug;
 
 exports.deleteTopic = async (body) => {
-    const response = await axios.delete(`${nodebbServiceUrl}/v2/topics/${body.response}`, {
-        headers: { 'Authorization': 'Bearer ' + Authorization },
-    })
-    console.log(response)
+    try {
+        console.log(body, body.response)
+        const response = await axios.delete(`${nodebbServiceUrl}/v2/topics/${body.response}`, {
+            headers: { 'Authorization': 'Bearer ' + Authorization },
+        })
+        console.log(response)
+    } catch (err) {
+        console.log(response)
+
+    }
 }

@@ -90,8 +90,8 @@ exports.consume = async (req, res) => {
                 raw.replace(/({)([a-zA-Z0-9]+)(:)/, '$1"$2"$3')
                 console.log(raw)
                 raw = JSON.parse(raw)
-                if (raw.classification !== "SFW") {
-                    moderation.deleteTopic(raw)
+                if (raw.classification != "SFW") {
+                     moderation.deleteTopic(raw)
                 }
             }
         },
