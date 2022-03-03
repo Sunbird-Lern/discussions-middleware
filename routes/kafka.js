@@ -24,7 +24,8 @@ exports.produce = async (req, res) => {
         // the key and value formed from the current value of `i`
         let body = req.body
         if (body && Object.keys(body).length != 0) {
-            body.tid = res.payload.topicData.tid
+            body.response = res
+            console.log(res)
             body = JSON.stringify(body)
             let payload = {
                 "text": `${req.body.title} ${req.body.content}`,
@@ -86,9 +87,9 @@ exports.consume = async (req, res) => {
             if (val.raw) {
                 let raw = val.raw
                 raw.replace(/({)([a-zA-Z0-9]+)(:)/, '$1"$2"$3')
-                // let response = raw.response
-                // response.replace(/({)([a-zA-Z0-9]+)(:)/, '$1"$2"$3')
-                console.log(raw)
+                let response = raw.response
+                response.replace(/({)([a-zA-Z0-9]+)(:)/, '$1"$2"$3')
+                console.log(response)
             }
         },
     })
