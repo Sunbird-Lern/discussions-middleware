@@ -24,7 +24,7 @@ exports.produce = async (req, res) => {
         // the key and value formed from the current value of `i`
         let body = req.body
         if (body && Object.keys(body).length != 0) {
-            console.log('tid',res.payload.topicData.tid)
+            res = JSON.parse(res)
             body.response = res.payload.topicData.tid
             body = JSON.stringify(body)
             let payload = {
