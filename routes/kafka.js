@@ -1,6 +1,7 @@
 // import the `Kafka` instance from the kafkajs library
 const { json } = require("express")
 const { Kafka } = require("kafkajs")
+const moderation = require('./moderation')
 
 // the client ID lets kafka know who's producing the messages
 const clientId = "f23f0a0351e5"
@@ -87,6 +88,8 @@ exports.consume = async (req, res) => {
                 let raw = val.raw
                 raw.replace(/({)([a-zA-Z0-9]+)(:)/, '$1"$2"$3')
                 console.log(raw)
+                raw = JSON.parse(raw)
+                moderation.deleteTopic(raw)
             }
         },
     })
