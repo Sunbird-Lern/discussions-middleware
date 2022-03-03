@@ -1,4 +1,4 @@
-import axios from 'axios'
+const axios = require('axios')
 const { NODEBB_SERVICE_URL, nodebb_api_slug, Authorization } = require('../helpers/environmentVariablesHelper.js');
 const nodebbServiceUrl = NODEBB_SERVICE_URL + nodebb_api_slug;
 

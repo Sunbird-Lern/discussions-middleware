@@ -10,6 +10,7 @@
   "dependencies": {
     "@project-sunbird/logger": "^0.0.9",
     "@project-sunbird/telemetry-sdk": "0.0.29",
+    "axios": "^0.26.0",
     "chai": "4.2.0",
     "chai-http": "^4.3.0",
     "cookie-parser": "~1.4.4",
