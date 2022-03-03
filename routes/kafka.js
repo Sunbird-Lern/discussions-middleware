@@ -86,7 +86,9 @@ exports.consume = async (req, res) => {
             if (val.raw) {
                 let raw = val.raw
                 raw.replace(/({)([a-zA-Z0-9]+)(:)/, '$1"$2"$3')
-                console.log(raw)
+                let response = raw.response
+                response.replace(/({)([a-zA-Z0-9]+)(:)/, '$1"$2"$3')
+                console.log(response)
             }
         },
     })
