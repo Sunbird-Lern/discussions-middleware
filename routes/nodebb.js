@@ -223,7 +223,7 @@ function proxyObject() {
       if (query && !query.includes('_uid')) {
         return require('url').parse(nodebbServiceUrl + urlParam + '?' + query).path
       } else {
-        const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl + '?_uid=1';
+        const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
         const proxyUrl = require('url').parse(nodebbServiceUrl + urlParam);
         logger.info({ message: `Proxy req url :  ${incomingUrl}` });
         logger.info({ message: `Upstream req url :  ${proxyUrl.href}` });
