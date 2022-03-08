@@ -1,6 +1,6 @@
 const proxyUtils = require('../proxy/proxyUtils.js')
 const proxy = require('express-http-proxy');
-const { NODEBB_SERVICE_URL, nodebb_api_slug } = require('../helpers/environmentVariablesHelper.js');
+const { NODEBB_SERVICE_URL, nodebb_api_slug, moderation_flag, moderation_type } = require('../helpers/environmentVariablesHelper.js');
 const { logger } = require('@project-sunbird/logger');
 const BASE_REPORT_URL = "/discussion";
 const express = require('express');

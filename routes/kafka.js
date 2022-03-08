@@ -1,6 +1,7 @@
 // import the `Kafka` instance from the kafkajs library
 const { json } = require("express")
 const { Kafka } = require("kafkajs")
+const { moderation_flag, moderation_type } = require('../helpers/environmentVariablesHelper.js');
 
 // the client ID lets kafka know who's producing the messages
 const clientId = "f23f0a0351e5"
