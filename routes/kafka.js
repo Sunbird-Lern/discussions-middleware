@@ -26,7 +26,9 @@ exports.produce = async (req, res) => {
         let body = req.body
         if (body && Object.keys(body).length != 0) {
             res = JSON.parse(res)
-            body.response = res.payload.topicData.tid
+            if (moderation_flag && moderation_type === 'post-moderation') {
+                body.response = res.payload.topicData.tid
+            }
             body = JSON.stringify(body)
             let payload = {
                 "text": `${req.body.title} ${req.body.content}`,
@@ -38,7 +40,7 @@ exports.produce = async (req, res) => {
                 ],
                 "classification": null,
                 "id": "GEbX4X0B9pbA_yqYBUtM",
-                "flaggedBy": "AI_flagged",
+                "flaggedBy": "system_flagged",
                 "url": null,
                 "timestamp": "1639560729228",
                 "author": "john",
@@ -90,9 +92,9 @@ exports.consume = async (req, res) => {
                 raw.replace(/({)([a-zA-Z0-9]+)(:)/, '$1"$2"$3')
                 console.log(raw)
                 raw = JSON.parse(raw)
-                console.log('class ===>',raw.classification)
+                console.log('class ===>', raw.classification)
                 if (val.classification != "SFW") {
-                     moderation.deleteTopic(raw)
+                    moderation.deleteTopic(raw)
                 }
             }
         },

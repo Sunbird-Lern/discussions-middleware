@@ -31,6 +31,15 @@ const responseObj = {
   message: 'You are not authorized to perform this action.'
 };
 
+const premoderation = function (req, res, next) {
+  if (moderation_flag && moderation_type === 'pre-moderation') {
+    kafka.produce(req, {})
+  } else {
+    next()
+  }
+}
+app.use(premoderation)
+
 app.post(`${BASE_REPORT_URL}/forum/v2/read`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v2/create`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v2/remove`, proxyObject());
@@ -243,7 +252,9 @@ function proxyObject() {
           const resCode = proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null)
           logTelemetryEvent(req, res, data, proxyResData, proxyRes, resCode)
           logMessage(edata, req);
-          kafka.produce(req, data)
+          if (moderation_flag && moderation_type === 'post-moderation') {
+            kafka.produce(req, data)
+          }
           return resCode;
         }
       } catch (err) {
