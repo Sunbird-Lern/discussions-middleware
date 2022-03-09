@@ -32,7 +32,7 @@ const responseObj = {
 };
 
 const premoderation = function (req, res, next) {
-  if (moderation_flag && moderation_type === 'pre-moderation') {
+  if (moderation_flag && moderation_type === 'pre-moderation' && req.body) {
     kafka.produce(req, {})
   } else {
     next()
