@@ -26,8 +26,8 @@ exports.produce = async (req, res) => {
         // the key and value formed from the current value of `i`
         let body = req.body
         if (body && Object.keys(body).length != 0) {
-            res = JSON.parse(res)
             if (moderation_flag && moderation_type === 'post-moderation') {
+                res = JSON.parse(res)
                 body.response = res.payload.topicData.tid
             }
             body = JSON.stringify(body)
@@ -58,6 +58,9 @@ exports.produce = async (req, res) => {
             await producer.send({ topic, messages: [{ key: "125", value: JSON.stringify(payload) }] })
             //  consume()
             // if the message is written successfully, log it and increment `i`
+            if (moderation_flag && moderation_type === 'pre-moderation') {
+                res.send({code: "ok"})
+            }
             console.log("writes: ", payload)
         }
     } catch (err) {

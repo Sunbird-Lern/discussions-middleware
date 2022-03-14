@@ -34,8 +34,7 @@ const responseObj = {
 const premoderation = function (req, res, next) {
   const body = req.body
   if (moderation_flag && moderation_type === 'pre-moderation' && Object.keys(body) != 0) {
-    let data = {}
-    kafka.produce(req, data)
+    kafka.produce(req, res)
   } else {
     next()
   }
