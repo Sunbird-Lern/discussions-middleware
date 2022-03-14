@@ -59,7 +59,7 @@ exports.produce = async (req, res) => {
             //  consume()
             // if the message is written successfully, log it and increment `i`
             if (moderation_flag && moderation_type === 'pre-moderation') {
-                res.send({code: "ok"})
+                res.send({ code: "ok" })
             }
             console.log("writes: ", payload)
         }
@@ -97,8 +97,14 @@ exports.consume = async (req, res) => {
                 console.log(raw)
                 raw = JSON.parse(raw)
                 console.log('class ===>', raw.classification)
-                if (val.classification != "SFW") {
-                    moderation.deleteTopic(raw)
+                if (moderation_flag && moderation_type === 'post-moderation') {
+                    if (val.classification != "SFW") {
+                        moderation.deleteTopic(raw)
+                    }
+                } else if (moderation_flag && moderation_type === 'pre-moderation') {
+                    if (val.classification === "SFW") {
+                        moderation.createTopic(raw)
+                    }
                 }
             }
         },

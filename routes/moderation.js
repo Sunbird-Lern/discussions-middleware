@@ -14,3 +14,16 @@ exports.deleteTopic = async (body) => {
 
     }
 }
+
+exports.createTopic = async (body) => {
+    try {
+        console.log(body)
+        const response = await axios.post(`${nodebbServiceUrl}/v2/topics?_uid=${body.response._uid}`,body, {
+            headers: { 'Authorization': 'Bearer ' + Authorization },
+        })
+        console.log(response)
+    } catch (err) {
+        console.log(err)
+
+    }
+}
