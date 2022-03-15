@@ -33,7 +33,11 @@ const responseObj = {
 
 const premoderation = function (req, res, next) {
   const body = req.body
-  if (moderation_flag && moderation_type === 'pre-moderation' && Object.keys(body) != 0) {
+  console.log(req.path)
+  let url = '/discussion/v2/topics'
+  let incomingUrl = req.path
+  console.log(url.indexOf(incomingUrl))
+  if (moderation_flag && moderation_type === 'pre-moderation' && Object.keys(body) != 0 && url.indexOf(incomingUrl) != -1) {
     kafka.produce(req, res)
   } else {
     next()
