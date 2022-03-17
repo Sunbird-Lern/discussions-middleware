@@ -46,10 +46,10 @@ exports.sendNotification = async (req) => {
                 ],
             }
         }
-        const response = await axios.post(`${LEARNER_SERVICE_URL}/user/v1/notification/email`, body, {
+        const response = await axios.post(`${LEARNER_SERVICE_URL}/v1/notification/email`, body, {
             headers: { 'Authorization': SB_API_KEY },
         })
-        console.log(response)
+        console.log(JSON.stringify(response.data))
     } catch (err) {
         console.log(err)
 
