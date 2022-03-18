@@ -37,6 +37,7 @@ exports.sendNotification = async (req) => {
                 "subject": "test email",
                 "body": "Hello Arun.",
                 "downloadUrl": "https://www.google.com/",
+                "mode": "email",
                 "recipientEmails": [
                     "arunkumar.pilli@tarento.com",
                     "amit1.kumar@tarento.com"
