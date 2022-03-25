@@ -18,7 +18,7 @@ exports.deleteTopic = async (body) => {
 exports.createTopic = async (body) => {
     try {
         console.log(body)
-        const response = await axios.post(`${nodebbServiceUrl}/v2/topics?_uid=${body._uid}`,body, {
+        const response = await axios.post(`${nodebbServiceUrl}/v2/topics?_uid=${body._uid}`, body, {
             headers: { 'Authorization': 'Bearer ' + Authorization },
         })
         console.log(response)
@@ -32,20 +32,25 @@ exports.sendNotification = async (req) => {
     try {
         // console.log(body)
         let body = {
-            "request": {
-                "name": "Arun",
-                "subject": "test email",
-                "body": "Hello Arun.",
-                "downloadUrl": "https://www.google.com/",
-                "mode": "email",
-                "recipientEmails": [
-                    "arunkumar.pilli@tarento.com",
-                    "amit1.kumar@tarento.com"
-                ],
-                "recipientUserIds": [
-                    "arunsix_ie7x"
-                ],
-            }
+            "notifications": [
+                {
+                    "mode": "email",
+                    "deliveryType": "message",
+                    "config": {
+                        "sender": "pritha.chattopadhyay@tarento.com",
+                        "subject": "Email Subject"
+                    },
+                    "ids": [
+                        "arunkumar.pilli@tarento.com",
+                        "amit1.kumar@tarento.com"
+                    ],
+                    "template": {
+                        "data": "testing moderation",
+                        "id": "",
+                        "params": {}
+                    }
+                }
+            ]
         }
         const response = await axios.post(`${LEARNER_SERVICE_URL}/v1/notification/email`, body, {
             headers: { 'Authorization': SB_API_KEY },
