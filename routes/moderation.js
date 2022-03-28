@@ -55,7 +55,6 @@ exports.sendNotification = async (req) => {
         const response = await axios.post(`${LEARNER_SERVICE_URL}/api/notification/v1/notification/send/sync`, body, {
             headers: {
                 Authorization: SB_API_KEY,
-                'x-authenticated-user-token': extractUserToken(req),
                 rootOrg: req.header('rootOrg')
             },
         })
@@ -64,8 +63,4 @@ exports.sendNotification = async (req) => {
         console.log(err)
 
     }
-}
-
- const extractUserToken = (req) => {
-    return req.kauth && req.kauth.grant.access_token.token
 }
