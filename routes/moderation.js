@@ -54,7 +54,7 @@ exports.sendNotification = async (req) => {
         }
         const response = await axios.post(`${LEARNER_SERVICE_URL}/api/notification/v1/notification/send/sync`, body, {
             headers: {
-                Authorization: SB_API_KEY
+                Authorization: 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJRekw4VVA1dUtqUFdaZVpMd1ZtTFJvNHdqWTg2a2FrcSJ9.TPjV0xLacSbp3FbJ7XeqHoKFN35Rl4YHx3DZNN9pm0o'
             },
         })
         console.log(JSON.stringify(response.data))
