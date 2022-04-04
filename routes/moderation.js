@@ -32,25 +32,31 @@ exports.sendNotification = async (req) => {
     try {
         // console.log(body)
         let body = {
-            "notifications": [
-                {
+            "id": "notification.message.send",
+            "ver": "1.0",
+            "ets": "11234",
+            "params": {
+                "did": "",
+                "key": "",
+                "msgid": ""
+            },
+            "request": {
+                "notifications": [{
                     "mode": "email",
                     "deliveryType": "message",
                     "config": {
                         "sender": "pritha.chattopadhyay@tarento.com",
-                        "subject": "Email Subject"
+                        "subject": "Hello from Sunbird"
                     },
-                    "ids": [
-                        "arunkumar.pilli@tarento.com",
-                        "amit1.kumar@tarento.com"
-                    ],
+                    "ids": ["arunkumar.pilli@tarento.com"],
                     "template": {
-                        "data": "testing moderation",
-                        "id": "",
-                        "params": {}
+                        "data": "Moderation test.",
+                        "params": {
+                            "courseName": "Sunbird training"
+                        }
                     }
-                }
-            ]
+                }]
+            }
         }
         const response = await axios.post(`${LEARNER_SERVICE_URL}/api/notification/v1/notification/send/sync`, body, {
             headers: {

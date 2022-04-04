@@ -178,9 +178,9 @@ function kafkaProducer(req, res) {
   return kafka.produce(req, res)
 }
 
-function kafkaConsumer(req, res) {
-  return kafka.consume(req, res)
-}
+// function kafkaConsumer(req, res) {
+   kafka.consume()
+// }
 
 
 
