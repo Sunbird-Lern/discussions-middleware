@@ -32,7 +32,8 @@ exports.produce = async (req, res) => {
             }
             body = JSON.stringify(body)
             let payload = {
-                "text": `${req.body.title} ${req.body.content}`,
+                "text": req.body.content,
+                "heading": req.body.title,
                 "raw": body,
                 "type": "TEXT",
                 "profaneStrings": [
@@ -43,8 +44,8 @@ exports.produce = async (req, res) => {
                 "id": "GEbX4X0B9pbA_yqYBUtM",
                 "flaggedBy": "system_flagged",
                 "url": null,
-                "timestamp": "1639560729228",
-                "author": "john",
+                "timestamp": Math.floor(Date.now() / 1000),
+                "author": req.body.email,
                 "feedbackOriginPlatform": "IGOT",
                 "feedbackOriginCategory": "discussions",
                 "moderationtimestamp": null,
@@ -78,7 +79,7 @@ exports.produce = async (req, res) => {
 // is yet to receive
 const consumer = kafka.consumer({ groupId: clientId })
 
-exports.consume = async (req, res) => {
+exports.consume = async () => {
     // first, we wait for the client to connect and subscribe to the given topic
     let arr = []
     await consumer.connect()
@@ -110,7 +111,6 @@ exports.consume = async (req, res) => {
             }
         },
     })
-    // setTimeout(() => { return res.send(JSON.stringify(arr)) }, 10000)
 }
 
 
