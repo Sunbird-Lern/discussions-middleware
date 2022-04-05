@@ -23,7 +23,6 @@ exports.createTopic = async (req, body) => {
             headers: { 'Authorization': 'Bearer ' + Authorization },
         })
         console.log(response.body)
-        sendNotification(req, body)
     } catch (err) {
         console.log(err)
 

@@ -106,6 +106,8 @@ exports.consume = async () => {
                 } else if (moderation_flag && moderation_type === 'pre-moderation') {
                     if (val.classification === "SFW") {
                         moderation.createTopic(val, raw)
+                    } else {
+                        moderation.sendNotification(val, raw)
                     }
                 }
             }
