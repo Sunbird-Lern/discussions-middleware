@@ -32,9 +32,9 @@ exports.createTopic = async (req, body) => {
 exports.sendNotification = (req, raw) => {
     try {
         let message
-        if (moderation_flag === 'pre-moderation') {
+        if (moderation_flag && moderation_type === 'pre-moderation') {
             message = `your post is not approved due to  reason: ${req.classification}`
-        } else if (moderation_flag === 'post-moderation') {
+        } else if (moderation_flag && moderation_type === 'post-moderation') {
             message = `your post is deleted  due to  reason: ${req.classification}`
 
         }

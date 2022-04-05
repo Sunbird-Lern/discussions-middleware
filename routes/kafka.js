@@ -63,7 +63,7 @@ exports.produce = async (req, res) => {
                 res.send({ code: "ok" })
             }
             console.log("writes: ", payload)
-            moderation.sendNotification(req)
+            // moderation.sendNotification(req)
         }
     } catch (err) {
         console.error("could not write message " + err)
