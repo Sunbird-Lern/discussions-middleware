@@ -101,11 +101,11 @@ exports.consume = async () => {
                 console.log('class ===>', raw.classification)
                 if (moderation_flag && moderation_type === 'post-moderation') {
                     if (val.classification != "SFW") {
-                        moderation.deleteTopic(raw)
+                        moderation.deleteTopic(val, raw)
                     }
                 } else if (moderation_flag && moderation_type === 'pre-moderation') {
                     if (val.classification === "SFW") {
-                        moderation.createTopic(raw)
+                        moderation.createTopic(val, raw)
                     }
                 }
             }

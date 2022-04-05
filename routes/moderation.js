@@ -1,35 +1,44 @@
 const axios = require('axios')
-const { NODEBB_SERVICE_URL, nodebb_api_slug, Authorization, LEARNER_SERVICE_URL, SB_API_KEY } = require('../helpers/environmentVariablesHelper.js');
+const { NODEBB_SERVICE_URL, nodebb_api_slug, Authorization, LEARNER_SERVICE_URL, SB_API_KEY, moderation_flag } = require('../helpers/environmentVariablesHelper.js');
 const nodebbServiceUrl = NODEBB_SERVICE_URL + nodebb_api_slug;
 
-exports.deleteTopic = async (body) => {
+exports.deleteTopic = async (req, body) => {
     try {
         console.log(body, body.response)
         const response = await axios.delete(`${nodebbServiceUrl}/v2/topics/${body.response}?_uid=1`, {
             headers: { 'Authorization': 'Bearer ' + Authorization },
         })
-        console.log(response)
+        console.log(response.body)
+        sendNotification(req, body)
     } catch (err) {
         console.log(err)
 
     }
 }
 
-exports.createTopic = async (body) => {
+exports.createTopic = async (req, body) => {
     try {
         console.log(body)
         const response = await axios.post(`${nodebbServiceUrl}/v2/topics?_uid=${body._uid}`, body, {
             headers: { 'Authorization': 'Bearer ' + Authorization },
         })
-        console.log(response)
+        console.log(response.body)
+        sendNotification(req, body)
     } catch (err) {
         console.log(err)
 
     }
 }
 
-exports.sendNotification = async (req) => {
+exports.sendNotification = (req, raw) => {
     try {
+        let message
+        if (moderation_flag === 'pre-moderation') {
+            message = `your post is not approved due to  reason: ${req.classification}`
+        } else if (moderation_flag === 'post-moderation') {
+            message = `your post is deleted  due to  reason: ${req.classification}`
+
+        }
         // console.log(body)
         let body = {
             "id": "notification.message.send",
@@ -46,11 +55,11 @@ exports.sendNotification = async (req) => {
                     "deliveryType": "message",
                     "config": {
                         "sender": "pritha.chattopadhyay@tarento.com",
-                        "subject": "Hello from Sunbird"
+                        "subject": "Sunbird Discussion  Moderation"
                     },
-                    "ids": ["arunkumar.pilli@tarento.com"],
+                    "ids": [raw.email],
                     "template": {
-                        "data": "Moderation test.",
+                        "data": message,
                         "params": {
                             "courseName": "Sunbird training"
                         }
@@ -60,7 +69,7 @@ exports.sendNotification = async (req) => {
         }
         const response = await axios.post(`${LEARNER_SERVICE_URL}/api/notification/v1/notification/send/sync`, body, {
             headers: {
-                Authorization: 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJRekw4VVA1dUtqUFdaZVpMd1ZtTFJvNHdqWTg2a2FrcSJ9.TPjV0xLacSbp3FbJ7XeqHoKFN35Rl4YHx3DZNN9pm0o'
+                Authorization: SB_API_KEY
             },
         })
         console.log(JSON.stringify(response.data))
