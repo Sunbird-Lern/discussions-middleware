@@ -29,7 +29,7 @@ exports.createTopic = async (req, body) => {
     }
 }
 
-exports.sendNotification = (req, raw) => {
+exports.sendNotification = async(req, raw) => {
     try {
         let message
         if (moderation_flag && moderation_type === 'pre-moderation') {

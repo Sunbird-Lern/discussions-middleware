@@ -1,9 +1,11 @@
 const dateFormat = require('dateformat')
-const { Authorization } = require('../helpers/environmentVariablesHelper');
+const { Authorization, enable_notifications } = require('../helpers/environmentVariablesHelper');
 const { logger } = require('@project-sunbird/logger');
+const telemetryHelper = require('../helpers/telemetryHelper.js')
 const sbLogger = require('sb_logger_util');
-const userCreate = '/discussion/user/v1/create';
-const groupCreate = '/discussion/forum/v3/create';
+const auditEvent = require('../helpers/auditEvent');
+const evObject = require('../helpers/constant.json');
+const notification = require('../helpers/notification.js');
 let logObj = {
   "eid": "LOG",
   "ets": 1518460198146,
@@ -57,7 +59,7 @@ const decorateRequestHeadersForPutApi = function () {
   }
 }
 
-const handleSessionExpiry = (proxyRes, proxyResData, req, res, error) => {
+const handleSessionExpiry = (proxyRes, proxyResData, req, res, error, data) => {
   let edata = {
     "type": "log",
     "level": "INFO",
@@ -69,7 +71,7 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, error) => {
     edata.level = "WARN";
     logger.info({ message: `You are not authorized to access ${req.originalUrl}` });
     logMessage(edata, req);
-    return {
+    const resCode = {
       id: 'app.error',
       ver: '1.0',
       ts: dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
@@ -83,16 +85,28 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, error) => {
       responseCode: 'SESSION_EXPIRED',
       result: {}
     };
-  } else if (error || errorStatus.includes(proxyRes.statusCode)) {
+    // logging the Error events
+    telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode);
+    return resCode;
+  } else if(error || errorStatus.includes(proxyRes.statusCode)) {
     edata['message'] = `${req.originalUrl} failed`;
     edata.level = "ERROR";
     logger.info({ message: `${req.originalUrl} failed` });
     logMessage(edata, req);
-    return errorResponse(req, res, proxyRes, error);
+    const resCode = errorResponse(req, res,proxyRes, error);
+    // logging the Error events
+    telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode);
+    return resCode;
   } else {
     edata['message'] = `${req.originalUrl} successfull`;
     logger.info({ message: `${req.originalUrl} successfull` });
     logMessage(edata, req);
+    auditEventObject(req, proxyResData);
+    const refObject = _.get(evObject, req.route.path);
+    if (enable_notifications && _.get(refObject, 'notificationObj')) {
+      const resData = JSON.parse(proxyResData.toString('utf8'));
+      notification.notificationObj(req, resData);
+    }
     return proxyResData;
   }
 }
@@ -126,11 +140,25 @@ function errorResponse(req, res, proxyRes, error) {
   error_obj['id'] = id.join('.');
   error_obj['ts'] = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo');
   error_obj['params']['msgid'] = req.headers['x-request-id']; // TODO: replace with x-request-id;
-  error_obj['params']['errmsg'] = errorObj.errMsg
-  error_obj['params']['err'] = errorObj.err;
+  error_obj['params']['errmsg'] = errorObj && errorObj.errMsg || ''
+  error_obj['params']['err'] = errorObj && errorObj.err || '';
   return error_obj;
 }
 
+function auditEventObject(req, proxyResData) {
+  const ref = _.get(evObject, req.route.path);
+  if (ref) {
+    const data = JSON.parse(proxyResData.toString('utf8'));
+    let auditdata = auditEvent.auditEventData(ref, data, req);
+    const cdata  = auditdata.cdata ? Object.values(auditdata.cdata) : [];
+    auditEvent.auditEventObject.object = auditdata.obj || {};
+    auditEvent.auditEventObject.edata = auditdata.edata; // need type & props
+    auditEvent.auditEventObject.reqData = req;
+    auditEvent.auditEventObject.cdata =  auditEvent.cdataArray(cdata); // need to take from cache
+    logger.info({'DF Audit event': JSON.stringify(auditEvent.auditEventObject.auditEventObj)});
+    telemetryHelper.logTelemetryAuditEvent(auditEvent.auditEventObject.auditEventObj);
+  }
+}
 
 module.exports.decorateRequestHeaders = decorateRequestHeaders
 module.exports.handleSessionExpiry = handleSessionExpiry

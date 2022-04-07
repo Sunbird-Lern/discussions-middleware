@@ -1,5 +1,5 @@
 var Telemetry = require('@project-sunbird/telemetry-sdk')
-
+var telemetrySyncManager = require('./telemetrySyncManager');
 var default_config = {
   'runningEnv': 'server',
   'dispatcher': undefined,
@@ -25,7 +25,7 @@ telemetryService.prototype.config = {}
 telemetryService.prototype.context = []
 
 telemetryService.prototype.init = function (config) {
-  default_config.dispatcher = telemetrySyncManage
+  default_config.dispatcher = new telemetrySyncManager()
   config['host'] = config['host'] || process.env.sunbird_telemetry_service_local_url;
   default_config.dispatcher.init(config)
   this.config = Object.assign({}, config, default_config)
@@ -328,11 +328,11 @@ telemetryService.prototype.generateApiCallLogEvent = function (data) {
 
 telemetryService.prototype.getTelemetryAPIError = function (data, res, context) {
   try {
-  if ( (data.responseCode !== 'OK' && data.responseCode !== 200) || res.statusCode !== 200) {
-      const result = data.params;
+  if ( data && (( data.responseCode !== 'OK' &&  data.responseCode !== 200) || res.statusCode !== 200)) {
+      const result =  data.params;
   if (result) {
   const edata = {
-    err: data.responseCode  || res.statusCode,
+    err: data && data.responseCode  || res.statusCode,
     errtype: result.err || res.statusMessage,
     requestid:  result.resmsgid || 'null',
     errmsg: result.errmsg  || 'null'

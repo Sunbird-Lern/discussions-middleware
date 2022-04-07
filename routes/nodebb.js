@@ -7,8 +7,8 @@ const express = require('express');
 const app = express();
 const sbLogger = require('sb_logger_util');
 const request = require('request');
-const Telemetry = require('../libs/sb_telemetry_util/telemetryService.js')
-const telemetry = new Telemetry()
+const telemetryHelper = require('../helpers/telemetryHelper.js')
+
 const methodSlug = '/update';
 const nodebbServiceUrl = NODEBB_SERVICE_URL + nodebb_api_slug;
 const kafka = require('./kafka')
@@ -50,10 +50,11 @@ app.post(`${BASE_REPORT_URL}/forum/v2/read`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v2/create`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v2/remove`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v3/create`, proxyObject());
-app.post(`${BASE_REPORT_URL}/forum/tags`, proxyObject())
+app.post(`${BASE_REPORT_URL}/forum/tags`, proxyObject());
 app.post(`${BASE_REPORT_URL}/privileges/v2/copy`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v3/user/profile`, proxyObject());
 
+app.post(`${BASE_REPORT_URL}/forum/v2/users/details`, proxyObject());
 
 app.post(`${BASE_REPORT_URL}/forum/v3/group/membership`, proxyObject());
 app.post(`${BASE_REPORT_URL}/forum/v3/groups/users`, proxyObject());
@@ -139,7 +140,8 @@ app.delete(`${BASE_REPORT_URL}/v2/groups/:slug/membership/:uid`, proxyObject());
 
 
 // post apis 
-app.get(`${BASE_REPORT_URL}/post/pid/:pid`, proxyObjectWithoutAuth());
+app.get(`${BASE_REPORT_URL}/post/pid/:pid`, proxyObjectWithoutAuth()); // DEPRECATE-V1.16.0: This api used for nodebb version v1.16.0 and will be deprecated in the next upgrade.
+app.get(`${BASE_REPORT_URL}/v3/posts/:pid`, proxyObjectWithoutAuth()); // INFO: This api used for nodebb version v1.18.6
 app.post(`${BASE_REPORT_URL}/v2/posts/:pid`, isEditablePost(), proxyObjectForPutApi());
 app.delete(`${BASE_REPORT_URL}/v2/posts/:pid`, isEditablePost(), proxyObject());
 app.put(`${BASE_REPORT_URL}/v2/posts/:pid/state`, proxyObject());
@@ -185,38 +187,62 @@ function kafkaProducer(req, res) {
 
 
 function isEditablePost() {
-  logger.info({ message: "isEditablePost method called" });
-  return function (req, res, next) {
+  logger.info({message: "isEditablePost method called"});
+  return async function(req, res, next) {
     logger.info(req.body);
     const uid = parseInt(req.body.uid || req.query.uid, 10);
     const pid = parseInt(req.params.pid, 10);
-    const url = `${req.protocol}://${req.get('host')}${BASE_REPORT_URL}/post/pid/${pid}`
-    const options = {
-      url: url,
+    let baseUrl = `${req.protocol}://${req.get('host')}${BASE_REPORT_URL}`;
+
+    let options = {
+      url: '',
       method: 'GET',
       json: true
     };
-    logger.info(options)
-    request(options, (error, response, body) => {
-      if (error) {
-        logger.info({ message: `Error while call the api ${options.url}` })
-        logger.info({ message: `Error message:  ${error.message}` })
-        next(error);
-        return;
-      }
-      logger.info(body)
-      if (body.uid === uid && body.pid === pid) {
-        logger.info({ message: 'Uid got matched and the post can be deleted' })
-        next();
-      } else {
-        logger.info({ message: 'Uid is not matched and you can not delete the post' })
-        res.status(400)
-        res.send(responseObj)
-      }
-    });
+    let response;
+    try {
+      // INFO: This will support nodebb version v1.18.6.
+      options.url = baseUrl+`/v3/posts/${pid}`;
+      response = await getPostDetails(options);
+    } catch(error) {
+        if (error.statusCode === 404) {
+          //  DEPRECATE-V1.16.0: This api will support only for nodebb version v1.16.0 and can be removed once nodebb updated to latest version.
+          logger.info({"message": 'Old nodebb V.1.16 is used.'});
+          options.url  = baseUrl+`/post/pid/${pid}`;
+          response = await getPostDetails(options);
+        } else {
+          next(error);
+        }
+    };
+    
+    logger.info({message: `Getting Post details using: ${options.url} `});
+    if (response.uid === uid && response.pid === pid) {
+      logger.info({message: 'Uid got matched and the post can be deleted'})
+      next();
+    } else {
+      logger.info({message: 'Uid is not matched and you can not delete the post'})
+      res.status(400)
+      res.send(responseObj)
+    }
   }
 }
 
+function getPostDetails(options) {
+  if (options) {
+    return new Promise((resolve, reject) => {
+      request(options, (error, response, body) => {
+        if(error || response.statusCode === 404) {
+          logger.info({message: `Error while call the api ${options.url}`})
+          logger.info({message: `Error message:  ${error}`})
+          reject(response);
+          return;
+        }
+        const result = _.get(body, 'response') || body;
+        resolve(result);
+       });
+    });
+  }
+}
 
 function proxyObject() {
   return proxy(nodebbServiceUrl, {
@@ -225,9 +251,10 @@ function proxyObject() {
       let urlParam = req.originalUrl.replace('/discussion', '');
       logger.info({ "message": `request comming from ${req.originalUrl}` })
       let query = require('url').parse(req.url).query;
-      console.log("query======>", query)
-      if (query && !query.includes('_uid')) {
-        return require('url').parse(nodebbServiceUrl + urlParam + '?' + query).path
+      // logging the Entry events
+      telemetryHelper.logAPIEvent(req,'discussion-middleware');
+      if (query) {
+        return require('url').parse(nodebbServiceUrl+ urlParam).path
       } else {
         const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
         const proxyUrl = require('url').parse(nodebbServiceUrl + urlParam);
@@ -285,8 +312,10 @@ function proxyObjectForPutApi() {
       }
       logger.info({ "message": `request comming from ${req.originalUrl}` })
       let query = require('url').parse(req.url).query;
-      if (query && !query.includes('_uid')) {
-        return require('url').parse(nodebbServiceUrl + urlParam + '?' + query).path
+      // logging the Entry events
+      telemetryHelper.logAPIEvent(req,'discussion-middleware');
+      if (query) {
+        return require('url').parse(nodebbServiceUrl+ urlParam).path
       } else {
         const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
         const proxyUrl = require('url').parse(nodebbServiceUrl + urlParam);
@@ -308,12 +337,15 @@ function proxyObjectForPutApi() {
         if (proxyRes.statusCode === 404) {
           edata['message'] = `Request url ${req.originalUrl} not found`;
           logMessage(edata, req);
-          logger.info({ message: `${req.originalUrl} Not found ${data}` })
+          logger.info({message: `${req.originalUrl} Not found ${data}`})
+          const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);
+          // logging the Error events
+          telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode) 
           return proxyUtils.errorResponse(req, res, proxyRes, null);
         } else {
           edata['message'] = `${req.originalUrl} successfull`;
           logMessage(edata, req);
-          return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null);
+          return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null, data);
         }
       } catch (err) {
         edata['level'] = "Error";
@@ -356,13 +388,11 @@ function proxyObjectWithoutAuth() {
           edata['message'] = `Request url ${req.originalUrl} not found`;
           logMessage(edata, req);
           logger.info({ message: `${req.originalUrl} Not found ${data}` })
-          const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);
-          logTelemetryEvent(req, res, data, proxyResData, proxyRes, resCode)
+          const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);   
           return resCode;
         } else {
           edata['message'] = `${req.originalUrl} successfull`;
           const resCode = proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null)
-          logTelemetryEvent(req, res, data, proxyResData, proxyRes, resCode)
           logMessage(edata, req);
           return resCode;
         }
@@ -390,50 +420,6 @@ function logMessage(data, req) {
   logObj.context.cdata = [];
   logObj.edata = data;
   sbLogger.info(logObj);
-}
-
-function logTelemetryEvent(req, res, data, proxyResData, proxyRes, resCode) {
-  const context = {
-    env: 'discussion-middleware'
-  }
-  let telemetryObj = {};
-  if (proxyRes.statusCode === 404) {
-    if (data !== 'Not Found' && (typeof data) !== 'string') {
-      telemetryObj = JSON.parse(proxyResData.toString('utf8'));
-    } else {
-      telemetryObj = resCode;
-    }
-  } else {
-    if (resCode.params) {
-      telemetryObj = resCode;
-    } else {
-      telemetryObj = JSON.parse(proxyResData.toString('utf8'));
-    }
-  }
-  const option = telemetry.getTelemetryAPIError(telemetryObj, proxyRes, context);
-  if (option) { logApiErrorEventV2(req, telemetryObj, option) }
-}
-
-function logApiErrorEventV2(req, data, option) {
-  let object = data.obj || {}
-  let channel = req.headers['x-channel-id']
-  const context = {
-    channel: channel,
-    env: option.context.env,
-    cdata: [],
-    did: req.headers['x-device-id'],
-    sid: req.headers['x-session-id']
-  }
-  const actor = {
-    id: req.userId ? req.userId.toString() : 'anonymous',
-    type: 'user'
-  }
-  telemetry.error({
-    edata: option.edata,
-    context: _.pickBy(context, value => !_.isEmpty(value)),
-    object: _.pickBy(object, value => !_.isEmpty(value)),
-    actor: _.pickBy(actor, value => !_.isEmpty(value))
-  })
 }
 
 module.exports = app;
