@@ -278,12 +278,11 @@ function proxyObject() {
           logMessage(edata, req);
           logger.info({ message: `${req.originalUrl} Not found ${data}` })
           const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);
-          logTelemetryEvent(req, res, data, proxyResData, proxyRes, resCode)
           return resCode;
         } else {
           edata['message'] = `${req.originalUrl} successfull`;
           const resCode = proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null)
-          logTelemetryEvent(req, res, data, proxyResData, proxyRes, resCode)
+          telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode)     
           logMessage(edata, req);
           if (moderation_flag && moderation_type === 'post-moderation') {
             kafka.produce(req, data)
