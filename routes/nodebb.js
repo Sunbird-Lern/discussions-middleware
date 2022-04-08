@@ -180,15 +180,15 @@ function kafkaProducer(req, res) {
   return kafka.produce(req, res)
 }
 
-// function kafkaConsumer(req, res) {
-   kafka.consume()
-// }
+if (moderation_flag) {
+  kafka.consume()
+}
 
 
 
 function isEditablePost() {
-  logger.info({message: "isEditablePost method called"});
-  return async function(req, res, next) {
+  logger.info({ message: "isEditablePost method called" });
+  return async function (req, res, next) {
     logger.info(req.body);
     const uid = parseInt(req.body.uid || req.query.uid, 10);
     const pid = parseInt(req.params.pid, 10);
@@ -202,25 +202,25 @@ function isEditablePost() {
     let response;
     try {
       // INFO: This will support nodebb version v1.18.6.
-      options.url = baseUrl+`/v3/posts/${pid}`;
+      options.url = baseUrl + `/v3/posts/${pid}`;
       response = await getPostDetails(options);
-    } catch(error) {
-        if (error.statusCode === 404) {
-          //  DEPRECATE-V1.16.0: This api will support only for nodebb version v1.16.0 and can be removed once nodebb updated to latest version.
-          logger.info({"message": 'Old nodebb V.1.16 is used.'});
-          options.url  = baseUrl+`/post/pid/${pid}`;
-          response = await getPostDetails(options);
-        } else {
-          next(error);
-        }
+    } catch (error) {
+      if (error.statusCode === 404) {
+        //  DEPRECATE-V1.16.0: This api will support only for nodebb version v1.16.0 and can be removed once nodebb updated to latest version.
+        logger.info({ "message": 'Old nodebb V.1.16 is used.' });
+        options.url = baseUrl + `/post/pid/${pid}`;
+        response = await getPostDetails(options);
+      } else {
+        next(error);
+      }
     };
-    
-    logger.info({message: `Getting Post details using: ${options.url} `});
+
+    logger.info({ message: `Getting Post details using: ${options.url} ` });
     if (response.uid === uid && response.pid === pid) {
-      logger.info({message: 'Uid got matched and the post can be deleted'})
+      logger.info({ message: 'Uid got matched and the post can be deleted' })
       next();
     } else {
-      logger.info({message: 'Uid is not matched and you can not delete the post'})
+      logger.info({ message: 'Uid is not matched and you can not delete the post' })
       res.status(400)
       res.send(responseObj)
     }
@@ -231,15 +231,15 @@ function getPostDetails(options) {
   if (options) {
     return new Promise((resolve, reject) => {
       request(options, (error, response, body) => {
-        if(error || response.statusCode === 404) {
-          logger.info({message: `Error while call the api ${options.url}`})
-          logger.info({message: `Error message:  ${error}`})
+        if (error || response.statusCode === 404) {
+          logger.info({ message: `Error while call the api ${options.url}` })
+          logger.info({ message: `Error message:  ${error}` })
           reject(response);
           return;
         }
         const result = _.get(body, 'response') || body;
         resolve(result);
-       });
+      });
     });
   }
 }
@@ -252,9 +252,9 @@ function proxyObject() {
       logger.info({ "message": `request comming from ${req.originalUrl}` })
       let query = require('url').parse(req.url).query;
       // logging the Entry events
-      telemetryHelper.logAPIEvent(req,'discussion-middleware');
+      telemetryHelper.logAPIEvent(req, 'discussion-middleware');
       if (query) {
-        return require('url').parse(nodebbServiceUrl+ urlParam).path
+        return require('url').parse(nodebbServiceUrl + urlParam).path
       } else {
         const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
         const proxyUrl = require('url').parse(nodebbServiceUrl + urlParam);
@@ -282,7 +282,7 @@ function proxyObject() {
         } else {
           edata['message'] = `${req.originalUrl} successfull`;
           const resCode = proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, null)
-          telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode)     
+          telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode)
           logMessage(edata, req);
           if (moderation_flag && moderation_type === 'post-moderation') {
             kafka.produce(req, data)
@@ -312,9 +312,9 @@ function proxyObjectForPutApi() {
       logger.info({ "message": `request comming from ${req.originalUrl}` })
       let query = require('url').parse(req.url).query;
       // logging the Entry events
-      telemetryHelper.logAPIEvent(req,'discussion-middleware');
+      telemetryHelper.logAPIEvent(req, 'discussion-middleware');
       if (query) {
-        return require('url').parse(nodebbServiceUrl+ urlParam).path
+        return require('url').parse(nodebbServiceUrl + urlParam).path
       } else {
         const incomingUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
         const proxyUrl = require('url').parse(nodebbServiceUrl + urlParam);
@@ -336,10 +336,10 @@ function proxyObjectForPutApi() {
         if (proxyRes.statusCode === 404) {
           edata['message'] = `Request url ${req.originalUrl} not found`;
           logMessage(edata, req);
-          logger.info({message: `${req.originalUrl} Not found ${data}`})
+          logger.info({ message: `${req.originalUrl} Not found ${data}` })
           const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);
           // logging the Error events
-          telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode) 
+          telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode)
           return proxyUtils.errorResponse(req, res, proxyRes, null);
         } else {
           edata['message'] = `${req.originalUrl} successfull`;
@@ -387,7 +387,7 @@ function proxyObjectWithoutAuth() {
           edata['message'] = `Request url ${req.originalUrl} not found`;
           logMessage(edata, req);
           logger.info({ message: `${req.originalUrl} Not found ${data}` })
-          const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);   
+          const resCode = proxyUtils.errorResponse(req, res, proxyRes, null);
           return resCode;
         } else {
           edata['message'] = `${req.originalUrl} successfull`;

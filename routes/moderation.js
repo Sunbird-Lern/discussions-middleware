@@ -1,5 +1,5 @@
 const axios = require('axios')
-const { NODEBB_SERVICE_URL, nodebb_api_slug, Authorization, LEARNER_SERVICE_URL, SB_API_KEY, moderation_flag } = require('../helpers/environmentVariablesHelper.js');
+const { NODEBB_SERVICE_URL, nodebb_api_slug, Authorization, LEARNER_SERVICE_URL, SB_API_KEY, moderation_flag, moderation_type } = require('../helpers/environmentVariablesHelper.js');
 const nodebbServiceUrl = NODEBB_SERVICE_URL + nodebb_api_slug;
 
 exports.deleteTopic = async (req, body) => {
@@ -29,7 +29,7 @@ exports.createTopic = async (req, body) => {
     }
 }
 
-exports.sendNotification = async(req, raw) => {
+exports.sendNotification = async (req, raw) => {
     try {
         let message
         if (moderation_flag && moderation_type === 'pre-moderation') {
