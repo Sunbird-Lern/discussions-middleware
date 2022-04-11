@@ -248,7 +248,7 @@ function proxyObject() {
   return proxy(nodebbServiceUrl, {
     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
     proxyReqPathResolver: function (req) {
-      let urlParam = req.originalUrl.replace('/discussion', '');
+      let urlParam = req.originalUrl.replace(BASE_REPORT_URL, '');
       logger.info({ "message": `request comming from ${req.originalUrl}` })
       let query = require('url').parse(req.url).query;
       // logging the Entry events

@@ -1,5 +1,5 @@
 const dateFormat = require('dateformat')
-const { Authorization, enable_notifications } = require('../helpers/environmentVariablesHelper');
+const { Authorization, enable_notifications, audit_flag } = require('../helpers/environmentVariablesHelper');
 const { logger } = require('@project-sunbird/logger');
 const telemetryHelper = require('../helpers/telemetryHelper.js')
 const sbLogger = require('sb_logger_util');
@@ -43,18 +43,18 @@ let error_obj = {
 const decorateRequestHeaders = function () {
   return function (proxyReqOpts) {
     console.log("Before appending master token:", JSON.stringify(proxyReqOpts.headers))
-    logger.info({message: `adding headers in the request ${proxyReqOpts.path}`});
-      proxyReqOpts.headers.Authorization = 'Bearer ' + Authorization;
-      console.log("After appending master token:", JSON.stringify(proxyReqOpts.headers))
+    logger.info({ message: `adding headers in the request ${proxyReqOpts.path}` });
+    proxyReqOpts.headers.Authorization = 'Bearer ' + Authorization;
+    console.log("After appending master token:", JSON.stringify(proxyReqOpts.headers))
     return proxyReqOpts;
   }
 }
 
 const decorateRequestHeadersForPutApi = function () {
   return function (proxyReqOpts) {
-    logger.info({message: `Changing the method name for the request ${proxyReqOpts.path}`});
-      proxyReqOpts.method = 'PUT';
-      proxyReqOpts.headers.Authorization = 'Bearer ' + Authorization;
+    logger.info({ message: `Changing the method name for the request ${proxyReqOpts.path}` });
+    proxyReqOpts.method = 'PUT';
+    proxyReqOpts.headers.Authorization = 'Bearer ' + Authorization;
     return proxyReqOpts;
   }
 }
@@ -88,12 +88,12 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, error, data) => {
     // logging the Error events
     telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode);
     return resCode;
-  } else if(error || errorStatus.includes(proxyRes.statusCode)) {
+  } else if (error || errorStatus.includes(proxyRes.statusCode)) {
     edata['message'] = `${req.originalUrl} failed`;
     edata.level = "ERROR";
     logger.info({ message: `${req.originalUrl} failed` });
     logMessage(edata, req);
-    const resCode = errorResponse(req, res,proxyRes, error);
+    const resCode = errorResponse(req, res, proxyRes, error);
     // logging the Error events
     telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode);
     return resCode;
@@ -101,7 +101,9 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, error, data) => {
     edata['message'] = `${req.originalUrl} successfull`;
     logger.info({ message: `${req.originalUrl} successfull` });
     logMessage(edata, req);
-    auditEventObject(req, proxyResData);
+    if (audit_flag) {
+      auditEventObject(req, proxyResData);
+    }
     const refObject = _.get(evObject, req.route.path);
     if (enable_notifications && _.get(refObject, 'notificationObj')) {
       const resData = JSON.parse(proxyResData.toString('utf8'));
@@ -150,12 +152,12 @@ function auditEventObject(req, proxyResData) {
   if (ref) {
     const data = JSON.parse(proxyResData.toString('utf8'));
     let auditdata = auditEvent.auditEventData(ref, data, req);
-    const cdata  = auditdata.cdata ? Object.values(auditdata.cdata) : [];
+    const cdata = auditdata.cdata ? Object.values(auditdata.cdata) : [];
     auditEvent.auditEventObject.object = auditdata.obj || {};
     auditEvent.auditEventObject.edata = auditdata.edata; // need type & props
     auditEvent.auditEventObject.reqData = req;
-    auditEvent.auditEventObject.cdata =  auditEvent.cdataArray(cdata); // need to take from cache
-    logger.info({'DF Audit event': JSON.stringify(auditEvent.auditEventObject.auditEventObj)});
+    auditEvent.auditEventObject.cdata = auditEvent.cdataArray(cdata); // need to take from cache
+    logger.info({ 'DF Audit event': JSON.stringify(auditEvent.auditEventObject.auditEventObj) });
     telemetryHelper.logTelemetryAuditEvent(auditEvent.auditEventObject.auditEventObj);
   }
 }
