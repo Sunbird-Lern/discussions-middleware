@@ -101,7 +101,7 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, error, data) => {
     edata['message'] = `${req.originalUrl} successfull`;
     logger.info({ message: `${req.originalUrl} successfull` });
     logMessage(edata, req);
-    if (audit_flag) {
+    if (enable_audit_event) {
       auditEventObject(req, proxyResData);
     }
     const refObject = _.get(evObject, req.route.path);

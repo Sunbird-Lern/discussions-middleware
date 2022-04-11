@@ -15,7 +15,7 @@ let devEnvVariables = {
     moderation_type: env.moderation_type || 'pre-moderation',
     LEARNER_SERVICE_URL: env.learner_service_url || 'https://igot-dev.in',
     SB_API_KEY: env.SB_API_KEY || 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJRekw4VVA1dUtqUFdaZVpMd1ZtTFJvNHdqWTg2a2FrcSJ9.TPjV0xLacSbp3FbJ7XeqHoKFN35Rl4YHx3DZNN9pm0o',
-    audit_flag: false
+    enable_audit_event: env.enable_audit_event || true
 }
 
 module.exports = devEnvVariables;
