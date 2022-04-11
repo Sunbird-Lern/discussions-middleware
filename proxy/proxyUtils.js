@@ -1,5 +1,5 @@
 const dateFormat = require('dateformat')
-const { Authorization, enable_notifications, audit_flag } = require('../helpers/environmentVariablesHelper');
+const { Authorization, enable_notifications, enable_audit_event } = require('../helpers/environmentVariablesHelper');
 const { logger } = require('@project-sunbird/logger');
 const telemetryHelper = require('../helpers/telemetryHelper.js')
 const sbLogger = require('sb_logger_util');
