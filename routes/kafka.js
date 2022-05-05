@@ -1,7 +1,7 @@
 // import the `Kafka` instance from the kafkajs library
 const { json } = require("express")
 const { Kafka } = require("kafkajs")
-const { moderation_flag, moderation_type } = require('../helpers/environmentVariablesHelper.js');
+const { moderation_flag, moderation_type, moderation_id, moderation_flag_by, moderation_platform, moderation_category, moderation_contentId } = require('../helpers/environmentVariablesHelper.js');
 
 // the client ID lets kafka know who's producing the messages
 const clientId = "f23f0a0351e5"
@@ -41,18 +41,18 @@ exports.produce = async (req, res) => {
                 "profaneStrings": [
                 ],
                 "classification": null,
-                "id": "GEbX4X0B9pbA_yqYBUtM",
-                "flaggedBy": "system_flagged",
+                "id": moderation_id,
+                "flaggedBy": moderation_flag_by,
                 "url": null,
                 "timestamp": time,
                 "author": req.body.email,
-                "feedbackOriginPlatform": "IGOT",
-                "feedbackOriginCategory": "discussions",
+                "feedbackOriginPlatform": moderation_platform,
+                "feedbackOriginCategory": moderation_category,
                 "moderationtimestamp": null,
                 "comment": "some comment about comment",
                 "published": false,
                 "moderated": false,
-                "contentId": "1112223332552"
+                "contentId": moderation_contentId
 
             }
 

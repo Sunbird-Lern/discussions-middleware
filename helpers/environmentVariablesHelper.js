@@ -13,8 +13,16 @@ let devEnvVariables = {
     TELEMETRY_EVENTS_BATCH_SIZE: env.TELEMETRY_EVENTS_BATCH_SIZE || 1,
     moderation_flag: env.moderation_flag || true,
     moderation_type: env.moderation_type || 'pre-moderation',
+    moderation_id: env.moderation_id || 'GEbX4X0B9pbA_yqYBUtM',
+    moderation_flag_by: env.moderation_flag_by || 'system_flagged',
+    moderation_platform: env.moderation_platform || 'Sunbird',
+    moderation_category: env.moderation_category || 'discussions',
+    moderation_contentId: env.moderation_contentId || '1112223332552',
+    moderation_email: env.moderation_email || 'pritha.chattopadhyay@tarento.com',
+    moderation_email_subject: env.moderation_email_subject || 'Sunbird Discussion  Moderation',
+    moderation_course: env.moderation_course || 'Sunbird training',
     LEARNER_SERVICE_URL: env.learner_service_url || 'https://igot-dev.in',
-    SB_API_KEY: env.SB_API_KEY || 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJRekw4VVA1dUtqUFdaZVpMd1ZtTFJvNHdqWTg2a2FrcSJ9.TPjV0xLacSbp3FbJ7XeqHoKFN35Rl4YHx3DZNN9pm0o',
+    SB_API_KEY: env.SB_API_KEY || 'bearer abc',
     enable_audit_event: env.enable_audit_event || true
 }
 

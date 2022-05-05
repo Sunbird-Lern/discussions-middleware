@@ -53,14 +53,14 @@ exports.sendNotification = async (req, raw) => {
                     "mode": "email",
                     "deliveryType": "message",
                     "config": {
-                        "sender": "pritha.chattopadhyay@tarento.com",
-                        "subject": "Sunbird Discussion  Moderation"
+                        "sender": moderation_email,
+                        "subject": moderation_email_subject
                     },
                     "ids": [raw.email],
                     "template": {
                         "data": message,
                         "params": {
-                            "courseName": "Sunbird training"
+                            "courseName": moderation_course
                         }
                     }
                 }]
