@@ -11,7 +11,7 @@ let devEnvVariables = {
     TELEMETRY_SERVICE_URL: env.TELEMETRY_SERVICE_URL || 'https://dev.sunbirded.org',
     TELEMETRY_SERVICE_API_SLUG: env.TELEMETRY_SERVICE_API_SLUG || '/v1/telemetry',
     TELEMETRY_EVENTS_BATCH_SIZE: env.TELEMETRY_EVENTS_BATCH_SIZE || 1,
-    moderation_flag: env.moderation_flag || flase,
+    moderation_flag: env.moderation_flag || false,
     moderation_type: env.moderation_type || 'pre-moderation',
     moderation_id: env.moderation_id || 'GEbX4X0B9pbA_yqYBUtM',
     moderation_flag_by: env.moderation_flag_by || 'system_flagged',
