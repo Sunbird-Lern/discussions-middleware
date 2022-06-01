@@ -1,5 +1,5 @@
 const dateFormat = require('dateformat')
-const { Authorization, enable_notifications } = require('../helpers/environmentVariablesHelper');
+const { Authorization, enable_notifications, enable_audit_event } = require('../helpers/environmentVariablesHelper');
 const { logger } = require('@project-sunbird/logger');
 const telemetryHelper = require('../helpers/telemetryHelper.js')
 const sbLogger = require('sb_logger_util');
@@ -29,11 +29,11 @@ let error_obj = {
   "ver": "1.0",
   "ts": "",
   "params": {
-      "resmsgid": "5f36c090-2eee-11eb-80ed-6bb70096c082",
-      "msgid": "",
-      "status": "failed",
-      "err": "",
-      "errmsg": ""
+    "resmsgid": "5f36c090-2eee-11eb-80ed-6bb70096c082",
+    "msgid": "",
+    "status": "failed",
+    "err": "",
+    "errmsg": ""
   }
 }
 
@@ -43,18 +43,18 @@ let error_obj = {
 const decorateRequestHeaders = function () {
   return function (proxyReqOpts) {
     console.log("Before appending master token:", JSON.stringify(proxyReqOpts.headers))
-    logger.info({message: `adding headers in the request ${proxyReqOpts.path}`});
-      proxyReqOpts.headers.Authorization = 'Bearer ' + Authorization;
-      console.log("After appending master token:", JSON.stringify(proxyReqOpts.headers))
+    logger.info({ message: `adding headers in the request ${proxyReqOpts.path}` });
+    proxyReqOpts.headers.Authorization = 'Bearer ' + Authorization;
+    console.log("After appending master token:", JSON.stringify(proxyReqOpts.headers))
     return proxyReqOpts;
   }
 }
 
 const decorateRequestHeadersForPutApi = function () {
   return function (proxyReqOpts) {
-    logger.info({message: `Changing the method name for the request ${proxyReqOpts.path}`});
-      proxyReqOpts.method = 'PUT';
-      proxyReqOpts.headers.Authorization = 'Bearer ' + Authorization;
+    logger.info({ message: `Changing the method name for the request ${proxyReqOpts.path}` });
+    proxyReqOpts.method = 'PUT';
+    proxyReqOpts.headers.Authorization = 'Bearer ' + Authorization;
     return proxyReqOpts;
   }
 }
@@ -69,7 +69,7 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, error, data) => {
   if ((proxyRes.statusCode === 401)) {
     edata['message'] = `You are not authorized to access ${req.originalUrl}`;
     edata.level = "WARN";
-    logger.info({message: `You are not authorized to access ${req.originalUrl}`});
+    logger.info({ message: `You are not authorized to access ${req.originalUrl}` });
     logMessage(edata, req);
     const resCode = {
       id: 'app.error',
@@ -88,20 +88,22 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, error, data) => {
     // logging the Error events
     telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode);
     return resCode;
-  } else if(error || errorStatus.includes(proxyRes.statusCode)) {
+  } else if (error || errorStatus.includes(proxyRes.statusCode)) {
     edata['message'] = `${req.originalUrl} failed`;
     edata.level = "ERROR";
-    logger.info({message: `${req.originalUrl} failed`});
+    logger.info({ message: `${req.originalUrl} failed` });
     logMessage(edata, req);
-    const resCode = errorResponse(req, res,proxyRes, error);
+    const resCode = errorResponse(req, res, proxyRes, error);
     // logging the Error events
     telemetryHelper.logTelemetryErrorEvent(req, data, proxyResData, proxyRes, resCode);
     return resCode;
   } else {
     edata['message'] = `${req.originalUrl} successfull`;
-    logger.info({message: `${req.originalUrl} successfull`});
+    logger.info({ message: `${req.originalUrl} successfull` });
     logMessage(edata, req);
-    auditEventObject(req, proxyResData);
+    if (enable_audit_event) {
+      auditEventObject(req, proxyResData);
+    }
     const refObject = _.get(evObject, req.route.path);
     if (enable_notifications && _.get(refObject, 'notificationObj')) {
       const resData = JSON.parse(proxyResData.toString('utf8'));
@@ -136,7 +138,7 @@ function errorResponse(req, res, proxyRes, error) {
   const method = req.method.toLowerCase();
   const path = `${req.route.path}.${method}.errorObject`;
   const errorObj = _.get(errorCodes, `${path}.${errorCode}`) || _.get(errorCodes, `${path}.${defaultErrorCode}`);
-  const id =  req.originalUrl.split('/');
+  const id = req.originalUrl.split('/');
   error_obj['id'] = id.join('.');
   error_obj['ts'] = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo');
   error_obj['params']['msgid'] = req.headers['x-request-id']; // TODO: replace with x-request-id;
@@ -150,17 +152,17 @@ function auditEventObject(req, proxyResData) {
   if (ref) {
     const data = JSON.parse(proxyResData.toString('utf8'));
     let auditdata = auditEvent.auditEventData(ref, data, req);
-    const cdata  = auditdata.cdata ? Object.values(auditdata.cdata) : [];
+    const cdata = auditdata.cdata ? Object.values(auditdata.cdata) : [];
     auditEvent.auditEventObject.object = auditdata.obj || {};
     auditEvent.auditEventObject.edata = auditdata.edata; // need type & props
     auditEvent.auditEventObject.reqData = req;
-    auditEvent.auditEventObject.cdata =  auditEvent.cdataArray(cdata); // need to take from cache
-    logger.info({'DF Audit event': JSON.stringify(auditEvent.auditEventObject.auditEventObj)});
+    auditEvent.auditEventObject.cdata = auditEvent.cdataArray(cdata); // need to take from cache
+    logger.info({ 'DF Audit event': JSON.stringify(auditEvent.auditEventObject.auditEventObj) });
     telemetryHelper.logTelemetryAuditEvent(auditEvent.auditEventObject.auditEventObj);
   }
 }
 
 module.exports.decorateRequestHeaders = decorateRequestHeaders
 module.exports.handleSessionExpiry = handleSessionExpiry
-module.exports.errorResponse= errorResponse
+module.exports.errorResponse = errorResponse
 module.exports.decorateRequestHeadersForPutApi = decorateRequestHeadersForPutApi
