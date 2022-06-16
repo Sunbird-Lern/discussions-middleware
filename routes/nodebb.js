@@ -11,8 +11,12 @@ const telemetryHelper = require('../helpers/telemetryHelper.js')
 
 const methodSlug = '/update';
 const nodebbServiceUrl = NODEBB_SERVICE_URL + nodebb_api_slug;
-const kafka = require('./kafka')
 const _ = require('lodash')
+
+var kafka;
+if(moderation_flag) {
+   kafka = require('./kafka');
+}
 
 let logObj = {
   "eid": "LOG",
