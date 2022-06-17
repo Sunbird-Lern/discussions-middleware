@@ -1,8 +1,9 @@
 // import the `Kafka` instance from the kafkajs library
 const { json } = require("express")
 const { Kafka } = require("kafkajs")
-const { moderation_flag, moderation_type, moderation_id, moderation_flag_by, moderation_platform, moderation_category, moderation_contentId } = require('../helpers/environmentVariablesHelper.js');
-
+const { moderation_type, moderation_id, moderation_flag_by, moderation_platform, moderation_category, moderation_contentId } = require('../helpers/environmentVariablesHelper.js');
+let {  moderation_flag } = require('../helpers/environmentVariablesHelper.js');
+moderation_flag = moderation_flag === 'true' ? true : false;
 // the client ID lets kafka know who's producing the messages
 const clientId = "f23f0a0351e5"
 // we can define the list of brokers in the cluster
