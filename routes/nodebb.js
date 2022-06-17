@@ -1,6 +1,9 @@
 const proxyUtils = require('../proxy/proxyUtils.js')
 const proxy = require('express-http-proxy');
-const { NODEBB_SERVICE_URL, nodebb_api_slug, moderation_flag, moderation_type } = require('../helpers/environmentVariablesHelper.js');
+const { NODEBB_SERVICE_URL, nodebb_api_slug, moderation_type } = require('../helpers/environmentVariablesHelper.js');
+let {  moderation_flag } = require('../helpers/environmentVariablesHelper.js');
+moderation_flag = moderation_flag === 'true' ? true : false;
+
 const { logger } = require('@project-sunbird/logger');
 const BASE_REPORT_URL = "/discussion";
 const express = require('express');
@@ -36,17 +39,22 @@ const responseObj = {
 };
 
 const premoderation = function (req, res, next) {
-  const body = req.body
-  console.log(req.path)
-  let url = '/discussion/v2/topics'
-  let incomingUrl = req.path
-  console.log(url.indexOf(incomingUrl))
-  console.log('headers====', req.headers)
-  if (moderation_flag && moderation_type === 'pre-moderation' && Object.keys(body) != 0 && url.indexOf(incomingUrl) != -1) {
-    kafka.produce(req, res)
+  if (moderation_flag) {
+    const body = req.body
+    console.log(req.path)
+    let url = '/discussion/v2/topics'
+    let incomingUrl = req.path
+    console.log(url.indexOf(incomingUrl))
+    console.log('headers====', req.headers)
+    if ( moderation_type === 'pre-moderation' && Object.keys(body) != 0 && url.indexOf(incomingUrl) != -1) {
+      kafka.produce(req, res)
+    } else {
+      next()
+    }
   } else {
     next()
   }
+  
 }
 app.use(premoderation)
 
