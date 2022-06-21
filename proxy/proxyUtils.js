@@ -27,11 +27,11 @@ let error_obj = {
   "ver": "1.0",
   "ts": "",
   "params": {
-      "resmsgid": "5f36c090-2eee-11eb-80ed-6bb70096c082",
-      "msgid": "",
-      "status": "failed",
-      "err": "",
-      "errmsg": ""
+    "resmsgid": "5f36c090-2eee-11eb-80ed-6bb70096c082",
+    "msgid": "",
+    "status": "failed",
+    "err": "",
+    "errmsg": ""
   }
 }
 
@@ -67,7 +67,7 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, error) => {
   if ((proxyRes.statusCode === 401)) {
     edata['message'] = `You are not authorized to access ${req.originalUrl}`;
     edata.level = "WARN";
-    logger.info({message: `You are not authorized to access ${req.originalUrl}`});
+    logger.info({ message: `You are not authorized to access ${req.originalUrl}` });
     logMessage(edata, req);
     return {
       id: 'app.error',
@@ -83,15 +83,15 @@ const handleSessionExpiry = (proxyRes, proxyResData, req, res, error) => {
       responseCode: 'SESSION_EXPIRED',
       result: {}
     };
-  } else if(error || errorStatus.includes(proxyRes.statusCode)) {
+  } else if (error || errorStatus.includes(proxyRes.statusCode)) {
     edata['message'] = `${req.originalUrl} failed`;
     edata.level = "ERROR";
-    logger.info({message: `${req.originalUrl} failed`});
+    logger.info({ message: `${req.originalUrl} failed` });
     logMessage(edata, req);
-    return errorResponse(req, res,proxyRes, error);
+    return errorResponse(req, res, proxyRes, error);
   } else {
     edata['message'] = `${req.originalUrl} successfull`;
-    logger.info({message: `${req.originalUrl} successfull`});
+    logger.info({ message: `${req.originalUrl} successfull` });
     logMessage(edata, req);
     return proxyResData;
   }
@@ -122,7 +122,7 @@ function errorResponse(req, res, proxyRes, error) {
   const method = req.method.toLowerCase();
   const path = `${req.route.path}.${method}.errorObject`;
   const errorObj = _.get(errorCodes, `${path}.${errorCode}`) || _.get(errorCodes, `${path}.${defaultErrorCode}`);
-  const id =  req.originalUrl.split('/');
+  const id = req.originalUrl.split('/');
   error_obj['id'] = id.join('.');
   error_obj['ts'] = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo');
   error_obj['params']['msgid'] = req.headers['x-request-id']; // TODO: replace with x-request-id;
@@ -134,5 +134,5 @@ function errorResponse(req, res, proxyRes, error) {
 
 module.exports.decorateRequestHeaders = decorateRequestHeaders
 module.exports.handleSessionExpiry = handleSessionExpiry
-module.exports.errorResponse= errorResponse
+module.exports.errorResponse = errorResponse
 module.exports.decorateRequestHeadersForPutApi = decorateRequestHeadersForPutApi
