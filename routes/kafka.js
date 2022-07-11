@@ -99,7 +99,7 @@ exports.consume = async () => {
                     raw.replace(/({)([a-zA-Z0-9]+)(:)/, '$1"$2"$3')
                     console.log(raw)
                     raw = JSON.parse(raw)
-                    console.log('class ===>', raw.classification)
+                    // console.log('class ===>', raw.classification)
                     if (moderation_flag && moderation_type === 'post-moderation') {
                         if (val.classification != "SFW") {
                             moderation.deleteTopic(val, raw)
