@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "backend-test": "nyc mocha 'tests/spec/*.spec.js'",
+    "backend-test": "nyc mocha 'tests/**/*.spec.js'",
     "coverage": "nyc --reporter=lcov --reporter=text-lcov npm run backend-test"
   },
   "dependencies": {
