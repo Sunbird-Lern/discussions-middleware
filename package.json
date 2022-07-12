@@ -35,6 +35,6 @@
     "sb-config-util": "file:libs/sb-config-util",
     "sb_logger_util": "file:libs/sb_logger_util",
     "sb_telemetry_util": "file:libs/sb_telemetry_util",
-    "sinon": "^14.0.0"
+    "sinon": "^9.2.2"
   }
 }
