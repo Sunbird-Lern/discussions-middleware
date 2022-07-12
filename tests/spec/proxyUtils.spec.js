@@ -7,7 +7,7 @@ const request = httpMocks.createRequest({
     rspObj: {
         apiId: 'apiId'
     },
-    path: '/discussion/user/v1/create',
+    route: {path: '/discussion/user/v1/create'},
     headers: {
         'x-request-id': 'f78a6a33-4246-580c-afd5-08824c8ad506',
         'x-session-id': 'bcbxg8cz41F3OpTp62qBByavpcRcUzVg',
@@ -64,7 +64,7 @@ describe('ProxyUtils add the headers', function () {
         const proxyData = {
             'username': 'Test-User'
         };
-        const data = proxyUtils.handleSessionExpiry(proxyRes, proxyData, request, null, null);
+        const data = proxyUtils.handleSessionExpiry(proxyRes, proxyData, request, null, null, null);
         expect(data).to.eql(proxyData);
         done();
     });

@@ -1,0 +1,144 @@
+{
+    "/discussion/v2/posts/:pid/vote": {
+        "audit": {
+            "edata": {
+                "state": "payload.upvote?",
+                "props": "body#"
+            }
+        },
+        "cdata": [],
+        "fromUid": "payload.fromuid",
+        "toUid": "payload.post.uid",
+        "notificationObj": {
+            "headers": "payload.headers#",
+            "notificationData": {
+                "ids": "payload.userDetails.ids",
+                "createdBy": {
+                    "id": "payload.userDetails.createdBy['sunbird-oidcId']",
+                    "name": "payload.userDetails.createdBy['username']",
+                    "type": "User"
+                },
+                "action": {
+                    "category": "discussion-forum",
+                    "type": "member-voted",
+                    "template": {
+                        "type": "JSON",
+                        "params": {
+                            "param1": "payload.userDetails.createdBy['username']",
+                            "param2": "payload.upvote?",
+                            "param3": ""
+                        }
+                    }
+                },
+                "additionalInfo": {
+                    "context": {},
+                    "category": {
+                        "cid": "",
+                        "title": "",
+                        "pid": ""
+                    },
+                    "topic": {
+                        "tid": "payload.post.tid",
+                        "title": "payload.post.title"
+                    },
+                    "post": {
+                        "pid": "payload.post.pid",
+                        "title": "payload.post.title"
+                    }
+                }
+            }
+        },
+        "expression": {
+            "payload.upvote": "? 'upvote' : 'downvote'",
+            "body": "((obj) => {return Object.keys(obj);})",
+            "payload.headers": "((obj) => {return {'sid': obj['x-session-id'] || obj['X-Session-Id'], 'traceID': obj['x-request-id']};})"
+        }
+    },
+    "/discussion/v2/topics": {
+        "audit": {
+            "edata": {
+                "state": "topic-created",
+                "props": "body#"
+            }
+        },
+        "cdata": [],
+        "expression": {
+            "body": "((obj) => {return Object.keys(obj);})"
+        }
+    },
+    "/discussion/v2/topics/:tid": {
+        "audit": {
+            "edata": {
+                "state": "payload.parent?",
+                "props": "body#"
+            }
+        },
+        "cdata": [],
+        "fromUid": "payload.user.uid",
+        "toUid": "payload.topic.uid",
+        "notificationObj": {
+            "headers": "payload.headers#",
+            "notificationData": {
+                "ids": "payload.userDetails.ids",
+                "createdBy": {
+                    "id": "payload.userDetails.createdBy['sunbird-oidcId']",
+                    "name": "payload.userDetails.createdBy['username']",
+                    "type": "User"
+                },
+                "action": {
+                    "category": "discussion-forum",
+                    "type": "member-replied",
+                    "template": {
+                        "type": "JSON",
+                        "params": {
+                            "param1": "payload.userDetails.createdBy['username']",
+                            "param2": "replied",
+                            "param3": "payload.parent?"
+                        }
+                    }
+                },
+                "additionalInfo": {
+                    "category": {
+                        "cid": "payload.cid",
+                        "title": "",
+                        "pid": ""
+                    },
+                    "topic": {
+                        "tid": "payload.topic.tid",
+                        "title": "payload.topic.title"
+                    },
+                    "post": {
+                        "pid": "payload.pid",
+                        "title": "payload.topic.title"
+                    }
+                }
+            }
+        },
+        "expression": {
+            "payload.parent": "? 'post-replied' : 'topic-replied'",
+            "body": "((obj) => {return Object.keys(obj);})",
+            "payload.headers": "((obj) => {return {'sid': obj['x-session-id'] || obj['X-Session-Id'], 'traceID': obj['x-request-id']};})"
+        }
+    },
+    "/discussion/forum/v3/create": {
+        "audit": {
+            "edata": {
+                "state": "discussion-enabled",
+                "props": "body.category#"
+            },
+            "cdata": [
+                {
+                    "type": "result.forums[0].sbType",
+                    "id": "result.forums[0].sbIdentifier"
+                },
+                {
+                    "type": "Forum",
+                    "id": "result.forums[0].newCid"
+                }
+            ]
+        },
+        "expression": {
+            "body.category": "((obj) => {return Object.keys(obj);})"
+        }
+    }
+}

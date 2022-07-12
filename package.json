@@ -1,6 +1,6 @@
 {
   "name": "nodebb-middleware",
-  "version": "0.0.0",
+  "version": "4.10.0",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@project-sunbird/logger": "^0.0.9",
+    "@project-sunbird/telemetry-sdk": "0.0.29",
+    "axios": "^0.26.0",
     "chai": "4.2.0",
     "chai-http": "^4.3.0",
     "cookie-parser": "~1.4.4",
@@ -20,6 +22,7 @@
     "http-errors": "~1.6.3",
     "istanbul": "^0.4.5",
     "jade": "~1.11.0",
+    "kafkajs": "^1.16.0",
     "lodash": "^4.17.20",
     "mocha": "^8.2.1",
     "mock-require": "3.0.3",
@@ -31,6 +34,7 @@
     "request": "^2.88.2",
     "sb-config-util": "file:libs/sb-config-util",
     "sb_logger_util": "file:libs/sb_logger_util",
+    "sb_telemetry_util": "file:libs/sb_telemetry_util",
     "sinon": "^9.2.2"
   }
 }

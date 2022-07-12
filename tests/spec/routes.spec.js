@@ -324,43 +324,63 @@ describe('Nodebb Routes', () => {
             });
     });
 
-    it('it should update the topic', (done) => {
-        const topic = {
-            pid: 1, content: "test content"
+    it('it should get the sunbird user details', (done) => {
+        const payload = {
+            "request": {
+                "uids" : [3]
+            }
         }
         nock(nodebbUrl)
-            .put('/v2/topics/1', topic)
-            .reply(200, mockData.topicsRes);
+            .post('/forum/v2/users/details', payload)
+            .reply(200, mockData.nbbUserDetailsById);
 
         chai.request(server)
-            .put('/discussion/v2/topics/1')
-            .send(topic)
+            .post('/discussion/forum/v2/users/details')
+            .send(payload)
             .end((err, res) => {
                 expect(res.body).to.be.a('object');
                 expect(res.status).to.equal(200);
-                expect(res.body.code).to.equal('ok')
                 done();
             });
     });
 
-    it('it should not update the topic', (done) => {
-        const topic = {
-            pid: 1, content: "test content"
-        }
-        nock(nodebbUrl)
-            .put('/v2/topics/123', topic)
-            .reply(404, mockData.errorMessage);
+    // it('it should update the topic', (done) => {
+    //     const topic = {
+    //         pid: 1, content: "test content"
+    //     }
+    //     nock(nodebbUrl)
+    //         .put('/v2/topics/1', topic)
+    //         .reply(200, mockData.topicsRes);
 
-        chai.request(server)
-            .put('/discussion/v2/topics/123')
-            .send(topic)
-            .end((err, res) => {
-                expect(res.body).to.be.a('object');
-                expect(res.status).to.equal(404);
-                expect(res.body.params.err).to.equal('DMW_TUDT14')
-                done();
-            });
-    });
+    //     chai.request(server)
+    //         .put('/discussion/v2/topics/1')
+    //         .send(topic)
+    //         .end((err, res) => {
+    //             expect(res.body).to.be.a('object');
+    //             expect(res.status).to.equal(200);
+    //             expect(res.body.code).to.equal('ok')
+    //             done();
+    //         });
+    // });
+
+    // it('it should not update the topic', (done) => {
+    //     const topic = {
+    //         pid: 1, content: "test content"
+    //     }
+    //     nock(nodebbUrl)
+    //         .put('/v2/topics/123', topic)
+    //         .reply(404, mockData.errorMessage);
+
+    //     chai.request(server)
+    //         .put('/discussion/v2/topics/123')
+    //         .send(topic)
+    //         .end((err, res) => {
+    //             expect(res.body).to.be.a('object');
+    //             expect(res.status).to.equal(404);
+    //             expect(res.body.params.err).to.equal('DMW_TUDT14')
+    //             done();
+    //         });
+    // });
 
     it('it should delete the topic', (done) => {
         nock(nodebbUrl)
@@ -556,36 +576,36 @@ describe('Nodebb Routes', () => {
     //             done();
     //         });
     // });
+    // post/pid/:pid api expired 
+    // it('it should not create new post', (done) => {
+    //     const payload = {uid:1}
+    //     nock(nodebbUrl)
+    //         .post('/v2/posts/1', payload)
+    //         .reply(400, mockData.errorResponse);
 
-    it('it should not create new post', (done) => {
-        const payload = {uid:1}
-        nock(nodebbUrl)
-            .post('/v2/posts/1', payload)
-            .reply(400, mockData.errorResponse);
+    //     chai.request(server)
+    //         .post('/discussion/v2/posts/1')
+    //         .send(payload)
+    //         .end().then(res => {
+    //             expect(res.body).to.be.a('object');
+    //             expect(res.status).to.equal(400);
+    //             done();
+    //         })
+    // });
 
-        chai.request(server)
-            .post('/discussion/v2/posts/1')
-            .send(payload)
-            .end((err, res) => {
-                expect(res.body).to.be.a('object');
-                expect(res.status).to.equal(400);
-                done();
-            });
-    });
+    // it('it should not delete post', (done) => {
+    //     nock(nodebbUrl)
+    //         .delete('/v2/posts/1?uid=1')
+    //         .reply(400, mockData.errorMessage);
 
-    it('it should not delete post', (done) => {
-        nock(nodebbUrl)
-            .delete('/v2/posts/1?uid=1')
-            .reply(400, mockData.errorMessage);
-
-        chai.request(server)
-            .delete('/discussion/v2/posts/12345')
-            .end((err, res) => {
-                expect(res.body).to.be.a('object');
-                expect(res.status).to.equal(400);
-                done();
-            });
-    });
+    //     chai.request(server)
+    //         .delete('/discussion/v2/posts/12345')
+    //         .end((err, res) => {
+    //             expect(res.body).to.be.a('object');
+    //             expect(res.status).to.equal(400);
+    //             done();
+    //         });
+    // });
     it('it should vote the post', (done) => {
         const payload = {delta: 1};
         nock(nodebbUrl)
@@ -685,4 +705,19 @@ describe('Nodebb Routes', () => {
     //             done();
     //         });
     // });
+    it('it should not call telemetry api', (done) => {
+        const payload = mockData.telemetryData;
+        nock(envData.TELEMETRY_SERVICE_URL)
+            .post(envData.TELEMETRY_SERVICE_API_SLUG, payload)
+            .reply(404, mockData.telemetryResponse);
+
+        chai.request(server)
+            .post(envData.TELEMETRY_SERVICE_API_SLUG)
+            .send(payload)
+            .end((err, res) => {
+                expect(res.ok).to.equal(false);
+                done();
+                process.exit()
+            });
+    });
 });
