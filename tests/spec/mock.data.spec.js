@@ -1387,107 +1387,347 @@ module.exports = {
         "message": "Something was wrong with the request payload you passed in. | Required parameters were missing from this API call, please see the \"params\" property",
         "params": {}
     },
-   errorMessage: {
-    "code": "not-found",
-    "message": "Invalid API call",
-    "params": {}
-},
-nbbUserDetailsById: {
-    "id": ".discussions.api.forum.v2.users.details",
-    "ver": "1.0",
-    "ets": 1644401072015,
-    "params": {
-        "resmsgid": "ceaa53ca-9753-4efd-952c-c3bb77baf953",
-        "msgid": "",
-        "status": "Success"
+    errorMessage: {
+        "code": "not-found",
+        "message": "Invalid API call",
+        "params": {}
     },
-    "responseCode": "OK",
-    "result": [
-        {
-            "uid": 3,
-            "username": "naveen123_zpev",
-            "userslug": "naveen123_zpev",
-            "email": "naveen123_zpev@staging.sunbirded.org",
-            "email:confirmed": 0,
-            "joindate": 1635143829968,
-            "lastonline": 1643631841003,
-            "picture": null,
-            "icon:bgColor": "#2196f3",
-            "fullname": null,
-            "location": null,
-            "birthday": null,
-            "website": null,
-            "aboutme": null,
-            "signature": null,
-            "uploadedpicture": null,
-            "profileviews": 4,
-            "reputation": -19,
-            "postcount": 813,
-            "topiccount": 615,
-            "lastposttime": 1642656022355,
-            "banned": false,
-            "banned:expire": 0,
-            "status": "offline",
-            "flags": null,
-            "followerCount": 0,
-            "followingCount": 0,
-            "cover:url": null,
-            "cover:position": null,
-            "groupTitle": null,
-            "sunbird-oidcId": "d9b6751b-7d49-42e0-840a-209acff2dcee",
-            "displayname": "naveen123_zpev",
-            "groupTitleArray": [],
-            "icon:text": "N",
-            "joindateISO": "2021-10-25T06:37:09.968Z",
-            "lastonlineISO": "2022-01-31T12:24:01.003Z",
-            "banned_until": 0,
-            "banned_until_readable": "Not Banned"
+    nbbUserDetailsById: {
+        "id": ".discussions.api.forum.v2.users.details",
+        "ver": "1.0",
+        "ets": 1644401072015,
+        "params": {
+            "resmsgid": "ceaa53ca-9753-4efd-952c-c3bb77baf953",
+            "msgid": "",
+            "status": "Success"
+        },
+        "responseCode": "OK",
+        "result": [
+            {
+                "uid": 3,
+                "username": "naveen123_zpev",
+                "userslug": "naveen123_zpev",
+                "email": "naveen123_zpev@staging.sunbirded.org",
+                "email:confirmed": 0,
+                "joindate": 1635143829968,
+                "lastonline": 1643631841003,
+                "picture": null,
+                "icon:bgColor": "#2196f3",
+                "fullname": null,
+                "location": null,
+                "birthday": null,
+                "website": null,
+                "aboutme": null,
+                "signature": null,
+                "uploadedpicture": null,
+                "profileviews": 4,
+                "reputation": -19,
+                "postcount": 813,
+                "topiccount": 615,
+                "lastposttime": 1642656022355,
+                "banned": false,
+                "banned:expire": 0,
+                "status": "offline",
+                "flags": null,
+                "followerCount": 0,
+                "followingCount": 0,
+                "cover:url": null,
+                "cover:position": null,
+                "groupTitle": null,
+                "sunbird-oidcId": "d9b6751b-7d49-42e0-840a-209acff2dcee",
+                "displayname": "naveen123_zpev",
+                "groupTitleArray": [],
+                "icon:text": "N",
+                "joindateISO": "2021-10-25T06:37:09.968Z",
+                "lastonlineISO": "2022-01-31T12:24:01.003Z",
+                "banned_until": 0,
+                "banned_until_readable": "Not Banned"
+            }
+        ]
+    },
+    telemetryData: {
+        "eid": "AUDIT",
+        "ets": 1645544012584,
+        "ver": "3.0",
+        "mid": "AUDIT:68e4811be0157eed57d35ad1dd7ea973",
+        "actor": {
+            "id": "public",
+            "type": "User"
+        },
+        "context": {
+            "channel": "324323243",
+            "pdata": {
+                "id": "preprod.ntp.net.in",
+                "pid": "discussion-middleware",
+                "ver": "4.7.0"
+            },
+            "env": "discussion-forum",
+            "sid": "",
+            "did": "",
+            "cdata": [
+            ],
+            "rollup": {
+                "l1": "324323243"
+            }
+        },
+        "object": {
+        },
+        "tags": [
+        ],
+        "edata": {
+            "state": "topic-created",
+            "props": [
+                "cid",
+                "title",
+                "content"
+            ]
         }
-    ]
-},
-telemetryData: {
-    "eid": "AUDIT",
-    "ets": 1645544012584,
-    "ver": "3.0",
-    "mid": "AUDIT:68e4811be0157eed57d35ad1dd7ea973",
-    "actor": {
-      "id": "public",
-      "type": "User"
     },
-    "context": {
-      "channel": "324323243",
-      "pdata": {
-        "id": "preprod.ntp.net.in",
-        "pid": "discussion-middleware",
-        "ver": "4.7.0"
-      },
-      "env": "discussion-forum",
-      "sid": "",
-      "did": "",
-      "cdata": [
-        
-      ],
-      "rollup": {
-        "l1": "324323243"
+    telemetryResponse: {
+        message: "error",
+        status: 404
+    },
+    notificationPayload: {
+        service: "discussion-forum",
+        headers: {
+            sid: "X-Session-id",
+            traceID: "X-Request-id"
+        },
+        notifcationData: {
+            ids: ["d9b6751b-7d49-42e0-840a-209acff2dcee"],
+            createdBy: {
+                id: "d9b6751b-7d49-42e0-840a-209acff2dcee",
+                name: "Test-User",
+                type: "User"
+            },
+            action: {
+                category: "discussion-forum",
+                type: "upvote",
+                template: {
+                    type: "JSON",
+                    params: {
+                        param1: "User1",
+                        param2: "Upvoted",
+                        param3: " topic",
+                    }
+                }
+            },
+            additionalInfo: {
+                context: {
+                    cid: "20",
+                    sbItendifier: "d9b6751b-7d49-42e0-840a-209acff2dcee",
+                    sbType: "Group"
+                },
+                category: {
+                    cid: "20",
+                    title: "Test topic",
+                    pid: "18"
+                },
+                topic: {
+                    tid: "32",
+                    title: "Test"
+                },
+                post: {
+                    pid: "34",
+                    title: "Test post"
+                }
+            }
+        }
+    },
+    topicCreateResponse: {
+        "code": "ok",
+        "payload": {
+          "topicData": {
+            "tid": 1396,
+            "uid": 241,
+            "cid": 1663,
+            "mainPid": 1954,
+            "title": "test topic create",
+            "slug": "1396/test-topic-create",
+            "timestamp": 1656918362680,
+            "lastposttime": 1656918362686,
+            "postcount": 1,
+            "viewcount": 0,
+            "postercount": 1,
+            "deleted": 0,
+            "locked": 0,
+            "pinned": 0,
+            "pinExpiry": 0,
+            "upvotes": 0,
+            "downvotes": 0,
+            "deleterUid": 0,
+            "titleRaw": "test topic create",
+            "timestampISO": "2022-07-04T07:06:02.680Z",
+            "scheduled": false,
+            "lastposttimeISO": "2022-07-04T07:06:02.686Z",
+            "pinExpiryISO": "",
+            "votes": 0,
+            "teaserPid": null,
+            "tags": [
+              
+            ],
+            "thumbs": [
+              
+            ],
+            "category": {
+              "cid": 1663,
+              "name": "General Discussion",
+              "slug": "1663/general-discussion",
+              "icon": "hidden",
+              "backgroundImage": null,
+              "imageClass": "cover",
+              "bgColor": "#7CAFC2",
+              "color": "#ffffff",
+              "disabled": 0
+            },
+            "user": {
+              "uid": 241,
+              "username": "venkatkadiveti345_p16x",
+              "userslug": "venkatkadiveti345_p16x",
+              "reputation": 0,
+              "postcount": 1,
+              "picture": null,
+              "signature": null,
+              "banned": false,
+              "status": "online",
+              "displayname": "venkatkadiveti345_p16x",
+              "icon:text": "V",
+              "icon:bgColor": "#795548",
+              "banned_until_readable": "Not Banned"
+            },
+            "teaser": null,
+            "isOwner": true,
+            "ignored": false,
+            "unread": false,
+            "bookmark": 1,
+            "unreplied": true,
+            "icons": [
+              
+            ],
+            "mainPost": {
+              "pid": 1954,
+              "uid": 241,
+              "tid": 1396,
+              "content": "<p dir=\"auto\">test topic create</p>\n",
+              "timestamp": 1656918362686,
+              "cid": 1663,
+              "isMain": true,
+              "user": {
+                "uid": 241,
+                "username": "venkatkadiveti345_p16x",
+                "userslug": "venkatkadiveti345_p16x",
+                "reputation": 0,
+                "postcount": 1,
+                "topiccount": 1,
+                "picture": null,
+                "signature": "",
+                "banned": false,
+                "banned:expire": 0,
+                "status": "online",
+                "lastonline": 1656918342544,
+                "groupTitle": null,
+                "displayname": "venkatkadiveti345_p16x",
+                "groupTitleArray": [
+                  
+                ],
+                "icon:text": "V",
+                "icon:bgColor": "#795548",
+                "lastonlineISO": "2022-07-04T07:05:42.544Z",
+                "banned_until": 0,
+                "banned_until_readable": "Not Banned",
+                "selectedGroups": [
+                  
+                ],
+                "custom_profile_info": [
+                  
+                ]
+              },
+              "topic": {
+                "tid": 1396,
+                "uid": 241,
+                "title": "test topic create",
+                "slug": "1396/test-topic-create",
+                "cid": 1663,
+                "postcount": 1,
+                "mainPid": 1954,
+                "scheduled": false,
+                "timestamp": 1656918362680,
+                "titleRaw": "test topic create",
+                "timestampISO": "2022-07-04T07:06:02.680Z"
+              },
+              "index": 0,
+              "votes": 0,
+              "bookmarked": false,
+              "display_edit_tools": true,
+              "display_delete_tools": true,
+              "display_moderator_tools": true,
+              "display_move_tools": true,
+              "selfPost": false,
+              "timestampISO": "2022-07-04T07:06:02.686Z"
+            },
+            "index": 0
+          },
+          "postData": {
+            "pid": 1954,
+            "uid": 241,
+            "tid": 1396,
+            "content": "<p dir=\"auto\">test topic create</p>\n",
+            "timestamp": 1656918362686,
+            "cid": 1663,
+            "isMain": true,
+            "user": {
+              "uid": 241,
+              "username": "venkatkadiveti345_p16x",
+              "userslug": "venkatkadiveti345_p16x",
+              "reputation": 0,
+              "postcount": 1,
+              "topiccount": 1,
+              "picture": null,
+              "signature": "",
+              "banned": false,
+              "banned:expire": 0,
+              "status": "online",
+              "lastonline": 1656918342544,
+              "groupTitle": null,
+              "displayname": "venkatkadiveti345_p16x",
+              "groupTitleArray": [
+                
+              ],
+              "icon:text": "V",
+              "icon:bgColor": "#795548",
+              "lastonlineISO": "2022-07-04T07:05:42.544Z",
+              "banned_until": 0,
+              "banned_until_readable": "Not Banned",
+              "selectedGroups": [
+                
+              ],
+              "custom_profile_info": [
+                
+              ]
+            },
+            "topic": {
+              "tid": 1396,
+              "uid": 241,
+              "title": "test topic create",
+              "slug": "1396/test-topic-create",
+              "cid": 1663,
+              "postcount": 1,
+              "mainPid": 1954,
+              "scheduled": false,
+              "timestamp": 1656918362680,
+              "titleRaw": "test topic create",
+              "timestampISO": "2022-07-04T07:06:02.680Z"
+            },
+            "index": 0,
+            "votes": 0,
+            "bookmarked": false,
+            "display_edit_tools": true,
+            "display_delete_tools": true,
+            "display_moderator_tools": true,
+            "display_move_tools": true,
+            "selfPost": false,
+            "timestampISO": "2022-07-04T07:06:02.686Z"
+          }
+        }
       }
-    },
-    "object": {
-      
-    },
-    "tags": [
-      
-    ],
-    "edata": {
-      "state": "topic-created",
-      "props": [
-        "cid",
-        "title",
-        "content"
-      ]
-    }
-  },
-  telemetryResponse: {
-      message: "error",
-      status: 404
-  }  
 }
