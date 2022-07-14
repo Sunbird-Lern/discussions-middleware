@@ -46,4 +46,51 @@ describe("Audit Event Unit Tests", function () {
       expect(audit.auditEventObject._pdata.id).to.equal('discussion-middleware');
       expect(audit.auditEventObject._pdata.ver).to.equal('4.6.0');
     });
+
+    it("should get reqData", async function () {
+      const data = audit.auditEventObject.reqData;
+      expect(audit.auditEventObject._pdata.pid).to.equal('staging.sunbird.portal');
+      expect(audit.auditEventObject._pdata.id).to.equal('discussion-middleware');
+      expect(audit.auditEventObject._pdata.ver).to.equal('4.6.0');
+    });
+
+    it("should set actor", async function () {
+      audit.auditEventObject.actor = req;
+      expect(audit.auditEventObject._actor.id).to.equal('public');
+      expect(audit.auditEventObject._actor.type).to.equal('User');
+    });
+
+    it("should get actor", async function () {
+      const actor = audit.auditEventObject.actor;
+      expect(actor.id).to.equal('public');
+      expect(actor.type).to.equal('User');
+    });
+
+    it("should set channel", async function () {
+      audit.auditEventObject.channel = req;
+      console.log(audit.auditEventObject)
+      expect(audit.auditEventObject._channel).to.equal('f5db7376-265c-a244-952b-86672b05e070');
+    });
+
+    it("should get channel", async function () {
+      const channel =  audit.auditEventObject.channel;
+      expect(channel).to.equal('f5db7376-265c-a244-952b-86672b05e070');
+    });
+
+    it("should get pdata", async function () {
+      const pdata = audit.auditEventObject.pdata;
+      expect(pdata.pid).to.equal('staging.sunbird.portal');
+      expect(pdata.id).to.equal('discussion-middleware');
+      expect(pdata.ver).to.equal('4.6.0');
+    });
+
+    it("should set rollup", async function () {
+      audit.auditEventObject.rollup = req;
+      expect(audit.auditEventObject._rollup.l1).to.equal('f5db7376-265c-a244-952b-86672b05e070');
+    });
+
+    it("should get rollup", async function () {
+      const rollup = audit.auditEventObject.rollup;
+      expect(rollup.l1).to.equal('f5db7376-265c-a244-952b-86672b05e070');
+    });
 });

@@ -1729,5 +1729,77 @@ module.exports = {
             "timestampISO": "2022-07-04T07:06:02.686Z"
           }
         }
-      }
+      },
+    forumUserDetails: {
+        "id": ".discussions.api.forum.v2.users.details",
+        "ver": "1.0",
+        "ets": 1657779480494,
+        "params": {
+            "resmsgid": "1f590939-21b9-41b0-9f28-8d2a8a0968e6",
+            "msgid": "",
+            "status": "Success"
+        },
+        "responseCode": "OK",
+        "result": [
+            {
+                "uid": 2,
+                "username": "content_creator_tn3941",
+                "userslug": "content_creator_tn3941",
+                "email": "content_creator_tn3941@staging.sunbirded.org",
+                "email:confirmed": 0,
+                "joindate": 1635143407282,
+                "lastonline": 1649328288672,
+                "picture": null,
+                "icon:bgColor": "#795548",
+                "fullname": null,
+                "location": null,
+                "birthday": null,
+                "website": null,
+                "aboutme": null,
+                "signature": null,
+                "uploadedpicture": null,
+                "profileviews": 1,
+                "reputation": -6,
+                "postcount": 118,
+                "topiccount": 70,
+                "lastposttime": 1646305551002,
+                "banned": false,
+                "banned:expire": 0,
+                "status": "offline",
+                "flags": null,
+                "followerCount": 0,
+                "followingCount": 0,
+                "cover:url": null,
+                "cover:position": null,
+                "groupTitle": null,
+                "sunbird-oidcId": "4cd4c690-eab6-4938-855a-447c7b1b8ea9",
+                "displayname": "content_creator_tn3941",
+                "groupTitleArray": [],
+                "icon:text": "C",
+                "joindateISO": "2021-10-25T06:30:07.282Z",
+                "lastonlineISO": "2022-04-07T10:44:48.672Z",
+                "banned_until": 0,
+                "banned_until_readable": "Not Banned"
+            }
+        ]
+    },
+    userVoteRes: {
+        "code": "ok",
+        "payload": {
+            "user": {
+                "reputation": -36
+            },
+            "fromuid": 10,
+            "post": {
+                "pid": 123,
+                "uid": 3,
+                "tid": 84,
+                "upvotes": 1,
+                "downvotes": 0,
+                "votes": 1
+            },
+            "upvote": true,
+            "downvote": false
+        }
+    }  
 }

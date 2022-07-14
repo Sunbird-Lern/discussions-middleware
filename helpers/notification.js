@@ -28,7 +28,7 @@ const notificationObj = async (req, resp) => {
     }
     return keyVal;
   })
-  console.log('notification payload-----------', JSON.stringify(result))
+  return result;
 }
 
 function getValue(resp, val) {
@@ -48,7 +48,7 @@ async function getUserObject(req, fromUid, toUid) {
 }
 
 function getSunbirdIds(req, uids) {
-  const url = `${req.protocol}://${req.get('host')}/discussion/forum/v2/users/details`;
+  const url = `${req.protocol}://${req.host}/discussion/forum/v2/users/details`;
   const payload = {
     request: {
       uids: uids
