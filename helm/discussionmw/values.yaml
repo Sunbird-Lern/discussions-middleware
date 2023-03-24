@@ -1,0 +1,83 @@
+## This section has mandatory variables
+## You must provide a value for these
+## If you don't provide a value for these variables, the chart installation will not proceed
+
+
+
+
+
+## This section has optional variables
+## If you provide a value to the variable, then that will have the highest precedence
+## If you don't provide a value, then it's auto generated
+
+
+## This section has optional variables
+## If you provide a value to the variable, then that will have the highest precedence
+## If you don't provide a value, then it's fetched from another object
+API_AUTH_TOKEN: ""
+authorization_token: ""
+
+## This section has variables with default values
+## These are standard defaults that work well
+## You can override these if you have a use case for it
+TELEMETRY_EVENTS_BATCH_SIZE: "1"
+TELEMETRY_SERVICE_API_SLUG: "/v1/telemetry"
+TELEMETRY_SERVICE_URL: "http://telemetry.svc.cluster.local:9001"
+enable_audit_event: 'True' 
+moderation_flag: 'False'
+nodebb_api_slug: "/discussions/api"
+nodebb_service_url: "http://nodebb.lern.svc.cluster.local:4567"
+
+## Helper variables which are used to construct other variables
+
+
+## Set this value to true when developing the chart
+local_chart_development: true
+
+
+## This section has other kubernetes variables
+## These are standard defaults that work well
+## You can override these if you have a use case for it
+image:
+  registry: docker.io
+  repository: ssksanthosh/discussion-middleware
+  tag: release-5.0.0_RC2_1
+
+replicaCount: 1
+
+strategy:
+  maxSurge: 25%
+  maxUnavailable: 25%
+
+imagePullSecrets: ""
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 100M
+  limits:
+    cpu: 1
+    memory: 1G
+
+port: 3002
+
+targetPort: 3002
+
+livenessProbe:
+  failureThreshold: 2
+  httpGet:
+      path: /health
+      port: 3002
+  initialDelaySeconds: 15
+  periodSeconds: 15
+  timeoutSeconds: 5
+
+readinessProbe:
+  failureThreshold: 2
+  httpGet:
+      path: /health
+      port: 3002
+  initialDelaySeconds: 15
+  periodSeconds: 15
+  timeoutSeconds: 5
+
