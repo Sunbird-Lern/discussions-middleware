@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-config
+  namespace: {{ .Release.Namespace }}
+data:
+  {{/* This section has variables whose value is read from another object */}}
+  
+  {{/* This section has variables which in turn contain one or more mandatory variables */}}
+
+  API_AUTH_TOKEN: {{ .Values.API_AUTH_TOKEN | quote }}
+  authorization_token: {{ .Values.API_AUTH_TOKEN | quote }}
+  
+  {{/* This section has optional variables */}}
+  
+  {{/* This section has variables with default values */}}
+
+  TELEMETRY_EVENTS_BATCH_SIZE: {{ .Values.TELEMETRY_EVENTS_BATCH_SIZE | quote }}
+  TELEMETRY_SERVICE_API_SLUG: {{ .Values.TELEMETRY_SERVICE_API_SLUG | quote }}
+  TELEMETRY_SERVICE_URL: {{ .Values.TELEMETRY_SERVICE_URL | quote }}
+  enable_audit_event: {{ .Values.enable_audit_event | quote }}
+  moderation_flag: {{ .Values.moderation_flag | quote }}
+  nodebb_api_slug: {{ .Values.nodebb_api_slug | quote }}
+  nodebb_service_url: {{ .Values.nodebb_service_url | quote }}
