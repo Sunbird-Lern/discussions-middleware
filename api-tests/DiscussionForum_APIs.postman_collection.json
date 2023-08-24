@@ -1,0 +1,327 @@
+{
+	"info": {
+		"_postman_id": "b7a30010-7a77-4b33-baef-e35086bdc746",
+		"name": "DiscussionForum_APIs",
+		"description": "The Discussion Forum APIS is a collection of API's for creation and management Discussion Forums in sunbird platform.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "4875988",
+		"_collection_link": "https://dark-star-147860.postman.co/workspace/LernBBAPIs~32e17cc4-6806-407e-b8ef-485ad4d0b712/collection/4875988-b7a30010-7a77-4b33-baef-e35086bdc746?action=share&source=collection_link&creator=4875988"
+	},
+	"item": [
+		{
+			"name": "HealthCheck",
+			"item": [
+				{
+					"name": "HealthCheck",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{host}}/health"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "AuthToken",
+			"item": [
+				{
+					"name": "UserToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonResponse = pm.response.json();",
+									"",
+									"// Set global variable",
+									"// pm.variables.set('refresh_token', jsonResponse.refresh_token);",
+									"// pm.globals.set(\"refresh_token\", jsonResponse.result.identifier);",
+									"pm.collectionVariables.set(\"refresh_token\", jsonResponse.refresh_token);",
+									"// pm.collectionVariables.set(\"variable_key\", \"variable_value\");",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							},
+							{
+								"key": "Cookie",
+								"value": "connect.sid=s%3Ad3chYLP8OfuB2bWgfEFohiWpDxM7GFol.gOPmzH3d2nP9enZ5qSHlVx1e%2BozTleCjXtfz7LUycCk"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client_id",
+									"value": "{{client_id}}",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{client_secret}}",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "{{user_name}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{password}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{host}}/auth/realms/sunbird/protocol/openid-connect/token"
+					},
+					"response": []
+				},
+				{
+					"name": "RefreshToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Extract the locationId from the response and set it to the environment variable",
+									"pm.test(\"Set access_token in environment variable\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.environment.set(\"keycloak_access_token\", responseJson.result.access_token);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{kong_api_key}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							},
+							{
+								"key": "Cookie",
+								"value": "connect.sid=s%3Ad3chYLP8OfuB2bWgfEFohiWpDxM7GFol.gOPmzH3d2nP9enZ5qSHlVx1e%2BozTleCjXtfz7LUycCk"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "refresh_token",
+									"value": "{{refresh_token}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{host}}/auth/v1/refresh/token"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "DiscussionForumAPIs",
+			"item": [
+				{
+					"name": "CreateDiscussionForum",
+					"item": [
+						{
+							"name": "CreateDiscussionForumV3",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{kong_api_key}}"
+									},
+									{
+										"key": "x-authenticated-user-token",
+										"value": "{{keycloak_access_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"category\": {\n        \"name\": \"{{random_topic}}\",\n        \"pid\": \"25\",\n        \"uid\": \"1\",\n        \"description\": \"test\",\n        \"context\": [\n            {\n                \"type\": \"group\",\n                \"identifier\": \"null\"\n            }\n        ]\n    }\n}"
+								},
+								"url": "{{host}}/api/discussions/api/forum/v3/create"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "ReadDiscussionForum",
+					"item": [
+						{
+							"name": "ReadDiscussionForumV2",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{kong_api_key}}"
+									},
+									{
+										"key": "x-authenticated-user-token",
+										"value": "{{keycloak_access_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"request\": {\n        \"identifier\": [\n            \"null\"\n        ],\n        \"type\": \"group\"\n    }\n}"
+								},
+								"url": "{{host}}/api/discussion/forum/v2/read"
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "DiscussionUserAPIs",
+			"item": [
+				{
+					"name": "DiscussionUserCreate",
+					"item": [
+						{
+							"name": "DiscussionUserCreateV1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const responseBody = pm.response.json();",
+											"const uid = responseBody.payload.uid;",
+											"pm.environment.set(\"uid\", uid);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{kong_api_key}}"
+									},
+									{
+										"key": "x-authenticated-user-token",
+										"value": "{{keycloak_access_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"request\": {\n        \"username\": \"{{random_user_name}}\",\n        \"identifier\": \"null\"\n    }\n}"
+								},
+								"url": "{{host}}/api/discussions/user/v1/create"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "DiscussionUserRead",
+					"item": [
+						{
+							"name": "DiscussionUserRead",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{kong_api_key}}"
+									},
+									{
+										"key": "x-authenticated-user-token",
+										"value": "{{keycloak_access_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": "{{host}}/api/discussion/user/uid/{{uid}}"
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Generate a random discussion topic",
+					"const topics = [",
+					"    \"The Future of AI in Education\",",
+					"    \"Challenges in Online Learning\",",
+					"    \"Importance of Project-Based Learning\",",
+					"    \"Hybrid Learning Models\",",
+					"    // Add more topics",
+					"];",
+					"",
+					"// Get a random index from the topics array",
+					"const randomIndex = Math.floor(Math.random() * topics.length);",
+					"const randomTopic = topics[randomIndex];",
+					"",
+					"// Set the generated topic as an environment variable",
+					"pm.environment.set(\"random_topic\", randomTopic);"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "refresh_token",
+			"value": ""
+		}
+	]
+}
