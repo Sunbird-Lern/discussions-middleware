@@ -201,7 +201,7 @@ if (moderation_flag) {
 function isEditablePost() {
   logger.info({ message: "isEditablePost method called" });
   return async function (req, res, next) {
-    logger.info(req.body);
+    // logger.info(req.body);
     const uid = parseInt(req.body.uid || req.query.uid, 10);
     const pid = parseInt(req.params.pid, 10);
     let baseUrl = `${req.protocol}://${req.get('host')}${BASE_REPORT_URL}`;
