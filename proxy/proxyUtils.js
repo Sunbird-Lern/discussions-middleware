@@ -157,7 +157,7 @@ function auditEventObject(req, proxyResData) {
     auditEvent.auditEventObject.edata = auditdata.edata; // need type & props
     auditEvent.auditEventObject.reqData = req;
     auditEvent.auditEventObject.cdata = auditEvent.cdataArray(cdata); // need to take from cache
-    logger.info({ 'DF Audit event': JSON.stringify(auditEvent.auditEventObject.auditEventObj) });
+    // logger.info({ 'DF Audit event': JSON.stringify(auditEvent.auditEventObject.auditEventObj) });
     telemetryHelper.logTelemetryAuditEvent(auditEvent.auditEventObject.auditEventObj);
   }
 }
