@@ -6,11 +6,11 @@ moderation_flag = moderation_flag === 'true' ? true : false;
 
 exports.deleteTopic = async (req, body) => {
     try {
-        console.log(body, body.response)
+        // console.log(body, body.response)
         const response = await axios.delete(`${nodebbServiceUrl}/v2/topics/${body.response}?_uid=1`, {
             headers: { 'Authorization': 'Bearer ' + Authorization },
         })
-        console.log(response.body)
+        // console.log(response.body)
         sendNotification(req, body)
     } catch (err) {
         console.log(err)
@@ -20,11 +20,11 @@ exports.deleteTopic = async (req, body) => {
 
 exports.createTopic = async (req, body) => {
     try {
-        console.log(body)
+        // console.log(body)
         const response = await axios.post(`${nodebbServiceUrl}/v2/topics?_uid=${body._uid}`, body, {
             headers: { 'Authorization': 'Bearer ' + Authorization },
         })
-        console.log(response.body)
+        // console.log(response.body)
     } catch (err) {
         console.log(err)
 
@@ -73,7 +73,7 @@ exports.sendNotification = async (req, raw) => {
                 Authorization: SB_API_KEY
             },
         })
-        console.log(JSON.stringify(response.data))
+        // console.log(JSON.stringify(response.data))
     } catch (err) {
         console.log(err)
 
