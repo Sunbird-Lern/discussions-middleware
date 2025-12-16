@@ -1,5 +1,5 @@
 
-FROM node:12-slim
+FROM node:22.17.1-slim
 
 MAINTAINER anjana <anjanapb7@gmail.com>
 

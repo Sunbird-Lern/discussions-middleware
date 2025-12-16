@@ -42,10 +42,10 @@ let error_obj = {
 */
 const decorateRequestHeaders = function () {
   return function (proxyReqOpts) {
-    console.log("Before appending master token:", JSON.stringify(proxyReqOpts.headers))
+    // console.log("Before appending master token:", JSON.stringify(proxyReqOpts.headers))
     logger.info({ message: `adding headers in the request ${proxyReqOpts.path}` });
     proxyReqOpts.headers.Authorization = 'Bearer ' + Authorization;
-    console.log("After appending master token:", JSON.stringify(proxyReqOpts.headers))
+    // console.log("After appending master token:", JSON.stringify(proxyReqOpts.headers))
     return proxyReqOpts;
   }
 }
@@ -157,7 +157,7 @@ function auditEventObject(req, proxyResData) {
     auditEvent.auditEventObject.edata = auditdata.edata; // need type & props
     auditEvent.auditEventObject.reqData = req;
     auditEvent.auditEventObject.cdata = auditEvent.cdataArray(cdata); // need to take from cache
-    logger.info({ 'DF Audit event': JSON.stringify(auditEvent.auditEventObject.auditEventObj) });
+    // logger.info({ 'DF Audit event': JSON.stringify(auditEvent.auditEventObject.auditEventObj) });
     telemetryHelper.logTelemetryAuditEvent(auditEvent.auditEventObject.auditEventObj);
   }
 }
