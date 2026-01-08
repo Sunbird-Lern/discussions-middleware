@@ -132,6 +132,18 @@ app.put(`${BASE_REPORT_URL}/v2/topics/:tid/tags`, proxyObject());
 app.delete(`${BASE_REPORT_URL}/v2/topics/:tid/tags`, proxyObject());
 app.put(`${BASE_REPORT_URL}/v2/topics/:tid/pin`, proxyObject());
 app.delete(`${BASE_REPORT_URL}/v2/topics/:tid/pin`, proxyObject());
+// v3 topic APIs (mirror v2)
+app.post(`${BASE_REPORT_URL}/v3/topics`, proxyObject());
+app.post(`${BASE_REPORT_URL}/v3/topics/:tid`, proxyObject());
+app.post(`${BASE_REPORT_URL}/v3/topics/update/:tid`, proxyObjectForPutApi());
+app.delete(`${BASE_REPORT_URL}/v3/topics/:tid`, proxyObject());
+app.put(`${BASE_REPORT_URL}/v3/topics/:tid/state`, proxyObject());
+app.put(`${BASE_REPORT_URL}/v3/topics/:tid/follow`, proxyObject());
+app.delete(`${BASE_REPORT_URL}/v3/topics/:tid/follow`, proxyObject());
+app.put(`${BASE_REPORT_URL}/v3/topics/:tid/tags`, proxyObject());
+app.delete(`${BASE_REPORT_URL}/v3/topics/:tid/tags`, proxyObject());
+app.put(`${BASE_REPORT_URL}/v3/topics/:tid/pin`, proxyObject());
+app.delete(`${BASE_REPORT_URL}/v3/topics/:tid/pin`, proxyObject());
 
 // categories apis
 app.post(`${BASE_REPORT_URL}/v2/categories`, proxyObject());
@@ -160,8 +172,18 @@ app.put(`${BASE_REPORT_URL}/v2/posts/:pid/state`, proxyObject());
 app.delete(`${BASE_REPORT_URL}/v2/posts/:pid/state`, proxyObject());
 app.post(`${BASE_REPORT_URL}/v2/posts/:pid/vote`, proxyObject());
 app.delete(`${BASE_REPORT_URL}/v2/posts/:pid/vote`, proxyObject());
+// Support v3 vote API called by portal
+app.put(`${BASE_REPORT_URL}/v3/posts/:pid/vote`, proxyObject());
+app.delete(`${BASE_REPORT_URL}/v3/posts/:pid/vote`, proxyObject());
 app.post(`${BASE_REPORT_URL}/v2/posts/:pid/bookmark`, proxyObject());
 app.delete(`${BASE_REPORT_URL}/v2/posts/:pid/bookmark`, proxyObject());
+// v3 post/bookmark APIs (mirror v2)
+app.post(`${BASE_REPORT_URL}/v3/posts/:pid`, isEditablePost(), proxyObjectForPutApi());
+app.delete(`${BASE_REPORT_URL}/v3/posts/:pid`, isEditablePost(), proxyObject());
+app.put(`${BASE_REPORT_URL}/v3/posts/:pid/state`, proxyObject());
+app.delete(`${BASE_REPORT_URL}/v3/posts/:pid/state`, proxyObject());
+app.put(`${BASE_REPORT_URL}/v3/posts/:pid/bookmark`, proxyObject());
+app.delete(`${BASE_REPORT_URL}/v3/posts/:pid/bookmark`, proxyObject());
 
 // util apis 
 app.post(`${BASE_REPORT_URL}/v2/util/upload`, proxyObject());
